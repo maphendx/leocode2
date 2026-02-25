@@ -1,0 +1,546 @@
+'use client'
+
+import { useState, useEffect, useRef } from 'react'
+import { CheckCircle2 } from 'lucide-react'
+import Image from '../ui/Image'
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
+
+interface HeroLeadFormState {
+  parentName: string
+  phone: string
+  childAge: string
+}
+
+interface HeroLeadFormErrors {
+  parentName: string
+  phone: string
+  childAge: string
+}
+
+const initialHeroLeadForm: HeroLeadFormState = {
+  parentName: '',
+  phone: '',
+  childAge: '',
+}
+
+const initialHeroLeadErrors: HeroLeadFormErrors = {
+  parentName: '',
+  phone: '',
+  childAge: '',
+}
+
+const heroNamePattern = /^[\p{L}\p{M}\s'-]*$/u
+
+const normalizeHeroPhone = (phone: string) => {
+  const digits = phone.replace(/\D/g, '')
+  if (!digits) return ''
+  if (digits.startsWith('380')) return `+${digits}`
+  if (digits.startsWith('0')) return `+38${digits}`
+  return `+${digits}`
+}
+
+const normalizeChildAge = (value: string) => {
+  const digits = value.replace(/\D/g, '')
+  return digits ? `${digits} років` : ''
+}
+
+const validateHeroLeadForm = (
+  form: HeroLeadFormState
+): HeroLeadFormErrors => {
+  const errors = { ...initialHeroLeadErrors }
+
+  if (!form.parentName.trim() || form.parentName.trim().length < 2) {
+    errors.parentName = "Вкажіть ім'я та прізвище батьків"
+  }
+
+  if (!/^\+\d{12}$/.test(normalizeHeroPhone(form.phone))) {
+    errors.phone = 'Вкажіть номер у форматі +380XXXXXXXXX'
+  }
+
+  const ageDigits = form.childAge.replace(/\D/g, '')
+  if (!ageDigits) {
+    errors.childAge = 'Вкажіть вік дитини'
+  } else {
+    const age = Number(ageDigits)
+    if (Number.isNaN(age) || age < 3 || age > 18) {
+      errors.childAge = 'Вкажіть вік від 3 до 18 років'
+    }
+  }
+
+  return errors
+}
+
+const HeroLeadForm = ({
+  formData,
+  errors,
+  submitted,
+  isSubmitting,
+  onChange,
+  onSubmit,
+  compact = false,
+}: {
+  formData: HeroLeadFormState
+  errors: HeroLeadFormErrors
+  submitted: boolean
+  isSubmitting: boolean
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+  compact?: boolean
+}) => {
+  const inputSize = compact
+    ? 'text-[17px] sm:text-[18px] pb-3'
+    : 'text-[20px] xl:text-[22px] pb-4'
+  const labelTone = compact ? 'placeholder:text-white/58' : 'placeholder:text-white/62'
+
+  if (submitted) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-center px-3">
+        <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full border border-[#98CF93]/30 bg-[#78C86F]/15">
+          <CheckCircle2 className="h-8 w-8 text-[#98CF93]" />
+        </div>
+        <p className="text-white text-lg font-extrabold">Заявку надіслано</p>
+        <p className="mt-2 text-sm text-white/70">
+          Менеджер зв&apos;яжеться з вами найближчим часом
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="h-full flex flex-col">
+      <div className={compact ? 'mb-4' : 'mb-6'}>
+        <h2
+          className={`text-white font-semibold tracking-[-0.02em] ${
+            compact
+              ? 'text-lg leading-tight'
+              : 'text-[24px] xl:text-[28px] leading-[1.08]'
+          }`}
+        >
+          Залиште заявку
+        </h2>
+        <p className={`mt-1.5 text-white ${compact ? 'text-xs' : 'text-sm xl:text-[15px]'}`}>
+          і ми звяжимлсь з вами
+        </p>
+      </div>
+
+      <div className={`grid ${compact ? 'grid-cols-1 gap-[18px]' : 'grid-cols-1 gap-6'}`}>
+        <div>
+          <input
+            type="text"
+            name="parentName"
+            value={formData.parentName}
+            onChange={onChange}
+            placeholder="Імʼя та прізвище батьків"
+            className={`w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-2 text-white tracking-[-0.01em] ${labelTone} focus:outline-none focus:border-white ${inputSize}`}
+            required
+          />
+          {errors.parentName && (
+            <p className="mt-1 text-xs text-[#FFAFB7]">{errors.parentName}</p>
+          )}
+        </div>
+
+        <div>
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={onChange}
+            placeholder="Ваш номер телефону"
+            className={`w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-2 text-white tracking-[-0.01em] ${labelTone} focus:outline-none focus:border-white ${inputSize}`}
+            required
+          />
+          {errors.phone && (
+            <p className="mt-1 text-xs text-[#FFAFB7]">{errors.phone}</p>
+          )}
+        </div>
+
+        <div>
+          <input
+            type="text"
+            inputMode="numeric"
+            name="childAge"
+            value={formData.childAge}
+            onChange={onChange}
+            placeholder="Вік дитини"
+            className={`w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-2 text-white tracking-[-0.01em] ${labelTone} focus:outline-none focus:border-white ${inputSize}`}
+            required
+          />
+          {errors.childAge && (
+            <p className="mt-1 text-xs text-[#FFAFB7]">{errors.childAge}</p>
+          )}
+        </div>
+      </div>
+
+      <div className={`${compact ? 'mt-5' : 'mt-auto pt-6'}`}>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className={`w-full rounded-[4px] bg-[#78C86F] px-6 text-center font-extrabold uppercase tracking-[0.02em] text-[#192518] transition-colors duration-200 hover:bg-[#8BC886] disabled:opacity-60 disabled:cursor-not-allowed ${
+            compact ? 'py-[14px] text-sm sm:text-base' : 'py-5 text-[15px] xl:text-[16px]'
+          }`}
+        >
+          {isSubmitting ? 'Відправляємо...' : 'Надіслати заявку'}
+        </button>
+      </div>
+    </form>
+  )
+}
+
+const Hero = () => {
+  const [videoError, setVideoError] = useState(false)
+  const [videoLoaded, setVideoLoaded] = useState(false)
+  const [isInViewport, setIsInViewport] = useState(false)
+  const [leadForm, setLeadForm] = useState<HeroLeadFormState>(initialHeroLeadForm)
+  const [leadErrors, setLeadErrors] = useState<HeroLeadFormErrors>(initialHeroLeadErrors)
+  const [isLeadSubmitting, setIsLeadSubmitting] = useState(false)
+  const [leadSubmitted, setLeadSubmitted] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const videoContainerRef = useRef<HTMLDivElement>(null)
+  const isPlayingRef = useRef(false)
+
+  const videoSources = {
+    mp4: '/video.mp4',
+    webm: '/video.webm',
+  }
+  const posterImageSrc = '/main-poster.jpg'
+
+  useIntersectionObserver(
+    videoContainerRef,
+    ([entry]) => {
+      setIsInViewport(entry.isIntersecting)
+    },
+    {
+      threshold: 0.1,
+      rootMargin: '200px',
+    }
+  )
+
+  useEffect(() => {
+    if (videoRef.current && !isPlayingRef.current && isInViewport) {
+      try {
+        videoRef.current.load()
+      } catch (e) {
+        console.warn('Error loading video:', e)
+      }
+    }
+
+    const playVideo = async () => {
+      if (!isInViewport || isPlayingRef.current) return
+
+      try {
+        if (videoRef.current) {
+          isPlayingRef.current = true
+          const playPromise = videoRef.current.play()
+
+          if (playPromise !== undefined) {
+            await playPromise.catch((err) => {
+              console.error('Video playback failed:', err)
+              isPlayingRef.current = false
+
+              if (err.name === 'NotAllowedError' && videoRef.current) {
+                videoRef.current.muted = true
+                videoRef.current.play().catch(() => {
+                  setVideoError(true)
+                })
+                return
+              }
+
+              setVideoError(true)
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Video playback failed:', error)
+        isPlayingRef.current = false
+        setVideoError(true)
+      }
+    }
+
+    if (!videoLoaded && isInViewport && !isPlayingRef.current) {
+      playVideo()
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden && videoRef.current && !videoRef.current.paused) {
+        videoRef.current.pause()
+        isPlayingRef.current = false
+      } else if (
+        !document.hidden &&
+        videoRef.current &&
+        videoRef.current.paused &&
+        isInViewport
+      ) {
+        videoRef.current
+          .play()
+          .then(() => {
+            isPlayingRef.current = true
+          })
+          .catch(() => {
+            isPlayingRef.current = false
+          })
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [videoLoaded, videoError, isInViewport])
+
+  const handleVideoCanPlay = () => {
+    setVideoLoaded(true)
+  }
+
+  const handleLeadInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+
+    if (name === 'parentName' && !heroNamePattern.test(value)) {
+      setLeadErrors((prev) => ({
+        ...prev,
+        [name]: "Поле повинно містити тільки літери",
+      }))
+      return
+    }
+
+    if (name === 'childAge' && value && !/^\d{0,2}$/.test(value)) {
+      setLeadErrors((prev) => ({
+        ...prev,
+        childAge: 'Вкажіть вік цифрами',
+      }))
+      return
+    }
+
+    setLeadForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+
+    setLeadErrors((prev) => ({
+      ...prev,
+      [name]: '',
+    }))
+  }
+
+  const handleLeadSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const validation = validateHeroLeadForm(leadForm)
+    setLeadErrors(validation)
+
+    if (Object.values(validation).some(Boolean)) return
+
+    setIsLeadSubmitting(true)
+
+    try {
+      const normalizedPhone = normalizeHeroPhone(leadForm.phone)
+      const normalizedChildAge = normalizeChildAge(leadForm.childAge)
+
+      const response = await fetch('/api/submit-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: leadForm.parentName.trim(),
+          parentName: leadForm.parentName.trim(),
+          childName: 'Hero lead',
+          childAge: normalizedChildAge,
+          direction: 'Hero форма',
+          phone: normalizedPhone,
+          source: 'hero-inline-form',
+        }),
+      })
+
+      const result = await response.json().catch(() => ({
+        success: false,
+        message: 'Некоректна відповідь сервера',
+      }))
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Не вдалося відправити форму')
+      }
+
+      setLeadSubmitted(true)
+      setIsLeadSubmitting(false)
+
+      setTimeout(() => {
+        setLeadForm(initialHeroLeadForm)
+        setLeadErrors(initialHeroLeadErrors)
+        setLeadSubmitted(false)
+      }, 2500)
+    } catch (error) {
+      console.error('Hero form submit error:', error)
+      setIsLeadSubmitting(false)
+      alert('Помилка підключення. Спробуйте ще раз пізніше.')
+    }
+  }
+
+  return (
+    <section className="relative overflow-hidden">
+      <div
+        ref={videoContainerRef}
+        className="relative home-banner__video-wrap h-[100svh] min-h-[560px] bg-[#1A1C21]"
+      >
+        <div
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            videoLoaded && !videoError ? 'opacity-0' : 'opacity-100'
+          }`}
+        >
+          <Image
+            src={posterImageSrc}
+            alt="Leo Code"
+            fill
+            priority={true}
+            className="object-cover"
+            sizes="100vw"
+            quality={70}
+          />
+        </div>
+
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          loop
+          controls={false}
+          poster={posterImageSrc}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+            videoLoaded && !videoError ? 'opacity-100' : 'opacity-0'
+          }`}
+          onCanPlay={handleVideoCanPlay}
+          onError={() => setVideoError(true)}
+          preload="none"
+        >
+          <source
+            src={videoSources.mp4}
+            type="video/mp4"
+            onError={() => {
+              console.error('MP4 format not supported')
+              console.warn('MP4 format not supported, trying fallback')
+            }}
+          />
+          <source
+            src={videoSources.webm}
+            type="video/webm"
+            onError={() => {
+              console.error('WebM format not supported')
+              setVideoError(true)
+            }}
+          />
+          Your browser does not support the video tag.
+        </video>
+
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(12,13,17,0.72)_0%,rgba(17,18,23,0.56)_42%,rgba(17,18,23,0.70)_100%)]" />
+        <div className="absolute inset-y-0 right-0 hidden lg:block w-[42%] bg-[#111318]/38" />
+        <div className="absolute inset-y-0 left-1/2 hidden lg:block w-px bg-white/10" />
+
+        <div className="relative z-[1] container h-full pt-[104px] pb-6 sm:pt-[112px] sm:pb-8 lg:pt-[132px] lg:pb-10">
+          <div className="grid h-full grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] gap-6 lg:gap-10 items-center">
+            <div className="flex flex-col justify-center lg:pr-6 text-white">
+              <h1 className="m-0 max-w-[780px] text-[clamp(2.05rem,5vw,4.5rem)] font-extrabold leading-[1.03] tracking-[-0.02em] text-white">
+                <span className="block">LEOCODE -</span>
+                <span className="block mt-1 sm:mt-2">
+                  Освітній простір для
+                </span>
+                <span className="block mt-1 sm:mt-2">
+                  дітей від 7 до 15 років
+                </span>
+              </h1>
+
+              <div className="mt-6 sm:mt-8">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#23262D]/80 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-[0_10px_22px_rgba(0,0,0,0.18)] backdrop-blur-md">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#98CF93]" />
+                  Доступне онлайн та офлайн навчання
+                </span>
+              </div>
+
+              <div className="mt-6 sm:mt-8 lg:hidden">
+                <div className="max-w-[500px] rounded-2xl border border-white/10 bg-[#171A21]/70 p-4 shadow-[0_24px_40px_rgba(8,10,14,0.28)] backdrop-blur-md">
+                  <HeroLeadForm
+                    formData={leadForm}
+                    errors={leadErrors}
+                    submitted={leadSubmitted}
+                    isSubmitting={isLeadSubmitting}
+                    onChange={handleLeadInputChange}
+                    onSubmit={handleLeadSubmit}
+                    compact
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="hidden lg:flex items-center justify-end">
+              <div className="relative h-[540px] xl:h-[640px] w-full max-w-[540px] rounded-[8px] border border-white/10 bg-[#171A21]/58 shadow-[0_30px_70px_rgba(5,8,12,0.35)] backdrop-blur-[2px]">
+                <div className="absolute inset-0 rounded-[8px] bg-gradient-to-b from-white/[0.04] via-transparent to-black/15" />
+                <div className="absolute inset-0 rounded-[8px] bg-[radial-gradient(circle_at_18%_12%,rgba(255,255,255,0.06),transparent_35%),radial-gradient(circle_at_86%_80%,rgba(255,255,255,0.04),transparent_40%)]" />
+                <div className="relative h-full p-5 xl:p-6">
+                  <HeroLeadForm
+                    formData={leadForm}
+                    errors={leadErrors}
+                    submitted={leadSubmitted}
+                    isSubmitting={isLeadSubmitting}
+                    onChange={handleLeadInputChange}
+                    onSubmit={handleLeadSubmit}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mb-8 md:mb-14 border-b border-primary-light/20 pt-8 md:pt-14">
+        <ul className="home-wrap home-banner__info-block grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-14">
+          <li className="home-banner__info-item flex items-center gap-2 md:gap-3">
+            <picture className="flex-shrink-0">
+              <Image src="/fi-rr-laugh.svg" alt="icon" width={30} height={30} />
+            </picture>
+            <p className="home-banner__info-text text-text">
+              <span className="text-[16px] font-bold block">
+                Індивідуальний підхід
+              </span>
+              до кожної дитини
+            </p>
+          </li>
+          <li className="home-banner__info-item flex items-center gap-2 md:gap-3">
+            <picture className="flex-shrink-0">
+              <Image src="/arrow.svg" alt="icon" width={30} height={30} />
+            </picture>
+            <p className="home-banner__info-text text-text">
+              <span className="text-[16px] font-bold block">
+                Різноманітність напрямків
+              </span>
+              в одному місці
+            </p>
+          </li>
+          <li className="home-banner__info-item flex items-center gap-2 md:gap-3">
+            <picture className="flex-shrink-0">
+              <Image src="/screen.svg" alt="icon" width={30} height={30} />
+            </picture>
+            <p className="home-banner__info-text text-text">
+              <span className="text-[16px] font-bold block">
+                Сучасне обладнання
+              </span>
+              для ефективного навчання
+            </p>
+          </li>
+          <li className="home-banner__info-item flex items-center gap-2 md:gap-3">
+            <picture className="flex-shrink-0">
+              <Image src="/book.svg" alt="icon" width={30} height={30} />
+            </picture>
+            <p className="home-banner__info-text text-text">
+              <span className="text-[16px] font-bold block">
+                Навчальна програма
+              </span>
+              адаптується під кожну групу
+            </p>
+          </li>
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+export default Hero
