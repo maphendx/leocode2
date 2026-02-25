@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
+import { motion, useScroll, useTransform, useSpring, type Variants } from 'framer-motion'
 import FreeLesson from '../other/FreeLesson'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'
@@ -30,7 +30,7 @@ const Advantages = () => {
   const rotateSpring = useSpring(0, { damping: 20, stiffness: 80 })
   const scaleSpring = useSpring(0.9, { damping: 25, stiffness: 70 })
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: {},
     visible: {
       transition: {
@@ -39,7 +39,7 @@ const Advantages = () => {
     },
   }
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, x: -20 },
     visible: {
       opacity: 1,

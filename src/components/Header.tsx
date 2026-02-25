@@ -6,7 +6,7 @@ import { ChevronDown, Menu, X, Tent, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import FreeLesson from './other/FreeLesson'
 import SummerCampAd from './other/SummerCampAd'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, type Variants } from 'framer-motion'
 
 const zIndexValues = {
   header: 100,
@@ -328,7 +328,7 @@ const Header = () => {
   )
 
   // Animation variants for the menu
-  const menuVariants = {
+  const menuVariants: Variants = {
     closed: {
       x: '100%',
       transition: {
@@ -349,19 +349,19 @@ const Header = () => {
     },
   }
 
-  const menuItemVariants = {
+  const menuItemVariants: Variants = {
     closed: { opacity: 0, y: 20 },
     open: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.4,
-        ease: [0.25, 0.1, 0.25, 1.0],
+        ease: [0.25, 0.1, 0.25, 1.0] as const,
       },
     },
   }
 
-  const overlayVariants = {
+  const overlayVariants: Variants = {
     closed: { opacity: 0, pointerEvents: 'none' as const },
     open: { opacity: 1, pointerEvents: 'auto' as const },
   }
