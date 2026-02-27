@@ -59,7 +59,9 @@ const PriceCard = ({
     )}
     <div
       className={`inline-flex items-center border border-[#86CC82] bg-[#F7FBF5] px-3 py-1 leading-none text-[#2F342F] rounded-[3px] ${
-        featured ? 'text-[15px] md:text-[18px] font-semibold' : 'text-[14px] md:text-[16px]'
+        featured
+          ? 'text-[15px] md:text-[18px] font-semibold'
+          : 'text-[14px] md:text-[16px]'
       }`}
     >
       {lessons}
@@ -91,7 +93,10 @@ const PriceCard = ({
 
 const OnlineLearning = () => {
   return (
-    <section id="online-learning" className="relative overflow-hidden py-14 md:py-20">
+    <section
+      id="online-learning"
+      className="relative overflow-hidden py-14 md:py-20"
+    >
       <div className="container relative">
         <div className="mx-auto w-full">
           <h2 className="mb-8 md:mb-10 text-left text-[30px] md:text-[42px] font-extrabold uppercase tracking-[-0.04em] leading-[0.98] text-[#2A2C31]">
@@ -121,7 +126,7 @@ const OnlineLearning = () => {
                 title="7-10 років"
                 items={[
                   "Комп'ютерна грамотність",
-                  'Дизайн у Canva',
+                  'Дизайн у Canva (комікс)',
                   '3D-моделювання у Tinkercad',
                   'Програмування та створення ігор у Scratch',
                 ]}
@@ -131,7 +136,7 @@ const OnlineLearning = () => {
                 label="для підлітків"
                 title="11-14 років"
                 items={[
-                  'Дизайн у Canva',
+                  'Дизайн у Canva (брендбук)',
                   'Прототипування у Figma',
                   '3D-моделювання у Tinkercad',
                   'Програмування та створення сайту HTML/CSS',
@@ -156,23 +161,6 @@ const OnlineLearning = () => {
                   '1 раз на тиждень у вихідні — 2 години поспіль',
                 ]}
               />
-            </div>
-
-            <div className="relative z-[1] mt-7 md:mt-9">
-              <div className="mb-2 inline-flex bg-[#8ED28A] text-black font-extrabold uppercase tracking-[-0.04em] text-[20px] md:text-[26px] leading-none px-4 py-2 rounded-[3px] border border-[#79BE76]">
-                РЕЗУЛЬТАТ НАВЧАННЯ
-              </div>
-              <div className="border border-[#86CC82] bg-[#F5F6F3]/96 rounded-[4px] px-5 py-4">
-                <div className="divide-y divide-[#D0D4CB] text-[#2A2D2B] text-[17px] md:text-[19px] leading-[1.12] tracking-[-0.025em] text-center">
-                  <p className="py-2">
-                    3 проєкти - 3д-модель, комікс та власна гра
-                  </p>
-                  <p className="py-2">Сертифікат після завершення курсу</p>
-                  <p className="py-2">
-                    Власний портфоліо-сайт наприкінці навчання
-                  </p>
-                </div>
-              </div>
             </div>
 
             <div className="relative z-[1] mt-7 md:mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">

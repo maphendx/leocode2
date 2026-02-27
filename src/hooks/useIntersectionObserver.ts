@@ -11,7 +11,7 @@ interface IntersectionObserverOptions extends IntersectionObserverInit {
  * @param options - IntersectionObserver options and additional custom options
  */
 export const useIntersectionObserver = (
-  elementRef: RefObject<Element>,
+  elementRef: RefObject<Element | null>,
   callback: (entries: IntersectionObserverEntry[]) => void,
   options: IntersectionObserverOptions = {}
 ): void => {

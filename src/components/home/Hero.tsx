@@ -39,6 +39,22 @@ const normalizeHeroPhone = (phone: string) => {
   return `+${digits}`
 }
 
+const formatHeroPhoneInput = (value: string) => {
+  const digits = value.replace(/\D/g, '')
+  if (!digits) return ''
+
+  let normalizedDigits = digits
+  if (normalizedDigits.startsWith('380')) {
+    normalizedDigits = normalizedDigits.slice(0, 12)
+  } else if (normalizedDigits.startsWith('0')) {
+    normalizedDigits = `380${normalizedDigits.slice(1)}`.slice(0, 12)
+  } else {
+    normalizedDigits = `380${normalizedDigits}`.slice(0, 12)
+  }
+
+  return `+${normalizedDigits}`
+}
+
 const normalizeChildAge = (value: string) => {
   const digits = value.replace(/\D/g, '')
   return digits ? `${digits} років` : ''
@@ -50,7 +66,7 @@ const validateHeroLeadForm = (
   const errors = { ...initialHeroLeadErrors }
 
   if (!form.parentName.trim() || form.parentName.trim().length < 2) {
-    errors.parentName = "Вкажіть ім'я та прізвище батьків"
+    errors.parentName = "Вкажіть ім'я"
   }
 
   if (!/^\+\d{12}$/.test(normalizeHeroPhone(form.phone))) {
@@ -62,8 +78,8 @@ const validateHeroLeadForm = (
     errors.childAge = 'Вкажіть вік дитини'
   } else {
     const age = Number(ageDigits)
-    if (Number.isNaN(age) || age < 3 || age > 18) {
-      errors.childAge = 'Вкажіть вік від 3 до 18 років'
+    if (Number.isNaN(age) || age < 7 || age > 15) {
+      errors.childAge = 'Вкажіть вік від 7 до 15 років'
     }
   }
 
@@ -76,6 +92,7 @@ const HeroLeadForm = ({
   submitted,
   isSubmitting,
   onChange,
+  onPhoneFocus,
   onSubmit,
   compact = false,
 }: {
@@ -84,13 +101,14 @@ const HeroLeadForm = ({
   submitted: boolean
   isSubmitting: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onPhoneFocus: () => void
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   compact?: boolean
 }) => {
-  const inputSize = compact
-    ? 'text-[17px] sm:text-[18px] pb-3'
-    : 'text-[20px] xl:text-[22px] pb-4'
-  const labelTone = compact ? 'placeholder:text-white/58' : 'placeholder:text-white/62'
+  const inputSize = compact ? 'text-[17px] sm:text-[18px]' : 'text-[20px] xl:text-[22px]'
+  const floatingLabelClass = compact
+    ? 'top-0 translate-y-0 text-[12px] text-[#98CF93] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[17px] peer-placeholder-shown:sm:text-[18px] peer-placeholder-shown:text-white/62 peer-focus:top-0 peer-focus:translate-y-0 peer-focus:text-[12px] peer-focus:text-[#98CF93]'
+    : 'top-0 translate-y-0 text-[13px] xl:text-[14px] text-[#98CF93] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[20px] peer-placeholder-shown:xl:text-[22px] peer-placeholder-shown:text-white/62 peer-focus:top-0 peer-focus:translate-y-0 peer-focus:text-[13px] peer-focus:xl:text-[14px] peer-focus:text-[#98CF93]'
 
   if (submitted) {
     return (
@@ -119,52 +137,80 @@ const HeroLeadForm = ({
           Залиште заявку
         </h2>
         <p className={`mt-1.5 text-white ${compact ? 'text-xs' : 'text-sm xl:text-[15px]'}`}>
-          і ми звяжимлсь з вами
+          і наш адміністратор зателефонує вам
         </p>
       </div>
 
-      <div className={`grid ${compact ? 'grid-cols-1 gap-[18px]' : 'grid-cols-1 gap-6'}`}>
+      <div className={`grid ${compact ? 'grid-cols-1 gap-4.5' : 'grid-cols-1 gap-6'}`}>
         <div>
-          <input
-            type="text"
-            name="parentName"
-            value={formData.parentName}
-            onChange={onChange}
-            placeholder="Імʼя та прізвище батьків"
-            className={`w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-2 text-white tracking-[-0.01em] ${labelTone} focus:outline-none focus:border-white ${inputSize}`}
-            required
-          />
+          <div className="relative">
+            <input
+              id="hero-parent-name"
+              type="text"
+              name="parentName"
+              value={formData.parentName}
+              onChange={onChange}
+              placeholder=" "
+              className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-7 pb-2 text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
+              required
+            />
+            <label
+              htmlFor="hero-parent-name"
+              className={`pointer-events-none absolute left-0 transition-all duration-200 ease-out ${floatingLabelClass}`}
+            >
+              Ім&apos;я
+            </label>
+          </div>
           {errors.parentName && (
             <p className="mt-1 text-xs text-[#FFAFB7]">{errors.parentName}</p>
           )}
         </div>
 
         <div>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={onChange}
-            placeholder="Ваш номер телефону"
-            className={`w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-2 text-white tracking-[-0.01em] ${labelTone} focus:outline-none focus:border-white ${inputSize}`}
-            required
-          />
+          <div className="relative">
+            <input
+              id="hero-phone"
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={onChange}
+              onFocus={onPhoneFocus}
+              placeholder=" "
+              className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-7 pb-2 text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
+              required
+            />
+            <label
+              htmlFor="hero-phone"
+              className={`pointer-events-none absolute left-0 transition-all duration-200 ease-out ${floatingLabelClass}`}
+            >
+              Номер телефону
+            </label>
+          </div>
           {errors.phone && (
             <p className="mt-1 text-xs text-[#FFAFB7]">{errors.phone}</p>
           )}
         </div>
 
         <div>
-          <input
-            type="text"
-            inputMode="numeric"
-            name="childAge"
-            value={formData.childAge}
-            onChange={onChange}
-            placeholder="Вік дитини"
-            className={`w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-2 text-white tracking-[-0.01em] ${labelTone} focus:outline-none focus:border-white ${inputSize}`}
-            required
-          />
+          <div className="relative">
+            <input
+              id="hero-child-age"
+              type="text"
+              inputMode="numeric"
+              name="childAge"
+              value={formData.childAge}
+              onChange={onChange}
+              placeholder=" "
+              className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-7 pb-2 text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
+              required
+            />
+            <label
+              htmlFor="hero-child-age"
+              className={`pointer-events-none absolute left-0 transition-all duration-200 ease-out ${floatingLabelClass}`}
+            >
+              Вік дитини
+            </label>
+          </div>
           {errors.childAge && (
             <p className="mt-1 text-xs text-[#FFAFB7]">{errors.childAge}</p>
           )}
@@ -175,8 +221,8 @@ const HeroLeadForm = ({
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full rounded-[4px] bg-[#78C86F] px-6 text-center font-extrabold uppercase tracking-[0.02em] text-[#192518] transition-colors duration-200 hover:bg-[#8BC886] disabled:opacity-60 disabled:cursor-not-allowed ${
-            compact ? 'py-[14px] text-sm sm:text-base' : 'py-5 text-[15px] xl:text-[16px]'
+          className={`w-full rounded-[4px] bg-accent px-6 text-center font-extrabold uppercase tracking-[0.02em] text-[#192518] transition-colors duration-200 hover:bg-[#8BC886] disabled:opacity-60 disabled:cursor-not-allowed ${
+            compact ? 'py-3.5 text-sm sm:text-base' : 'py-5 text-[15px] xl:text-[16px]'
           }`}
         >
           {isSubmitting ? 'Відправляємо...' : 'Надіслати заявку'}
@@ -303,6 +349,19 @@ const Hero = () => {
       return
     }
 
+    if (name === 'phone') {
+      const formattedPhone = formatHeroPhoneInput(value)
+      setLeadForm((prev) => ({
+        ...prev,
+        phone: formattedPhone,
+      }))
+      setLeadErrors((prev) => ({
+        ...prev,
+        phone: '',
+      }))
+      return
+    }
+
     if (name === 'childAge' && value && !/^\d{0,2}$/.test(value)) {
       setLeadErrors((prev) => ({
         ...prev,
@@ -319,6 +378,27 @@ const Hero = () => {
     setLeadErrors((prev) => ({
       ...prev,
       [name]: '',
+    }))
+  }
+
+  const handlePhoneFocus = () => {
+    setLeadForm((prev) => {
+      if (prev.phone.trim().length > 0) {
+        return {
+          ...prev,
+          phone: formatHeroPhoneInput(prev.phone),
+        }
+      }
+
+      return {
+        ...prev,
+        phone: '+380',
+      }
+    })
+
+    setLeadErrors((prev) => ({
+      ...prev,
+      phone: '',
     }))
   }
 
@@ -380,7 +460,7 @@ const Hero = () => {
     <section className="relative overflow-hidden">
       <div
         ref={videoContainerRef}
-        className="relative home-banner__video-wrap h-[100svh] min-h-[560px] bg-[#1A1C21]"
+        className="relative home-banner__video-wrap h-svh min-h-140 bg-[#1A1C21]"
       >
         <div
           className={`absolute inset-0 transition-opacity duration-1000 ${
@@ -436,16 +516,16 @@ const Hero = () => {
         <div className="absolute inset-y-0 right-0 hidden lg:block w-[42%] bg-[#111318]/38" />
         <div className="absolute inset-y-0 left-1/2 hidden lg:block w-px bg-white/10" />
 
-        <div className="relative z-[1] container h-full pt-[104px] pb-6 sm:pt-[112px] sm:pb-8 lg:pt-[132px] lg:pb-10">
+        <div className="relative z-1 container h-full pt-26 pb-6 sm:pt-28 sm:pb-8 lg:pt-33 lg:pb-10">
           <div className="grid h-full grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] gap-6 lg:gap-10 items-center">
             <div className="flex flex-col justify-center lg:pr-6 text-white">
-              <h1 className="m-0 max-w-[780px] text-[clamp(2.05rem,5vw,4.5rem)] font-extrabold leading-[1.03] tracking-[-0.02em] text-white">
-                <span className="block">LEOCODE -</span>
-                <span className="block mt-1 sm:mt-2">
-                  Освітній простір для
+              <h1 className="m-0 max-w-195 text-[clamp(2.05rem,5vw,4.5rem)] font-extrabold leading-[1.03] tracking-[-0.02em] text-white">
+                <span className="block whitespace-nowrap text-[clamp(1.35rem,4.6vw,4.5rem)]">
+                  ОСВІТНІЙ&nbsp;ПРОСТІР
                 </span>
-                <span className="block mt-1 sm:mt-2">
-                  дітей від 7 до 15 років
+                <span className="block mt-1 sm:mt-2">ДЛЯ ДІТЕЙ</span>
+                <span className="block mt-3 sm:mt-4 ml-1 text-[clamp(1.35rem,2.9vw,2.2rem)] font-bold leading-[1.15] normal-case">
+                  7-15 років
                 </span>
               </h1>
 
@@ -457,13 +537,14 @@ const Hero = () => {
               </div>
 
               <div className="mt-6 sm:mt-8 lg:hidden">
-                <div className="max-w-[500px] rounded-2xl border border-white/10 bg-[#171A21]/70 p-4 shadow-[0_24px_40px_rgba(8,10,14,0.28)] backdrop-blur-md">
+                <div className="max-w-125 rounded-2xl border border-white/10 bg-[#171A21]/70 p-4 shadow-[0_24px_40px_rgba(8,10,14,0.28)] backdrop-blur-md">
                   <HeroLeadForm
                     formData={leadForm}
                     errors={leadErrors}
                     submitted={leadSubmitted}
                     isSubmitting={isLeadSubmitting}
                     onChange={handleLeadInputChange}
+                    onPhoneFocus={handlePhoneFocus}
                     onSubmit={handleLeadSubmit}
                     compact
                   />
@@ -472,8 +553,8 @@ const Hero = () => {
             </div>
 
             <div className="hidden lg:flex items-center justify-end">
-              <div className="relative h-[540px] xl:h-[640px] w-full max-w-[540px] rounded-[8px] border border-white/10 bg-[#171A21]/58 shadow-[0_30px_70px_rgba(5,8,12,0.35)] backdrop-blur-[2px]">
-                <div className="absolute inset-0 rounded-[8px] bg-gradient-to-b from-white/[0.04] via-transparent to-black/15" />
+              <div className="relative h-135 xl:h-160 w-full max-w-135 rounded-[8px] border border-white/10 bg-[#171A21]/58 shadow-[0_30px_70px_rgba(5,8,12,0.35)] backdrop-blur-[2px]">
+                <div className="absolute inset-0 rounded-[8px] bg-linear-to-b from-white/4 via-transparent to-black/15" />
                 <div className="absolute inset-0 rounded-[8px] bg-[radial-gradient(circle_at_18%_12%,rgba(255,255,255,0.06),transparent_35%),radial-gradient(circle_at_86%_80%,rgba(255,255,255,0.04),transparent_40%)]" />
                 <div className="relative h-full p-5 xl:p-6">
                   <HeroLeadForm
@@ -482,6 +563,7 @@ const Hero = () => {
                     submitted={leadSubmitted}
                     isSubmitting={isLeadSubmitting}
                     onChange={handleLeadInputChange}
+                    onPhoneFocus={handlePhoneFocus}
                     onSubmit={handleLeadSubmit}
                   />
                 </div>
@@ -491,54 +573,6 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="container mb-8 md:mb-14 border-b border-primary-light/20 pt-8 md:pt-14">
-        <ul className="home-wrap home-banner__info-block grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-14">
-          <li className="home-banner__info-item flex items-center gap-2 md:gap-3">
-            <picture className="flex-shrink-0">
-              <Image src="/fi-rr-laugh.svg" alt="icon" width={30} height={30} />
-            </picture>
-            <p className="home-banner__info-text text-text">
-              <span className="text-[16px] font-bold block">
-                Індивідуальний підхід
-              </span>
-              до кожної дитини
-            </p>
-          </li>
-          <li className="home-banner__info-item flex items-center gap-2 md:gap-3">
-            <picture className="flex-shrink-0">
-              <Image src="/arrow.svg" alt="icon" width={30} height={30} />
-            </picture>
-            <p className="home-banner__info-text text-text">
-              <span className="text-[16px] font-bold block">
-                Різноманітність напрямків
-              </span>
-              в одному місці
-            </p>
-          </li>
-          <li className="home-banner__info-item flex items-center gap-2 md:gap-3">
-            <picture className="flex-shrink-0">
-              <Image src="/screen.svg" alt="icon" width={30} height={30} />
-            </picture>
-            <p className="home-banner__info-text text-text">
-              <span className="text-[16px] font-bold block">
-                Сучасне обладнання
-              </span>
-              для ефективного навчання
-            </p>
-          </li>
-          <li className="home-banner__info-item flex items-center gap-2 md:gap-3">
-            <picture className="flex-shrink-0">
-              <Image src="/book.svg" alt="icon" width={30} height={30} />
-            </picture>
-            <p className="home-banner__info-text text-text">
-              <span className="text-[16px] font-bold block">
-                Навчальна програма
-              </span>
-              адаптується під кожну групу
-            </p>
-          </li>
-        </ul>
-      </div>
     </section>
   )
 }
