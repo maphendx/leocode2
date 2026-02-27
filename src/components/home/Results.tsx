@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { Swiper, SwiperSlide } from 'swiper/react'
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Navigation } from 'swiper/modules'
 import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
 import {
@@ -19,7 +19,8 @@ import {
   Users,
   ThumbsUp,
   Split,
-} from 'lucide-react'
+} 
+from 'lucide-react'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
@@ -66,27 +67,27 @@ const Results = () => {
   const backgroundY = useTransform(
     scrollYProgress,
     [0, 1],
-    ['-5%', '5%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`)
+    ['-5%', '5%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`),
   )
   const headerY = useTransform(
     scrollYProgress,
     [0, 1],
-    ['0%', '10%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`)
+    ['0%', '10%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`),
   )
   const cardsY = useTransform(
     scrollYProgress,
     [0, 0.8],
-    ['5%', '-5%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`)
+    ['5%', '-5%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`),
   )
   const statsY = useTransform(
     scrollYProgress,
     [0.2, 0.8],
-    ['10%', '-10%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`)
+    ['10%', '-10%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`),
   )
   const projectsY = useTransform(
     scrollYProgress,
     [0.4, 1],
-    ['15%', '-5%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`)
+    ['15%', '-5%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`),
   )
 
   // Stats animation
@@ -334,15 +335,15 @@ const Results = () => {
               scrollYProgress,
               [0, 1],
               ['-30px', '30px'].map(
-                (val) => `${parseFloat(val) * mobileReduceFactor}px`
-              )
+                (val) => `${parseFloat(val) * mobileReduceFactor}px`,
+              ),
             ),
             x: useTransform(
               scrollYProgress,
               [0, 1],
               ['-20px', '20px'].map(
-                (val) => `${parseFloat(val) * mobileReduceFactor}px`
-              )
+                (val) => `${parseFloat(val) * mobileReduceFactor}px`,
+              ),
             ),
           }}
         />
@@ -354,15 +355,15 @@ const Results = () => {
               scrollYProgress,
               [0, 1],
               ['50px', '-50px'].map(
-                (val) => `${parseFloat(val) * mobileReduceFactor}px`
-              )
+                (val) => `${parseFloat(val) * mobileReduceFactor}px`,
+              ),
             ),
             x: useTransform(
               scrollYProgress,
               [0, 1],
               ['30px', '-30px'].map(
-                (val) => `${parseFloat(val) * mobileReduceFactor}px`
-              )
+                (val) => `${parseFloat(val) * mobileReduceFactor}px`,
+              ),
             ),
           }}
         />
@@ -421,10 +422,7 @@ const Results = () => {
         </motion.div>
 
         {/* Achievement Statistics - Horizontal Cards with Parallax */}
-        <motion.div
-          className="hidden"
-          style={{ y: statsY }}
-        >
+        <motion.div className="hidden" style={{ y: statsY }}>
           {/* Decorative background elements */}
           <div className="absolute inset-0 opacity-15">
             <div className="absolute top-0 left-0 w-96 h-96 bg-primary-light/25 rounded-full blur-3xl"></div>
@@ -499,7 +497,9 @@ const Results = () => {
                     <h4 className="text-3xl md:text-4xl font-bold mb-2 text-text tracking-tight">
                       {stat.title}
                     </h4>
-                    <p className="text-primary/70 text-sm">{stat.description}</p>
+                    <p className="text-primary/70 text-sm">
+                      {stat.description}
+                    </p>
                   </div>
                 </motion.div>
               ))}
@@ -616,7 +616,10 @@ const Results = () => {
                 watchSlidesProgress={true}
               >
                 {studentProjects.map((project, index) => (
-                  <SwiperSlide key={project.id} className="!h-auto max-w-[92vw] md:max-w-none">
+                  <SwiperSlide
+                    key={project.id}
+                    className="!h-auto max-w-[92vw] md:max-w-none"
+                  >
                     <div
                       className="overflow-hidden transition-all duration-500 border border-[#CDD4CA] cursor-pointer relative bg-[#FBFCF9] h-full flex flex-col group hover:border-[#AFC8A9] min-h-[520px] md:min-h-[590px] lg:min-h-[640px]"
                       onClick={() => {
@@ -698,7 +701,6 @@ const Results = () => {
             </div>
           </div>
         </motion.div>
-
       </div>
 
       <ProjectPreview
@@ -712,7 +714,7 @@ const Results = () => {
         onPrev={() =>
           setCurrentProjectIndex(
             (prev) =>
-              (prev - 1 + studentProjects.length) % studentProjects.length
+              (prev - 1 + studentProjects.length) % studentProjects.length,
           )
         }
       />

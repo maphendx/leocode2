@@ -245,7 +245,7 @@ header.main-header {
 }
 
 .courses-section .card-item:hover {
-  transform: translateY(-7px) scale(1.05) translateZ(0) !important;
+  transform: translateY(-3px) translateZ(0) !important;
 }
 
 .nav-group:hover .dropdown-menu {

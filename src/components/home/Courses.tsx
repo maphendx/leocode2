@@ -117,6 +117,64 @@ const SkillsDevelopment = () => {
         ],
       },
       {
+        title: '3Д моделювання в Blockbench',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        detailedDescription:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        duration: '9 місяців',
+        schedule: '2 рази на тиждень або субота, 2 години',
+        age: '8-15 років',
+        ageGroup: 'middle',
+        image: '/images/course.jpeg',
+        tag: 'IT школа',
+        tagColor: 'blue',
+        colorClass: 'blue',
+        bgClass: 'bg-[#6FAE64]',
+        textClass: 'text-primary-light',
+        hoverClass: 'hover:bg-blue/80',
+        price: '2400 грн/місяць',
+        skills: [
+          { name: '3D-моделювання', level: 'початковий' },
+          { name: 'Креативність', level: 'середній' },
+          { name: 'Робота з формами', level: 'середній' },
+        ],
+        progressSteps: [
+          'Знайомство з Blockbench',
+          'Створення базових моделей',
+          'Деталізація та текстурування',
+          'Власний 3D-проєкт',
+        ],
+      },
+      {
+        title: 'Комплексна програма',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        detailedDescription:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        duration: '9 місяців',
+        schedule: '2 рази на тиждень або субота, 2 години',
+        age: '7-14 років',
+        ageGroup: 'middle',
+        image: '/images/canva.jpeg',
+        tag: 'IT школа',
+        tagColor: 'green-500',
+        colorClass: 'primary-light',
+        bgClass: 'bg-[#7BBE72]',
+        textClass: 'text-primary-light',
+        hoverClass: 'hover:bg-primary-light/80',
+        price: '2800 грн/місяць',
+        skills: [
+          { name: 'Дизайн', level: 'початковий' },
+          { name: '3D-моделювання', level: 'початковий' },
+          { name: 'Програмування', level: 'початковий' },
+        ],
+        progressSteps: [
+          'Вступ та визначення цілей',
+          'Практика в різних напрямах',
+          'Комбіновані міні-проєкти',
+          'Фінальний командний проєкт',
+        ],
+      },
+      {
         title: 'Figma - курс для дизайнерів',
         description:
           'Опанування основ дизайну та роботи з макетами у Figma для дітей, які хочуть створювати візуальні проєкти.',
@@ -384,6 +442,67 @@ const SkillsDevelopment = () => {
     }
   }, [expandedCourse, handleCourseClick])
 
+  const smoothScrollTo = useCallback((top: number, duration = 820) => {
+    if (typeof window === 'undefined') return
+
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+
+    if (reduceMotion) {
+      window.scrollTo({ top, behavior: 'auto' })
+      return
+    }
+
+    const startY = window.scrollY
+    const distance = top - startY
+
+    if (Math.abs(distance) < 2) {
+      window.scrollTo({ top, behavior: 'auto' })
+      return
+    }
+
+    const startTime = performance.now()
+    const easeInOutCubic = (t: number) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+
+    const step = (currentTime: number) => {
+      const elapsed = currentTime - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const easedProgress = easeInOutCubic(progress)
+
+      window.scrollTo({
+        top: startY + distance * easedProgress,
+        behavior: 'auto',
+      })
+
+      if (progress < 1) {
+        window.requestAnimationFrame(step)
+      }
+    }
+
+    window.requestAnimationFrame(step)
+  }, [])
+
+  const handleCloseAndScrollToCourses = useCallback(() => {
+    if (typeof window === 'undefined' || expandedCourse === null) return
+
+    const coursesSection = document.getElementById('napryamki')
+    const headerOffset = 88
+    const targetTop = coursesSection
+      ? Math.max(
+          coursesSection.getBoundingClientRect().top +
+            window.scrollY -
+            headerOffset,
+          0
+        )
+      : 0
+
+    handleCourseClick(expandedCourse)
+
+    smoothScrollTo(targetTop)
+  }, [expandedCourse, handleCourseClick, smoothScrollTo])
+
   // Hash change detection
   const checkHashForCourse = useCallback(() => {
     if (typeof window === 'undefined' || isHashChangeInProgress.current) return
@@ -521,18 +640,9 @@ const SkillsDevelopment = () => {
       return (
         <div className="card-wrapper h-full py-0 md:py-1 px-0 md:px-1">
           <motion.div
-            className="rounded-[10px] overflow-hidden cursor-pointer aspect-[5/6] w-full group relative card-item bg-[#171A20]"
+            className="rounded-[10px] overflow-hidden cursor-pointer aspect-5/6 w-full group relative card-item action-card bg-[#171A20]"
             initial={{ boxShadow: '0 0 0 rgba(0,0,0,0)', y: 0 }}
             animate={isMounted ? { opacity: 1 } : { opacity: 0 }}
-            whileHover={
-              isMobile
-                ? undefined
-                : {
-                    y: -4,
-                    boxShadow: '0 18px 28px rgba(10, 12, 16, 0.24)',
-                    zIndex: 50,
-                  }
-            }
             style={{
               border: isExpanded
                 ? '2px solid rgba(90, 162, 255, 0.95)'
@@ -547,23 +657,36 @@ const SkillsDevelopment = () => {
               isMobile
                 ? { duration: 0.2 }
                 : {
-                    type: 'spring',
-                    stiffness: 150,
-                    damping: 20,
+                    duration: 0.3,
                   }
             }
             onClick={() => handleCourseClick(index)}
           >
-            <div className="absolute inset-x-0 top-0 z-10 flex items-center min-h-[62px] border-b border-white/5 bg-[#2A2D35] px-5 py-3">
-              <h3 className="text-[17px] md:text-[18px] font-extrabold text-white leading-tight line-clamp-2">
+            <div
+              className={`absolute inset-x-0 top-0 z-10 flex items-start border-b border-white/5 bg-[#2A2D35] px-5 pt-3 pb-2 h-16 ${
+                isMobile ? '' : 'group-hover:h-24'
+              } transition-all duration-300 ease-in-out`}
+              style={{ willChange: isMobile ? 'auto' : 'height' }}
+            >
+              <h3 className="relative z-10 text-[17px] md:text-[18px] font-extrabold text-white leading-tight line-clamp-2 [transform:translateZ(0)]">
                 {course.title}
               </h3>
+              <div className="pointer-events-none absolute left-5 right-5 top-14 hidden md:flex flex-wrap gap-2 opacity-0 translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0">
+                <span className="rounded-[6px] border border-white/20 bg-white/12 px-2.5 py-1 text-[11px] font-semibold text-white/95">
+                  {course.duration}
+                </span>
+                <span className="rounded-[6px] border border-white/20 bg-white/12 px-2.5 py-1 text-[11px] font-semibold text-white/95">
+                  {course.age}
+                </span>
+              </div>
             </div>
 
             <div className="absolute inset-0 overflow-hidden h-full">
               <div
-                className="absolute inset-0 top-[62px]"
-                style={{ willChange: isMobile ? 'auto' : 'transform' }}
+                className={`absolute inset-0 top-16 ${
+                  isMobile ? '' : 'group-hover:top-24'
+                } transition-all duration-300 ease-in-out`}
+                style={{ willChange: isMobile ? 'auto' : 'top' }}
               >
                 <Image
                   src={course.image}
@@ -579,19 +702,29 @@ const SkillsDevelopment = () => {
               </div>
 
               <div
-                className="absolute inset-0 top-[62px] bg-gradient-to-b from-transparent via-black/10 to-black/18 opacity-100 transition-all duration-300 ease-in-out"
-                style={{ willChange: isMobile ? 'auto' : 'opacity' }}
+                className={`absolute inset-0 top-16 ${
+                  isMobile ? '' : 'group-hover:top-24'
+                } bg-linear-to-b from-transparent via-black/10 to-black/18 opacity-100 transition-all duration-300 ease-out group-hover:via-black/30 group-hover:to-black/70`}
+                style={{ willChange: isMobile ? 'auto' : 'opacity, top' }}
               />
             </div>
 
-            <div className="absolute inset-x-0 bottom-0 p-3 z-20">
-              <div className="flex items-center justify-between rounded-[8px] border border-white/8 bg-[#171A20]/78 px-3 py-2 backdrop-blur-sm">
+            <div className="absolute inset-x-0 bottom-0 p-3 z-20 pointer-events-none">
+              <div className="hidden md:block mb-3 translate-y-3 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                <p className="text-[14px] leading-snug text-white/93 line-clamp-3 mb-3">
+                  {course.description}
+                </p>
+                <div className="inline-flex items-center gap-1.5 text-accent text-[16px] font-semibold">
+                  <span>Дізнатись більше</span>
+                  <ChevronRight className="w-4 h-4" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between rounded-[8px] border border-white/8 bg-[#171A20]/78 px-3 py-2 backdrop-blur-sm transition-all duration-300 ease-out md:group-hover:translate-y-2 md:group-hover:opacity-0">
                 <span className="text-[11px] font-bold uppercase tracking-[0.03em] text-white/85">
                   {course.tag}
                 </span>
-                <span className="text-[11px] text-white/60">
-                  Детальніше
-                </span>
+                <span className="text-[11px] text-white/60">Детальніше</span>
               </div>
             </div>
           </motion.div>
@@ -623,9 +756,9 @@ const SkillsDevelopment = () => {
           }`}
         >
           {steps.map((step, idx) => (
-            <div key={idx} className="flex items-center flex-shrink-0">
+            <div key={idx} className="flex items-center shrink-0">
               <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#78C86F] text-[#1A2318]">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-accent text-[#1A2318]">
                   {idx === 0 ? (
                     <Star size={16} />
                   ) : idx === steps.length - 1 ? (
@@ -672,7 +805,7 @@ const SkillsDevelopment = () => {
                     : ''
                 } ${
                   activeFilter === filter.id
-                    ? 'bg-[#78C86F] border-[#78C86F] hover:bg-[#8BC886] text-[#1C261B] shadow-none'
+                    ? 'bg-accent border-[#78C86F] hover:bg-[#8BC886] text-[#1C261B] shadow-none'
                     : !filter.disabled
                     ? 'bg-transparent border-[#B9BCB6] text-[#4F574E] hover:bg-white/60 hover:text-[#2A2C31]'
                     : ''
@@ -698,7 +831,7 @@ const SkillsDevelopment = () => {
             {isMounted && showNav && (
               <>
                 <motion.button
-                  className="!static !w-11 !h-11 flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all p-1"
+                  className="static! w-11! h-11! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all p-1"
                   aria-label="Previous slide"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -713,7 +846,7 @@ const SkillsDevelopment = () => {
                   <ChevronLeft className="w-5 h-5" />
                 </motion.button>
                 <motion.button
-                  className="!static !w-11 !h-11 flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all p-1"
+                  className="static! w-11! h-11! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all p-1"
                   aria-label="Next slide"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -762,16 +895,16 @@ const SkillsDevelopment = () => {
                     }}
                     breakpoints={{
                       640: { slidesPerView: 1, spaceBetween: 5 },
-                      768: { slidesPerView: 1.45, spaceBetween: 8 },
-                      1024: { slidesPerView: 2.2, spaceBetween: 8 },
-                      1280: { slidesPerView: 2.9, spaceBetween: 8 },
+                      768: { slidesPerView: 1.75, spaceBetween: 8 },
+                      1024: { slidesPerView: 2.6, spaceBetween: 8 },
+                      1280: { slidesPerView: 3.4, spaceBetween: 8 },
                     }}
-                    className="courses-swiper !pb-10 !overflow-visible"
+                    className="courses-swiper pb-10! overflow-visible!"
                   >
                     {filteredCourses.map((course, index) => (
                       <SwiperSlide
                         key={`${course.title}-${index}`}
-                        className="!h-auto !overflow-visible"
+                        className="h-auto! overflow-visible!"
                       >
                         <CourseCard
                           course={course}
@@ -787,7 +920,7 @@ const SkillsDevelopment = () => {
                     {isMounted && (
                       <>
                         <button
-                          className="swiper-button-prev-mobile !static !w-10 !h-10 flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all"
+                          className="swiper-button-prev-mobile static! w-10! h-10! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all"
                           aria-label="Previous slide"
                           onClick={(e) => {
                             e.preventDefault()
@@ -797,7 +930,7 @@ const SkillsDevelopment = () => {
                           <ChevronLeft className="w-4 h-4" />
                         </button>
                         <button
-                          className="swiper-button-next-mobile !static !w-10 !h-10 flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all"
+                          className="swiper-button-next-mobile static! w-10! h-10! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all"
                           aria-label="Next slide"
                           onClick={(e) => {
                             e.preventDefault()
@@ -815,7 +948,7 @@ const SkillsDevelopment = () => {
                   {filteredCourses.slice(0, 4).map((course, index) => (
                     <div
                       key={`skeleton-${index}`}
-                      className="aspect-[5/6] w-full rounded-[25px] bg-[#EAF1E4] animate-pulse"
+                      className="aspect-5/6 w-full rounded-[25px] bg-[#EAF1E4] animate-pulse"
                     />
                   ))}
                 </div>
@@ -841,7 +974,7 @@ const SkillsDevelopment = () => {
                   }}
                 >
                   <div className="flex flex-col md:flex-row bg-[#2A2D35]">
-                    <div className="relative w-full md:w-[310px] lg:w-[360px] h-[300px] md:h-auto overflow-hidden">
+                    <div className="relative w-full md:w-77.5 lg:w-90 h-75 md:h-auto overflow-hidden">
                       <Image
                         src={
                           filteredCourses[expandedCourse]?.image ||
@@ -853,20 +986,30 @@ const SkillsDevelopment = () => {
                         className="object-cover w-full h-full"
                         priority
                       />
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/5 via-transparent to-black/20 md:bg-gradient-to-t md:from-black/20 md:to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-r from-black/5 via-transparent to-black/20 md:bg-linear-to-t md:from-black/20 md:to-transparent" />
                     </div>
 
                     <div className="p-5 md:p-8 flex-1 bg-[#2F323A] relative z-10 text-white">
-                      <div className="flex flex-wrap items-center gap-2 mb-4">
-                        <span className="px-2.5 py-1 rounded-[4px] border border-white/15 text-[11px] font-bold uppercase tracking-[0.04em] text-white/80">
-                          {filteredCourses[expandedCourse]?.tag || ''}
-                        </span>
-                        <span className="px-2.5 py-1 rounded-[4px] border border-white/10 text-[11px] text-white/70">
-                          {filteredCourses[expandedCourse]?.duration || ''}
-                        </span>
-                        <span className="px-2.5 py-1 rounded-[4px] border border-white/10 text-[11px] text-white/70">
-                          {filteredCourses[expandedCourse]?.age || ''}
-                        </span>
+                      <div className="mb-4 flex items-start justify-between gap-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="px-2.5 py-1 rounded-[4px] border border-white/15 text-[11px] font-bold uppercase tracking-[0.04em] text-white/80">
+                            {filteredCourses[expandedCourse]?.tag || ''}
+                          </span>
+                          <span className="px-2.5 py-1 rounded-[4px] border border-white/10 text-[11px] text-white/70">
+                            {filteredCourses[expandedCourse]?.duration || ''}
+                          </span>
+                          <span className="px-2.5 py-1 rounded-[4px] border border-white/10 text-[11px] text-white/70">
+                            {filteredCourses[expandedCourse]?.age || ''}
+                          </span>
+                        </div>
+                        <motion.button
+                          onClick={handleCloseAndScrollToCourses}
+                          className="shrink-0 inline-flex items-center gap-1 rounded-[6px] border border-white/15 px-3 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-all"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <X size={15} /> Закрити
+                        </motion.button>
                       </div>
                       <motion.h2
                         className="text-[28px] md:text-[40px] font-extrabold mb-4 tracking-[-0.02em] text-white leading-tight"
@@ -985,21 +1128,6 @@ const SkillsDevelopment = () => {
                           </div>
                         </div>
                       </motion.div>
-                      <motion.div
-                        className="flex justify-end items-center"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.6 }}
-                      >
-                        <motion.button
-                          onClick={handleClose}
-                          className="text-white/70 hover:text-white transition-all font-medium flex items-center gap-1"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <X size={16} /> Закрити
-                        </motion.button>
-                      </motion.div>
                     </div>
                   </div>
                 </motion.div>
@@ -1013,7 +1141,7 @@ const SkillsDevelopment = () => {
           </p>
           <motion.button
             onClick={() => setIsConsultationModalOpen(true)}
-            className="inline-block bg-[#78C86F] text-[#1A2518] py-3.5 px-8 md:px-10 text-base md:text-lg font-extrabold rounded-[4px] hover:bg-[#8BC886] transition hover:scale-[1.02] transform duration-300"
+            className="inline-block bg-accent text-[#1A2518] py-3.5 px-8 md:px-10 text-base md:text-lg font-extrabold rounded-[4px] hover:bg-[#8BC886] transition hover:scale-[1.02] transform duration-300"
           >
             Прийти на пробне
           </motion.button>
@@ -1050,6 +1178,29 @@ const SkillsDevelopment = () => {
           transform: translate3d(0, 0, 0);
           backface-visibility: hidden;
           perspective: 1000px;
+        }
+
+        .courses-section .action-card {
+          backface-visibility: hidden;
+          perspective: 1000px;
+          transform: translate3d(0, 0, 0);
+          transition:
+            transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1),
+            box-shadow 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) !important;
+          will-change: transform, box-shadow;
+        }
+
+        .courses-section .action-card * {
+          backface-visibility: hidden;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+          .courses-section .action-card:hover {
+            z-index: 20 !important;
+            position: relative;
+            transform: translateY(-3px) translateZ(0) !important;
+            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.15) !important;
+          }
         }
 
         @media (max-width: 767px) {

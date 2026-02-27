@@ -17,3 +17,8 @@ interface Window {
   ) => void
   _fbq?: unknown
 }
+
+// Swiper side-effect CSS imports used in TSX files
+declare module 'swiper/css'
+declare module 'swiper/css/navigation'
+declare module 'swiper/css/pagination'
