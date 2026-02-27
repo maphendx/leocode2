@@ -243,7 +243,7 @@ const SkillsDevelopment = () => {
       { id: 'all', label: 'Всі напрямки' },
       { id: 'IT школа', label: 'IT школа' },
       { id: 'DRONE школа', label: 'DRONE школа' },
-      { id: 'clubs', label: 'Гуртки', disabled: true },
+      { id: 'clubs', label: 'Онлайн' },
     ],
     []
   )
@@ -263,6 +263,36 @@ const SkillsDevelopment = () => {
       ? courses
       : courses.filter((course) => course.tag === activeFilter)
   }, [activeFilter, courses])
+
+  const scrollToOnlineLearning = useCallback(() => {
+    if (typeof window === 'undefined') return
+
+    const onlineSection = document.getElementById('online-learning')
+    if (!onlineSection) return
+
+    const headerOffset = 88
+    const targetPosition =
+      onlineSection.getBoundingClientRect().top + window.scrollY - headerOffset
+
+    window.scrollTo({
+      top: Math.max(targetPosition, 0),
+      behavior: 'smooth',
+    })
+  }, [])
+
+  const handleFilterClick = useCallback(
+    (filter: FilterOption) => {
+      if (filter.id === 'clubs') {
+        scrollToOnlineLearning()
+        return
+      }
+
+      if (!filter.disabled) {
+        setActiveFilter(filter.id)
+      }
+    },
+    [scrollToOnlineLearning]
+  )
 
   // Show navigation when component is mounted
   useEffect(() => {
@@ -391,6 +421,10 @@ const SkillsDevelopment = () => {
     const handleFilterChange = (event: Event) => {
       const customEvent = event as CustomEvent
       if (customEvent.detail?.filterName) {
+        if (customEvent.detail.filterName === 'clubs') {
+          scrollToOnlineLearning()
+          return
+        }
         setActiveFilter(customEvent.detail.filterName)
       }
     }
@@ -446,6 +480,7 @@ const SkillsDevelopment = () => {
     isMounted,
     checkHashForCourse,
     handleCourseClick,
+    scrollToOnlineLearning,
     activeFilter,
     filteredCourses,
     courses,
@@ -484,9 +519,9 @@ const SkillsDevelopment = () => {
       }, [])
 
       return (
-        <div className="card-wrapper h-full py-0.5 md:py-2 px-0.5 md:px-2">
+        <div className="card-wrapper h-full py-0 md:py-1 px-0 md:px-1">
           <motion.div
-            className="rounded-[10px] overflow-hidden cursor-pointer h-[340px] md:h-[360px] group relative card-item bg-[#171A20]"
+            className="rounded-[10px] overflow-hidden cursor-pointer aspect-[5/6] w-full group relative card-item bg-[#171A20]"
             initial={{ boxShadow: '0 0 0 rgba(0,0,0,0)', y: 0 }}
             animate={isMounted ? { opacity: 1 } : { opacity: 0 }}
             whileHover={
@@ -525,7 +560,7 @@ const SkillsDevelopment = () => {
               </h3>
             </div>
 
-            <div className="absolute inset-0 overflow-hidden h-[360px]">
+            <div className="absolute inset-0 overflow-hidden h-full">
               <div
                 className="absolute inset-0 top-[62px]"
                 style={{ willChange: isMobile ? 'auto' : 'transform' }}
@@ -624,16 +659,14 @@ const SkillsDevelopment = () => {
         <h2 className="text-[34px] md:text-[46px] font-extrabold mb-8 md:mb-10 text-[#2A2C31] uppercase tracking-[-0.02em] text-center md:text-left">
           Напрямки навчання
         </h2>
-        <div className="flex flex-col gap-5 md:flex-row md:justify-between md:items-center mb-6 md:mb-8">
-          <div className="flex flex-wrap gap-2 md:gap-3 text-sm">
+        <div className="flex flex-col gap-5 md:flex-row md:justify-between md:items-center mb-4 md:mb-6">
+          <div className="flex flex-wrap gap-2.5 md:gap-3.5 text-sm">
             {filters.map((filter) => (
               <motion.button
                 key={filter.id}
-                onClick={() => {
-                  if (!filter.disabled) setActiveFilter(filter.id)
-                }}
+                onClick={() => handleFilterClick(filter)}
                 disabled={filter.disabled}
-                className={`px-4 md:px-5 py-2.5 text-[13px] md:text-[15px] rounded-[4px] transition-all duration-300 border font-semibold ${
+                className={`px-5 md:px-6 py-3 text-[14px] md:text-[16px] rounded-[4px] transition-all duration-300 border font-semibold ${
                   filter.disabled
                     ? 'border-[#C9CBC7] bg-[#F0F1EE] text-[#A6A8A4] cursor-not-allowed'
                     : ''
@@ -642,6 +675,10 @@ const SkillsDevelopment = () => {
                     ? 'bg-[#78C86F] border-[#78C86F] hover:bg-[#8BC886] text-[#1C261B] shadow-none'
                     : !filter.disabled
                     ? 'bg-transparent border-[#B9BCB6] text-[#4F574E] hover:bg-white/60 hover:text-[#2A2C31]'
+                    : ''
+                } ${
+                  filter.id === 'clubs'
+                    ? 'online-filter-chip border-[#86CC82] bg-[#EEF7E8] text-[#2D4328] hover:bg-[#E6F4DF] hover:text-[#21311D]'
                     : ''
                 }`}
                 whileTap={{ scale: 0.95 }}
@@ -661,7 +698,7 @@ const SkillsDevelopment = () => {
             {isMounted && showNav && (
               <>
                 <motion.button
-                  className="!static !w-10 !h-10 flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all p-1"
+                  className="!static !w-11 !h-11 flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all p-1"
                   aria-label="Previous slide"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -673,10 +710,10 @@ const SkillsDevelopment = () => {
                     swiperRef.current?.slidePrev()
                   }}
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-5 h-5" />
                 </motion.button>
                 <motion.button
-                  className="!static !w-10 !h-10 flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all p-1"
+                  className="!static !w-11 !h-11 flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all p-1"
                   aria-label="Next slide"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -688,7 +725,7 @@ const SkillsDevelopment = () => {
                     swiperRef.current?.slideNext()
                   }}
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-5 h-5" />
                 </motion.button>
               </>
             )}
@@ -712,7 +749,7 @@ const SkillsDevelopment = () => {
                 <>
                   <Swiper
                     modules={[Navigation, A11y, Autoplay]}
-                    spaceBetween={16}
+                    spaceBetween={8}
                     slidesPerView="auto"
                     navigation={false}
                     onSwiper={(swiper) => {
@@ -725,9 +762,9 @@ const SkillsDevelopment = () => {
                     }}
                     breakpoints={{
                       640: { slidesPerView: 1, spaceBetween: 5 },
-                      768: { slidesPerView: 2, spaceBetween: 10 },
-                      1024: { slidesPerView: 3, spaceBetween: 15 },
-                      1280: { slidesPerView: 4, spaceBetween: 20 },
+                      768: { slidesPerView: 1.45, spaceBetween: 8 },
+                      1024: { slidesPerView: 2.2, spaceBetween: 8 },
+                      1280: { slidesPerView: 2.9, spaceBetween: 8 },
                     }}
                     className="courses-swiper !pb-10 !overflow-visible"
                   >
@@ -778,7 +815,7 @@ const SkillsDevelopment = () => {
                   {filteredCourses.slice(0, 4).map((course, index) => (
                     <div
                       key={`skeleton-${index}`}
-                      className="h-[340px] md:h-[360px] rounded-[25px] bg-[#EAF1E4] animate-pulse"
+                      className="aspect-[5/6] w-full rounded-[25px] bg-[#EAF1E4] animate-pulse"
                     />
                   ))}
                 </div>
@@ -969,15 +1006,16 @@ const SkillsDevelopment = () => {
               )}
           </AnimatePresence>
         )}
-        <div className="text-center pt-8 md:pt-10">
-          <p className="text-base md:text-[18px] font-medium mb-5 text-[#4D4F54]">
-            Не знаєте, який формат краще підійде? Ми готові допомогти!
+        <div className="text-center pt-6 md:pt-8">
+          <p className="text-base md:text-[18px] font-medium mb-4 text-[#4D4F54]">
+            Хочете, щоб ваша дитина опанувала один із перелічених напрямків?
+            Записуйтеся на пробне.
           </p>
           <motion.button
             onClick={() => setIsConsultationModalOpen(true)}
             className="inline-block bg-[#78C86F] text-[#1A2518] py-3.5 px-8 md:px-10 text-base md:text-lg font-extrabold rounded-[4px] hover:bg-[#8BC886] transition hover:scale-[1.02] transform duration-300"
           >
-            Замовити консультацію
+            Прийти на пробне
           </motion.button>
         </div>
       </div>
@@ -994,13 +1032,13 @@ const SkillsDevelopment = () => {
         }
 
         .courses-section .swiper-slide {
-          padding: 10px 8px !important;
+          padding: 6px 4px !important;
           overflow: visible !important;
         }
 
         @media (min-width: 768px) {
           .courses-section .swiper-slide {
-            padding: 14px 10px !important;
+            padding: 8px 6px !important;
           }
         }
 
@@ -1041,26 +1079,50 @@ const SkillsDevelopment = () => {
           display: none;
         }
 
-          body.has-expanded-course {
-            position: relative !important;
-            overflow-y: auto !important;
-            height: auto !important;
-            overscroll-behavior: auto !important;
-          }
+        .courses-section .online-filter-chip {
+          animation: onlineChipGlow 3.2s ease-in-out infinite;
+          box-shadow: 0 0 0 rgba(134, 204, 130, 0);
+        }
 
-          .card-expanded .overflow-x-auto {
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+        @keyframes onlineChipGlow {
+          0%,
+          100% {
+            box-shadow: 0 0 0 0 rgba(134, 204, 130, 0);
+            background-color: #eef7e8;
           }
-          .card-expanded button {
-            min-height: 44px;
-            min-width: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem;
+          50% {
+            box-shadow:
+              0 0 0 2px rgba(134, 204, 130, 0.16),
+              0 0 10px rgba(134, 204, 130, 0.18);
+            background-color: #f2faed;
           }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .courses-section .online-filter-chip {
+            animation: none !important;
+          }
+        }
+
+        body.has-expanded-course {
+          position: relative !important;
+          overflow-y: auto !important;
+          height: auto !important;
+          overscroll-behavior: auto !important;
+        }
+
+        .card-expanded .overflow-x-auto {
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .card-expanded button {
+          min-height: 44px;
+          min-width: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.5rem;
         }
       `}</style>
     </section>
