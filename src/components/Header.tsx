@@ -34,7 +34,6 @@ const MENU_ITEMS = [
     isScroll: false,
     isSpecial: false,
     dropdownItems: [
-      { title: 'Табори', href: '/' },
       { title: 'Партнерства зі школами', href: '/#partnerstvo' },
       { title: 'Контакти', href: '/#contacts' },
       { title: 'FAQ', href: '/#faq' },
