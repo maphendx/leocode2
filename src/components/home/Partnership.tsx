@@ -117,7 +117,7 @@ const Partnership = () => {
 
           <div className="mt-5 md:mt-6 flex justify-center">
             <Link
-              href="/maister-klasy"
+              href="/partnerstva-shkil"
               className="inline-flex items-center justify-center min-w-[220px] h-12 px-6 bg-[#7DCC72] text-[#1B1F16] font-extrabold uppercase tracking-[-0.02em] rounded-[4px] hover:bg-[#8dd882] transition-colors duration-200"
             >
               Детальніше
