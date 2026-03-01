@@ -7,7 +7,7 @@ const Partnership = () => {
   return (
     <section
       id="partnerstvo"
-      className="relative overflow-hidden bg-[#262830] py-14 md:py-20 min-h-[100svh] flex items-center"
+      className="relative overflow-hidden bg-[#262830] py-11 md:py-14"
     >
       <div className="pointer-events-none absolute inset-0 opacity-60">
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.02)_0%,transparent_35%,transparent_100%)]" />
@@ -17,14 +17,30 @@ const Partnership = () => {
 
       <div className="container relative z-[1]">
         <div className="mx-auto w-full">
-          <h2 className="mb-6 md:mb-8 text-white text-[28px] md:text-[44px] font-extrabold uppercase tracking-[-0.04em] leading-none">
-            ПАРТНЕРСТВО
-          </h2>
+          <div className="mb-6 md:mb-8 rounded-[8px] border border-white/10 bg-[#2A2D35]/70 p-4 sm:p-5 md:p-6">
+            <div className="grid gap-3 md:gap-4 lg:grid-cols-[0.42fr_0.58fr] lg:items-start">
+              <h2 className="text-white text-[28px] md:text-[42px] font-extrabold uppercase tracking-[-0.04em] leading-none">
+                ПАРТНЕРСТВО
+              </h2>
+              <div className="space-y-2.5 md:space-y-3 lg:border-l lg:border-white/10 lg:pl-6">
+                <p className="text-white/88 text-[16px] md:text-[19px] leading-relaxed">
+                  LeoCode активно співпрацює з державними навчальними
+                  закладами, щоб зробити технологічну освіту доступною для
+                  дітей.
+                </p>
+                <p className="text-white/82 text-[15px] md:text-[17px] leading-relaxed">
+                  Наша мета — доповнити шкільну програму практичними навичками з
+                  програмування, 3D-моделювання та дронів, надихаючи учнів на
+                  вибір технологічних професій.
+                </p>
+              </div>
+            </div>
+          </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-5">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 md:gap-4">
             <div className="relative overflow-hidden border border-white/8 bg-[#2a2c35] rounded-[4px]">
-              <div className="relative grid min-h-[220px] grid-cols-1 md:min-h-[280px] lg:min-h-[340px] lg:grid-cols-[1.06fr_0.94fr]">
-                <div className="relative min-h-[190px] lg:order-1">
+              <div className="relative grid min-h-[200px] grid-cols-1 md:min-h-[245px] lg:min-h-[285px] lg:grid-cols-[1.06fr_0.94fr]">
+                <div className="relative min-h-[155px] lg:order-1">
                   <Image
                     src="/images/course.jpeg"
                     alt="Майстер класи для шкіл"
@@ -33,8 +49,8 @@ const Partnership = () => {
                     className="object-cover"
                   />
                 </div>
-                <div className="relative flex items-start p-4 sm:p-5 md:p-6 lg:p-7 lg:order-2">
-                  <h3 className="text-white text-[22px] sm:text-[26px] md:text-[30px] lg:text-[34px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[10ch]">
+                <div className="relative flex items-start p-4 sm:p-4 md:p-5 lg:p-5 lg:order-2">
+                  <h3 className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[10ch]">
                     Майстер класи для шкіл
                   </h3>
                 </div>
@@ -42,8 +58,8 @@ const Partnership = () => {
             </div>
 
             <div className="relative overflow-hidden border border-white/8 bg-[#2a2c35] rounded-[4px]">
-              <div className="relative grid min-h-[220px] grid-cols-1 md:min-h-[280px] lg:min-h-[340px] lg:grid-cols-[1.06fr_0.94fr]">
-                <div className="relative min-h-[190px] lg:order-1">
+              <div className="relative grid min-h-[200px] grid-cols-1 md:min-h-[245px] lg:min-h-[285px] lg:grid-cols-[1.06fr_0.94fr]">
+                <div className="relative min-h-[155px] lg:order-1">
                   <Image
                     src="/images/course.jpeg"
                     alt="Науковий Квест"
@@ -52,8 +68,8 @@ const Partnership = () => {
                     className="object-cover"
                   />
                 </div>
-                <div className="relative flex items-start p-4 sm:p-5 md:p-6 lg:p-7 lg:order-2">
-                  <h3 className="text-white text-[22px] sm:text-[26px] md:text-[30px] lg:text-[34px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[10ch]">
+                <div className="relative flex items-start p-4 sm:p-4 md:p-5 lg:p-5 lg:order-2">
+                  <h3 className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[10ch]">
                     Науковий Квест
                   </h3>
                 </div>
@@ -61,13 +77,13 @@ const Partnership = () => {
             </div>
 
             <div className="relative overflow-hidden border border-white/8 bg-[#2a2c35] rounded-[4px]">
-              <div className="relative grid min-h-[220px] grid-cols-1 md:min-h-[280px] lg:min-h-[340px] lg:grid-cols-[0.94fr_1.06fr]">
-                <div className="relative flex items-start p-4 sm:p-5 md:p-6 lg:p-7 lg:order-1">
-                  <h3 className="text-white text-[22px] sm:text-[26px] md:text-[30px] lg:text-[34px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[10ch]">
+              <div className="relative grid min-h-[200px] grid-cols-1 md:min-h-[245px] lg:min-h-[285px] lg:grid-cols-[0.94fr_1.06fr]">
+                <div className="relative flex items-start p-4 sm:p-4 md:p-5 lg:p-5 lg:order-1">
+                  <h3 className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[10ch]">
                     Наукові ярмарки
                   </h3>
                 </div>
-                <div className="relative min-h-[190px] lg:order-2">
+                <div className="relative min-h-[155px] lg:order-2">
                   <Image
                     src="/images/course.jpeg"
                     alt="Наукові ярмарки"
@@ -80,13 +96,13 @@ const Partnership = () => {
             </div>
 
             <div className="relative overflow-hidden border border-white/8 bg-[#2a2c35] rounded-[4px]">
-              <div className="relative grid min-h-[220px] grid-cols-1 md:min-h-[280px] lg:min-h-[340px] lg:grid-cols-[0.94fr_1.06fr]">
-                <div className="relative flex items-start p-4 sm:p-5 md:p-6 lg:p-7 lg:order-1">
-                  <h3 className="text-white text-[22px] sm:text-[26px] md:text-[30px] lg:text-[34px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[10ch]">
+              <div className="relative grid min-h-[200px] grid-cols-1 md:min-h-[245px] lg:min-h-[285px] lg:grid-cols-[0.94fr_1.06fr]">
+                <div className="relative flex items-start p-4 sm:p-4 md:p-5 lg:p-5 lg:order-1">
+                  <h3 className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[10ch]">
                     Воркшопи
                   </h3>
                 </div>
-                <div className="relative min-h-[190px] lg:order-2">
+                <div className="relative min-h-[155px] lg:order-2">
                   <Image
                     src="/images/course.jpeg"
                     alt="Воркшопи"

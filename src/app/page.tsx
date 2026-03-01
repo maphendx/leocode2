@@ -8,7 +8,7 @@ import Courses from '@/components/home/Courses'
 import OnlineLearning from '@/components/home/OnlineLearning'
 import SummerCampAd from '@/components/other/SummerCampAd'
 import Results from '@/components/home/Results'
-import CallToAction from '@/components/home/CallToAction'
+import Events from '@/components/home/Events'
 import FAQ from '@/components/home/FAQ'
 import Locations from '@/components/home/Locations'
 import Reviews from '@/components/home/Reviews'
@@ -72,7 +72,7 @@ export default function Home() {
         </ErrorBoundary>
 
         <ErrorBoundary>
-          <CallToAction />
+          <Events />
         </ErrorBoundary>
 
         <ErrorBoundary>

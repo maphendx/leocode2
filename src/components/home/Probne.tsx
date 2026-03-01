@@ -427,7 +427,9 @@ const Probne = () => {
 
           <div className="container mx-auto px-4 py-16 relative z-10">
             <div className="max-w-4xl mx-auto text-center mb-8">
-              <h2 className="lc-section-title-dark mb-4">ПРОБНИЙ УРОК</h2>
+              <h2 className="lc-section-title-dark mb-4">
+                БЕЗКОШТОВНЕ ЗАНЯТТЯ
+              </h2>
               <p className="text-sm md:text-base text-white/90 mb-10 max-w-3xl mx-auto">
                 Залиште контакти і менеджер зв'яжеться з вами, щоб надати
                 відповіді на всі запитання та забронювати місце для дитини.

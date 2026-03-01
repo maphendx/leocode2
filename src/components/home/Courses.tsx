@@ -52,6 +52,8 @@ interface FilterOption {
   disabled?: boolean
 }
 
+const COURSE_GROUP_SIZE_TEXT = 'Кількість дітей в навчальній групі 6-8'
+
 const SkillsDevelopment = () => {
   const isMounted = useIsMounted()
 
@@ -293,7 +295,7 @@ const SkillsDevelopment = () => {
         ],
       },
     ],
-    []
+    [],
   )
 
   const filters = useMemo<FilterOption[]>(
@@ -303,7 +305,7 @@ const SkillsDevelopment = () => {
       { id: 'DRONE школа', label: 'DRONE школа' },
       { id: 'clubs', label: 'Онлайн' },
     ],
-    []
+    [],
   )
 
   const [activeFilter, setActiveFilter] = useState('all')
@@ -349,10 +351,8 @@ const SkillsDevelopment = () => {
         setActiveFilter(filter.id)
       }
     },
-    [scrollToOnlineLearning]
+    [scrollToOnlineLearning],
   )
-
-  // Show navigation when component is mounted
   useEffect(() => {
     if (isMounted) {
       setShowNav(true)
@@ -383,7 +383,7 @@ const SkillsDevelopment = () => {
           window.history.pushState(
             null,
             '',
-            window.location.pathname + window.location.search
+            window.location.pathname + window.location.search,
           )
           setTimeout(() => {
             isHashChangeInProgress.current = false
@@ -428,11 +428,11 @@ const SkillsDevelopment = () => {
 
             setIsAnimating(false)
           },
-          isMobile ? 100 : 50
+          isMobile ? 100 : 50,
         )
       }
     },
-    [expandedCourse, isAnimating, filteredCourses.length]
+    [expandedCourse, isAnimating, filteredCourses.length],
   )
 
   // Close handler
@@ -446,7 +446,7 @@ const SkillsDevelopment = () => {
     if (typeof window === 'undefined') return
 
     const reduceMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
+      '(prefers-reduced-motion: reduce)',
     ).matches
 
     if (reduceMotion) {
@@ -494,7 +494,7 @@ const SkillsDevelopment = () => {
           coursesSection.getBoundingClientRect().top +
             window.scrollY -
             headerOffset,
-          0
+          0,
         )
       : 0
 
@@ -562,7 +562,7 @@ const SkillsDevelopment = () => {
           actualIndex = courseId
         } else {
           actualIndex = filteredCourses.findIndex(
-            (course) => courses[courseId].title === course.title
+            (course) => courses[courseId].title === course.title,
           )
         }
 
@@ -581,18 +581,18 @@ const SkillsDevelopment = () => {
     window.addEventListener('changeFilter', handleFilterChange as EventListener)
     window.addEventListener(
       'selectCourse',
-      handleCourseSelection as EventListener
+      handleCourseSelection as EventListener,
     )
 
     return () => {
       window.removeEventListener('hashchange', handleHashChange)
       window.removeEventListener(
         'changeFilter',
-        handleFilterChange as EventListener
+        handleFilterChange as EventListener,
       )
       window.removeEventListener(
         'selectCourse',
-        handleCourseSelection as EventListener
+        handleCourseSelection as EventListener,
       )
     }
   }, [
@@ -668,7 +668,7 @@ const SkillsDevelopment = () => {
               } transition-all duration-300 ease-in-out`}
               style={{ willChange: isMobile ? 'auto' : 'height' }}
             >
-              <h3 className="relative z-10 text-[17px] md:text-[18px] font-extrabold text-white leading-tight line-clamp-2 [transform:translateZ(0)]">
+              <h3 className="relative z-10 text-[17px] md:text-[18px] font-extrabold text-white leading-tight line-clamp-2 transform-[translateZ(0)]">
                 {course.title}
               </h3>
               <div className="pointer-events-none absolute left-5 right-5 top-14 hidden md:flex flex-wrap gap-2 opacity-0 translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0">
@@ -677,6 +677,9 @@ const SkillsDevelopment = () => {
                 </span>
                 <span className="rounded-[6px] border border-white/20 bg-white/12 px-2.5 py-1 text-[11px] font-semibold text-white/95">
                   {course.age}
+                </span>
+                <span className="rounded-[6px] border border-white/20 bg-white/12 px-2.5 py-1 text-[11px] font-semibold text-white/95">
+                  6-8 в групі
                 </span>
               </div>
             </div>
@@ -730,7 +733,7 @@ const SkillsDevelopment = () => {
           </motion.div>
         </div>
       )
-    }
+    },
   )
 
   CourseCard.displayName = 'CourseCard'
@@ -807,8 +810,8 @@ const SkillsDevelopment = () => {
                   activeFilter === filter.id
                     ? 'bg-accent border-[#78C86F] hover:bg-[#8BC886] text-[#1C261B] shadow-none'
                     : !filter.disabled
-                    ? 'bg-transparent border-[#B9BCB6] text-[#4F574E] hover:bg-white/60 hover:text-[#2A2C31]'
-                    : ''
+                      ? 'bg-transparent border-[#B9BCB6] text-[#4F574E] hover:bg-white/60 hover:text-[#2A2C31]'
+                      : ''
                 } ${
                   filter.id === 'clubs'
                     ? 'online-filter-chip border-[#86CC82] bg-[#EEF7E8] text-[#2D4328] hover:bg-[#E6F4DF] hover:text-[#21311D]'
@@ -1001,6 +1004,9 @@ const SkillsDevelopment = () => {
                           <span className="px-2.5 py-1 rounded-[4px] border border-white/10 text-[11px] text-white/70">
                             {filteredCourses[expandedCourse]?.age || ''}
                           </span>
+                          <span className="px-2.5 py-1 rounded-[4px] border border-white/10 text-[11px] text-white/70">
+                            {COURSE_GROUP_SIZE_TEXT}
+                          </span>
                         </div>
                         <motion.button
                           onClick={handleCloseAndScrollToCourses}
@@ -1059,14 +1065,14 @@ const SkillsDevelopment = () => {
                                     skill.level === 'базовий'
                                       ? 'bg-[#202A1F] text-[#99D08E]'
                                       : skill.level === 'середній'
-                                      ? 'bg-[#1F252E] text-[#AFC4FF]'
-                                      : 'bg-[#25272D] text-[#D5D7DB]'
+                                        ? 'bg-[#1F252E] text-[#AFC4FF]'
+                                        : 'bg-[#25272D] text-[#D5D7DB]'
                                   }`}
                                 >
                                   {skill.level}
                                 </span>
                               </motion.div>
-                            )
+                            ),
                           ) || <div>Інформація про навички відсутня</div>}
                         </div>
                       </motion.div>
@@ -1102,9 +1108,7 @@ const SkillsDevelopment = () => {
                             </p>
                           </div>
                           <div className="border border-white/10 p-4 rounded-[8px] bg-[#262931] transition-colors duration-300">
-                            <p className="font-bold mb-1 text-white">
-                              Графік
-                            </p>
+                            <p className="font-bold mb-1 text-white">Графік</p>
                             <p className="text-white/75">
                               {filteredCourses[expandedCourse]?.schedule || ''}
                             </p>
@@ -1127,6 +1131,12 @@ const SkillsDevelopment = () => {
                             </p>
                           </div>
                         </div>
+                        <div className="mt-4 border border-white/10 p-4 rounded-[8px] bg-[#262931] transition-colors duration-300">
+                          <p className="font-bold mb-1 text-white">
+                            Кількість дітей в навчальній групі
+                          </p>
+                          <p className="text-white/75">6-8</p>
+                        </div>
                       </motion.div>
                     </div>
                   </div>
@@ -1137,13 +1147,13 @@ const SkillsDevelopment = () => {
         <div className="text-center pt-6 md:pt-8">
           <p className="text-base md:text-[18px] font-medium mb-4 text-[#4D4F54]">
             Хочете, щоб ваша дитина опанувала один із перелічених напрямків?
-            Записуйтеся на пробне.
+            Записуйтеся на заняття.
           </p>
           <motion.button
             onClick={() => setIsConsultationModalOpen(true)}
             className="inline-block bg-accent text-[#1A2518] py-3.5 px-8 md:px-10 text-base md:text-lg font-extrabold rounded-[4px] hover:bg-[#8BC886] transition hover:scale-[1.02] transform duration-300"
           >
-            Прийти на пробне
+            Записатися на заняття
           </motion.button>
         </div>
       </div>

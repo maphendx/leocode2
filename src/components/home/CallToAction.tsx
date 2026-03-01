@@ -347,7 +347,7 @@ const CallToAction = () => {
                     className="inline-flex items-center gap-2 bg-[#262A31] text-white font-semibold uppercase tracking-[0.03em] px-3 py-2 rounded-[4px] mb-5 border border-white/5"
                   >
                     <Star className="h-4 w-4" fill="currentColor" />
-                    <span>Безкоштовне пробне заняття</span>
+                    <span>Безкоштовне заняття</span>
                   </motion.div>
 
                   <motion.h2

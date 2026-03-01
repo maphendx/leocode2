@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay, Navigation } from 'swiper/modules'
 import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
 import {
   ChevronLeft,
@@ -21,26 +19,17 @@ import {
   Split,
 } 
 from 'lucide-react'
-import 'swiper/css'
-import 'swiper/css/pagination'
-import 'swiper/css/navigation'
 import ProjectPreview from '../other/ProjectPreview'
-import type { Swiper as SwiperType } from 'swiper'
 
 const Results = () => {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0)
-  const swiperRef = useRef<SwiperType | null>(null)
   const sectionRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start end', 'end start'],
   })
-  const [activeImageIndex, setActiveImageIndex] = useState(0)
-  const [selectedProject, setSelectedProject] = useState<
-    (typeof studentProjects)[0] | null
-  >(null)
   const [counters, setCounters] = useState({
     parentSatisfaction: 0,
     mathImprovement: 0,
@@ -241,6 +230,8 @@ const Results = () => {
         'Інтерактивна гра, створена в середовищі Pygame,за допомогою Python',
       image: '/work/game.png',
       student: 'Марʼян Г., 12 років',
+      direction: 'IT школа',
+      tool: 'Python + Pygame',
     },
     {
       id: 2,
@@ -249,6 +240,8 @@ const Results = () => {
         'Модель, створена за допомогою ThinkerCad та надрукована на 3D-принтері',
       image: '/work/3d_1.png',
       student: 'Олександр К., 13 років',
+      direction: 'IT школа',
+      tool: 'Tinkercad + 3D-друк',
     },
     {
       id: 3,
@@ -256,6 +249,8 @@ const Results = () => {
       description: 'Реклама танцювального майстер класу, розроблена у Canva',
       image: '/work/ПР №15.png',
       student: 'Марія Т., 12 років',
+      direction: 'IT школа',
+      tool: 'Canva',
     },
     {
       id: 4,
@@ -264,6 +259,8 @@ const Results = () => {
         'Модель, створена у середовищі ThinkerCad та надрукована за допомогою 3D-принтера',
       image: '/work/3d_2.png',
       student: 'Ярослав М., 12 років',
+      direction: 'IT школа',
+      tool: 'Tinkercad + 3D-друк',
     },
     {
       id: 5,
@@ -272,6 +269,8 @@ const Results = () => {
         'Постер присвячений автомобілю Porsche GT3 RS, створений у середовищі Canva',
       image: '/work/кіщак Маряна пр14.png',
       student: 'Марʼяна К., 13 років',
+      direction: 'IT школа',
+      tool: 'Canva',
     },
     {
       id: 6,
@@ -279,8 +278,25 @@ const Results = () => {
       description: 'Дрон, створений нашим студентом, на курсі з напрямку ДРОНИ',
       image: '/work/drone.jpeg',
       student: 'Максим Р., 12 років',
+      direction: 'DRONE школа',
+      tool: 'Drone engineering',
     },
   ]
+
+  const activeProject = studentProjects[activeIndex] ?? studentProjects[0]
+
+  const moveProject = (direction: 'prev' | 'next') => {
+    setActiveIndex((prev) =>
+      direction === 'next'
+        ? (prev + 1) % studentProjects.length
+        : (prev - 1 + studentProjects.length) % studentProjects.length,
+    )
+  }
+
+  const openProjectPreview = (projectIndex: number) => {
+    setCurrentProjectIndex(projectIndex)
+    setIsPreviewOpen(true)
+  }
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -507,198 +523,173 @@ const Results = () => {
           </motion.div>
         </motion.div>
 
-        {/* Student Projects Section with Parallax */}
+        {/* Student Projects Section */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="relative overflow-hidden mb-0 bg-transparent p-4 md:p-6 lg:p-8 min-h-[72svh]"
+          className="relative overflow-hidden mb-0 rounded-[10px] border border-[#D8DED2] bg-[#ECEEEA] p-4 md:p-6 lg:p-7"
           style={{ y: projectsY }}
         >
           <div className="relative">
-            <div className="mb-4 md:mb-6 lg:mb-8 flex items-end justify-between gap-4">
-              <h2 className="lc-section-title mb-0">РОБОТИ НАШИХ УЧНІВ</h2>
-
-              {/* Desktop navigation buttons */}
-              <div className="hidden md:flex justify-end gap-2 z-10 relative">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    if (swiperRef.current) {
-                      swiperRef.current.slidePrev()
-                    }
-                  }}
-                  className="!static !w-10 !h-10 flex items-center justify-center border border-[#C8D0C5] text-[#2D332D] rounded-[4px] bg-[#F7FAF4] hover:bg-[#EAF2E4] hover:border-[#AFC4A6] transition-all p-1 z-20"
-                  aria-label="Previous project"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    if (swiperRef.current) {
-                      swiperRef.current.slideNext()
-                    }
-                  }}
-                  className="!static !w-10 !h-10 flex items-center justify-center border border-[#C8D0C5] text-[#2D332D] rounded-[4px] bg-[#F7FAF4] hover:bg-[#EAF2E4] hover:border-[#AFC4A6] transition-all p-1 z-20"
-                  aria-label="Next project"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+            <div className="mb-5 md:mb-6">
+              <div>
+                <h2 className="mb-2 text-[#292A2C] text-[30px] md:text-[42px] font-extrabold uppercase tracking-[-0.04em] leading-[0.9]">
+                  РОБОТИ НАШИХ УЧНІВ
+                </h2>
+                <p className="max-w-2xl text-[#4E5750] text-[15px] md:text-[18px] leading-relaxed">
+                  Не шаблони, а живі проєкти дітей: від першої ідеї до
+                  фінального результату.
+                </p>
               </div>
             </div>
 
-            {/* Desktop navigation buttons - top right (legacy hidden) */}
-            <div className="hidden">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  if (swiperRef.current) {
-                    swiperRef.current.slidePrev()
-                  }
-                }}
-                className="!static !w-8 !h-8 flex items-center justify-center border border-primary/15 text-primary/70 rounded-[8px] bg-white hover:bg-primary hover:border-primary hover:text-white transition-all p-1 z-20 lc-icon-btn"
-                aria-label="Previous project"
+            <div className="grid gap-4 lg:gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)]">
+              <article
+                className="group relative overflow-hidden rounded-[8px] border border-[#D3DACD] bg-[#F1F4EC] cursor-pointer"
+                onClick={() => openProjectPreview(activeIndex)}
               >
-                <ChevronLeft className="w-3 h-3" />
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  if (swiperRef.current) {
-                    swiperRef.current.slideNext()
-                  }
-                }}
-                className="!static !w-8 !h-8 flex items-center justify-center border border-primary/15 text-primary/70 rounded-[8px] bg-white hover:bg-primary hover:border-primary hover:text-white transition-all p-1 z-20 lc-icon-btn"
-                aria-label="Next project"
-              >
-                <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
+                <div className="relative h-[280px] md:h-[360px] lg:h-[410px] border-b border-[#D3DACD]">
+                  <Image
+                    src={activeProject.image}
+                    alt={activeProject.title}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 58vw"
+                    className="object-cover group-hover:scale-[1.025] transition-transform duration-500"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/8 to-transparent" />
 
-            <div
-              className="relative"
-              style={{
-                WebkitMaskImage:
-                  'linear-gradient(to right, transparent 0px, black 12px, black calc(100% - 12px), transparent 100%)',
-                maskImage:
-                  'linear-gradient(to right, transparent 0px, black 12px, black calc(100% - 12px), transparent 100%)',
-              }}
-            >
-              <Swiper
-                modules={[Navigation, Autoplay]}
-                spaceBetween={18}
-                slidesPerView="auto"
-                onSwiper={(swiper) => {
-                  swiperRef.current = swiper
-                }}
-                autoplay={{
-                  delay: 5000,
-                  disableOnInteraction: true,
-                  pauseOnMouseEnter: true,
-                }}
-                breakpoints={{
-                  640: { slidesPerView: 1.08 },
-                  768: { slidesPerView: 1.35 },
-                  1024: { slidesPerView: 1.85 },
-                  1440: { slidesPerView: 2.15 },
-                }}
-                className="project-swiper !overflow-visible"
-                watchSlidesProgress={true}
-              >
-                {studentProjects.map((project, index) => (
-                  <SwiperSlide
-                    key={project.id}
-                    className="!h-auto max-w-[92vw] md:max-w-none"
-                  >
-                    <div
-                      className="overflow-hidden transition-all duration-500 border border-[#CDD4CA] cursor-pointer relative bg-[#FBFCF9] h-full flex flex-col group hover:border-[#AFC8A9] min-h-[520px] md:min-h-[590px] lg:min-h-[640px]"
-                      onClick={() => {
-                        setCurrentProjectIndex(index)
-                        setIsPreviewOpen(true)
-                      }}
+                  <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                    <span
+                      className={`inline-flex rounded-[4px] border px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.04em] ${
+                        activeProject.direction === 'DRONE школа'
+                          ? 'bg-[#DDEBFF]/95 text-[#264E88] border-[#A6C2EC]'
+                          : 'bg-[#E7F5DF]/95 text-[#2B6A27] border-[#A7D19D]'
+                      }`}
                     >
-                      <div className="relative h-[320px] md:h-[390px] lg:h-[470px] overflow-hidden border-b border-[#D7DDD3]">
-                        <Image
-                          src={project.image}
-                          alt={project.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
-                          loading={index < 2 ? 'eager' : 'lazy'}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-black/5" />
-                        <div className="absolute left-0 right-0 bottom-0 p-4 md:p-5">
-                          <h3 className="font-extrabold text-white text-[18px] md:text-[22px] leading-[0.98] tracking-[-0.03em] uppercase max-w-[22ch] drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
-                            {project.title}
-                          </h3>
+                      {activeProject.direction}
+                    </span>
+                    <span className="inline-flex rounded-[4px] border border-[#CFD6C9] bg-[#EEF3E7] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-[#455247]">
+                      {activeProject.tool}
+                    </span>
+                  </div>
+
+                  <div className="absolute right-4 top-4 rounded-[4px] border border-[#CFD6C9] bg-[#EEF3E7] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-[#5A665A]">
+                    #{String(activeIndex + 1).padStart(2, '0')}
+                  </div>
+
+                  <div className="absolute left-0 right-0 bottom-0 p-4 md:p-5">
+                    <h3 className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.38)] text-[21px] md:text-[30px] font-extrabold uppercase tracking-[-0.03em] leading-[0.94] max-w-[22ch]">
+                      {activeProject.title}
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="p-4 md:p-5 lg:p-6 bg-[#F1F4EC]">
+                  <div className="mb-3 flex flex-wrap items-center gap-2">
+                    <span className="inline-flex rounded-[4px] border border-[#CDD5C7] bg-[#ECEFE7] px-2.5 py-1 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.06em] text-[#526050]">
+                      {activeProject.student}
+                    </span>
+                    <span className="inline-flex rounded-[4px] border border-[#BFD8B8] bg-[#EAF4E2] px-2.5 py-1 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.06em] text-[#3D6B39]">
+                      Учнівський проєкт
+                    </span>
+                  </div>
+
+                  <p className="text-[15px] md:text-[17px] leading-[1.3] text-[#434E45] max-w-3xl">
+                    {activeProject.description}
+                  </p>
+
+                  <div className="mt-5 flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        moveProject('prev')
+                      }}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-[4px] border border-[#CDD5C7] bg-[#ECEFE7] text-[#3F4A41] transition-colors hover:bg-[#E4E9DF]"
+                      aria-label="Попередня робота"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        moveProject('next')
+                      }}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-[4px] border border-[#CDD5C7] bg-[#ECEFE7] text-[#3F4A41] transition-colors hover:bg-[#E4E9DF]"
+                      aria-label="Наступна робота"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        openProjectPreview(activeIndex)
+                      }}
+                      className="inline-flex h-10 items-center justify-center rounded-[4px] border border-[#B8DAB3] bg-[#DFF0D4] px-4 text-[12px] md:text-[13px] font-extrabold uppercase tracking-[0.05em] text-[#2F4E2C] transition-colors hover:bg-[#D4EAC6]"
+                    >
+                      Відкрити проєкт
+                      <Maximize2 className="ml-2 h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </article>
+
+              <aside className="rounded-[8px] border border-[#D3DACD] bg-[#F1F4EC] p-2 md:p-3 lg:p-4">
+                <div className="mb-3 px-1 text-[12px] md:text-[13px] font-semibold uppercase tracking-[0.08em] text-[#667265]">
+                  Оберіть роботу
+                </div>
+
+                <div className="project-rail-scroll grid gap-2 max-h-[560px] overflow-auto pr-1">
+                  {studentProjects.map((project, index) => (
+                    <button
+                      key={project.id}
+                      type="button"
+                      onClick={() => setActiveIndex(index)}
+                      className={`w-full text-left overflow-hidden rounded-[6px] border transition-colors ${
+                        index === activeIndex
+                          ? 'border-[#B9DDB5] bg-[#E8F3DF]'
+                          : 'border-[#D3DACD] bg-[#EEF2E8] hover:bg-[#E6ECDE]'
+                      }`}
+                    >
+                      <div className="grid grid-cols-[96px_minmax(0,1fr)] items-stretch">
+                        <div className="relative h-[84px]">
+                          <Image
+                            src={project.image}
+                            alt={project.title}
+                            fill
+                            sizes="96px"
+                            className="object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/25" />
                         </div>
-                      </div>
-
-                      <div className="p-4 md:p-5 lg:p-6 flex-grow flex flex-col bg-[linear-gradient(180deg,#FBFCF9_0%,#F4F7F1_100%)]">
-                        <p className="text-[12px] md:text-[13px] font-semibold uppercase tracking-[0.08em] text-[#566055] mb-2">
-                          {project.student}
-                        </p>
-                        <p className="text-[15px] md:text-[17px] text-[#2C312D]/85 leading-[1.15] line-clamp-4 md:line-clamp-5">
-                          {project.description}
-                        </p>
-
-                        <div className="mt-auto pt-4 border-t border-[#D7DDD3] flex justify-between items-center">
-                          <span className="text-[12px] md:text-[13px] font-semibold uppercase tracking-[0.08em] text-[#3D463C]">
-                            Учнівська робота
-                          </span>
-                          <div className="text-[12px] md:text-[13px] font-semibold uppercase tracking-[0.08em] text-[#5E685D] flex items-center">
-                            <span className="mr-1">Деталі</span>
-                            <Maximize2 className="w-3.5 h-3.5" />
+                        <div className="p-3">
+                          <div className="mb-1 flex items-center justify-between gap-2">
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#667265]">
+                              #{String(index + 1).padStart(2, '0')}
+                            </span>
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6E7A6D]">
+                              {project.student}
+                            </span>
                           </div>
+                          <p className="text-[15px] leading-tight font-bold text-[#2E342F] line-clamp-2">
+                            {project.title}
+                          </p>
                         </div>
                       </div>
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+                    </button>
+                  ))}
+                </div>
+              </aside>
             </div>
 
-            {/* Improved mobile navigation buttons with consistent styling */}
-            <div className="flex md:hidden justify-center items-center gap-3 mt-6 mb-4 z-10 relative">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  if (swiperRef.current) {
-                    swiperRef.current.slidePrev()
-                  }
-                }}
-                className="!w-10 !h-10 flex items-center justify-center border border-[#C8D0C5] text-[#2D332D] rounded-[4px] bg-[#F7FAF4] hover:bg-[#EAF2E4] hover:border-[#AFC4A6] transition-all z-20"
-                aria-label="Previous project"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  if (swiperRef.current) {
-                    swiperRef.current.slideNext()
-                  }
-                }}
-                className="!w-10 !h-10 flex items-center justify-center border border-[#C8D0C5] text-[#2D332D] rounded-[4px] bg-[#F7FAF4] hover:bg-[#EAF2E4] hover:border-[#AFC4A6] transition-all z-20"
-                aria-label="Next project"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
           </div>
         </motion.div>
       </div>
@@ -720,59 +711,17 @@ const Results = () => {
       />
 
       <style jsx global>{`
-        .courses-section .swiper-button-next:after,
-        .courses-section .swiper-button-prev:after {
-          display: none;
+        .project-rail-scroll::-webkit-scrollbar {
+          width: 7px;
         }
-
-        .courses-section .swiper-button-next,
-        .courses-section .swiper-button-prev {
-          background-color: white;
-          border: 1px solid #d1d5db;
-          color: #4b5563;
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.3s ease;
+        .project-rail-scroll::-webkit-scrollbar-track {
+          background: #e2e7da;
+          border-radius: 999px;
         }
-
-        .courses-section .swiper-button-next:hover,
-        .courses-section .swiper-button-prev:hover {
-          background-color: #f3f4f6;
-          border-color: #9ca3af;
-          transform: scale(1.1);
+        .project-rail-scroll::-webkit-scrollbar-thumb {
+          background: #bdd8b3;
+          border-radius: 999px;
         }
-
-        .courses-section .swiper-button-disabled {
-          opacity: 0.5;
-          pointer-events: none;
-        }
-
-        .project-swiper .swiper-slide {
-          height: auto;
-          transition: transform 0.3s ease;
-        }
-
-        .project-swiper.swiper {
-          padding-bottom: 20px;
-        }
-
-        /* Make all project cards clickable with visual feedback */
-        .project-swiper .swiper-slide > div {
-          cursor: pointer;
-        }
-
-        /* Optimize performance */
-        .project-swiper .swiper-wrapper {
-          will-change: transform;
-          transform: translateZ(0);
-          backface-visibility: hidden;
-        }
-
-        /* Project preview modal should be highest */
         .project-preview-modal-open {
           z-index: 20000 !important;
         }

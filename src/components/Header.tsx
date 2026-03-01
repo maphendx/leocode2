@@ -34,7 +34,7 @@ const MENU_ITEMS = [
     isScroll: false,
     isSpecial: false,
     dropdownItems: [
-      { title: 'Табори', href: '/tabory' },
+      { title: 'Табори', href: '/' },
       { title: 'Партнерства зі школами', href: '/#partnerstvo' },
       { title: 'Контакти', href: '/#contacts' },
       { title: 'FAQ', href: '/#faq' },
@@ -557,107 +557,111 @@ const Header = () => {
 
               <motion.div className="overflow-y-auto h-[calc(100%-5rem)] pb-6 px-5">
                 <nav className="py-5">
-                  {MENU_ITEMS.filter((item) => !item.isSpecial).map((item, index) => (
-                    <motion.div
-                      key={index}
-                      variants={menuItemVariants}
-                      custom={index}
-                      className="overflow-hidden border-b border-white/5 last:border-b-0"
-                    >
-                      {item.hasDropdown ? (
-                        <>
-                          <motion.button
-                            onClick={() => toggleSubmenu(index)}
-                            className={cn(
-                              'flex items-center justify-between w-full py-5 px-1 text-left',
-                              'text-base font-extrabold uppercase tracking-wide transition-colors duration-200',
-                              openSubmenu === index
-                                ? 'text-white'
-                                : 'text-white/90 hover:text-white',
-                            )}
-                            whileTap={{ scale: 0.97 }}
-                          >
-                            <span>{item.title}</span>
-                            <motion.div
-                              animate={{
-                                rotate: openSubmenu === index ? 180 : 0,
-                              }}
-                              transition={{ duration: 0.3 }}
+                  {MENU_ITEMS.filter((item) => !item.isSpecial).map(
+                    (item, index) => (
+                      <motion.div
+                        key={index}
+                        variants={menuItemVariants}
+                        custom={index}
+                        className="overflow-hidden border-b border-white/5 last:border-b-0"
+                      >
+                        {item.hasDropdown ? (
+                          <>
+                            <motion.button
+                              onClick={() => toggleSubmenu(index)}
+                              className={cn(
+                                'flex items-center justify-between w-full py-5 px-1 text-left',
+                                'text-base font-extrabold uppercase tracking-wide transition-colors duration-200',
+                                openSubmenu === index
+                                  ? 'text-white'
+                                  : 'text-white/90 hover:text-white',
+                              )}
+                              whileTap={{ scale: 0.97 }}
                             >
-                              <ChevronDown className="h-5 w-5 text-white/65" />
-                            </motion.div>
-                          </motion.button>
-
-                          <AnimatePresence>
-                            {openSubmenu === index && (
+                              <span>{item.title}</span>
                               <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{
-                                  duration: 0.3,
-                                  ease: [0.04, 0.62, 0.23, 0.98],
+                                animate={{
+                                  rotate: openSubmenu === index ? 180 : 0,
                                 }}
-                                className="overflow-hidden"
+                                transition={{ duration: 0.3 }}
                               >
-                                <div className="pb-3 pl-3 space-y-1.5">
-                                  {item.dropdownItems?.map((dropItem, idx) => (
-                                    <motion.div
-                                      key={idx}
-                                      initial={{ opacity: 0, x: -10 }}
-                                      animate={{ opacity: 1, x: 0 }}
-                                      transition={{ delay: idx * 0.05 }}
-                                    >
-                                      <Link
-                                        href={dropItem.href}
-                                        onClick={(e) =>
-                                          handleClick(e, dropItem.href)
-                                        }
-                                        className={cn(
-                                          'block py-2 px-3 rounded-lg text-[13px] font-semibold uppercase tracking-wide',
-                                          'text-white/75 hover:text-white hover:bg-white/5 transition-colors duration-200',
-                                        )}
-                                      >
-                                        {dropItem.title}
-                                      </Link>
-                                    </motion.div>
-                                  ))}
-                                </div>
+                                <ChevronDown className="h-5 w-5 text-white/65" />
                               </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </>
-                      ) : (
-                        <motion.div whileTap={{ scale: 0.97 }}>
-                          <Link
-                            href={item.href}
-                            onClick={(e) =>
-                              handleClick(
-                                e,
-                                item.href,
-                                item.isScroll,
-                                item.isSpecial,
-                              )
-                            }
-                            className={cn(
-                              'block py-5 px-1 text-base font-extrabold uppercase tracking-wide transition-colors duration-200',
-                              item.isSpecial
-                                ? 'flex items-center gap-2 text-white/90 hover:text-white'
-                                : 'text-white/90 hover:text-white',
-                            )}
-                          >
-                            {item.isSpecial && (
-                              <Tent className="h-5 w-5 text-[#98CF93] animate-bounce" />
-                            )}
-                            {item.title}
-                            {item.isSpecial && (
-                              <Sparkles className="h-4 w-4 text-[#F5BE3B] animate-pulse" />
-                            )}
-                          </Link>
-                        </motion.div>
-                      )}
-                    </motion.div>
-                  ))}
+                            </motion.button>
+
+                            <AnimatePresence>
+                              {openSubmenu === index && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{
+                                    duration: 0.3,
+                                    ease: [0.04, 0.62, 0.23, 0.98],
+                                  }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="pb-3 pl-3 space-y-1.5">
+                                    {item.dropdownItems?.map(
+                                      (dropItem, idx) => (
+                                        <motion.div
+                                          key={idx}
+                                          initial={{ opacity: 0, x: -10 }}
+                                          animate={{ opacity: 1, x: 0 }}
+                                          transition={{ delay: idx * 0.05 }}
+                                        >
+                                          <Link
+                                            href={dropItem.href}
+                                            onClick={(e) =>
+                                              handleClick(e, dropItem.href)
+                                            }
+                                            className={cn(
+                                              'block py-2 px-3 rounded-lg text-[13px] font-semibold uppercase tracking-wide',
+                                              'text-white/75 hover:text-white hover:bg-white/5 transition-colors duration-200',
+                                            )}
+                                          >
+                                            {dropItem.title}
+                                          </Link>
+                                        </motion.div>
+                                      ),
+                                    )}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </>
+                        ) : (
+                          <motion.div whileTap={{ scale: 0.97 }}>
+                            <Link
+                              href={item.href}
+                              onClick={(e) =>
+                                handleClick(
+                                  e,
+                                  item.href,
+                                  item.isScroll,
+                                  item.isSpecial,
+                                )
+                              }
+                              className={cn(
+                                'block py-5 px-1 text-base font-extrabold uppercase tracking-wide transition-colors duration-200',
+                                item.isSpecial
+                                  ? 'flex items-center gap-2 text-white/90 hover:text-white'
+                                  : 'text-white/90 hover:text-white',
+                              )}
+                            >
+                              {item.isSpecial && (
+                                <Tent className="h-5 w-5 text-[#98CF93] animate-bounce" />
+                              )}
+                              {item.title}
+                              {item.isSpecial && (
+                                <Sparkles className="h-4 w-4 text-[#F5BE3B] animate-pulse" />
+                              )}
+                            </Link>
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    ),
+                  )}
                 </nav>
 
                 <motion.div

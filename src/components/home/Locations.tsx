@@ -14,6 +14,7 @@ import {
   Map,
 } from 'lucide-react'
 import { useModal } from '@/contexts/ModalContext'
+import LocationMapModal from './LocationMapModal'
 
 const locations = [
   {
@@ -51,7 +52,9 @@ export default function Locations() {
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
   const { openFreeLesson } = useModal()
-  const [showMap, setShowMap] = useState(false)
+  const [mapLocation, setMapLocation] = useState<
+    (typeof locations)[number] | null
+  >(null)
   const detailsRef = React.useRef<HTMLDivElement>(null)
   const [showScrollIndicator, setShowScrollIndicator] = useState(false)
 
@@ -69,20 +72,13 @@ export default function Locations() {
 
   // Open map modal
   const handleShowMap = () => {
-    setShowMap(true)
+    if (!activeLocation) return
+    setMapLocation(activeLocation)
   }
 
   // Close map modal
   const handleCloseMap = () => {
-    setShowMap(false)
-  }
-
-  // Generate Google Maps embed URL for the active location
-  const getMapEmbedUrl = () => {
-    if (!activeLocation || !activeLocation.coordinates) return ''
-    const { lat, lng } = activeLocation.coordinates
-    // Формування адреси для вбудовування через iframe без API ключа
-    return `https://maps.google.com/maps?q=${lat},${lng}&t=m&z=16&output=embed&iwloc=near`
+    setMapLocation(null)
   }
 
   const handleNextImage = () => {
@@ -129,6 +125,9 @@ export default function Locations() {
   const handleLocationClick = (locationId: string) => {
     const isNewLocation = activeTab !== locationId
     setActiveTab(locationId)
+    if (isNewLocation) {
+      setActiveImageIndex(0)
+    }
 
     // If we're on mobile, provide visual feedback and scroll to details
     if (isMobile && detailsRef.current && isNewLocation) {
@@ -161,7 +160,15 @@ export default function Locations() {
   }
 
   return (
-    <section className="lc-section-soft py-12 md:py-16" id="lokacii">
+    <section
+      className="relative overflow-hidden bg-[#262830] py-10 md:py-12"
+      id="lokacii"
+    >
+      <div className="pointer-events-none absolute inset-0 opacity-60">
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.02)_0%,transparent_38%,transparent_100%)]" />
+        <div className="absolute top-0 left-1/2 h-full w-px bg-white/5" />
+        <div className="absolute top-0 left-0 h-px w-full bg-white/5" />
+      </div>
 
       <div className="container relative z-10">
         {/* Section Header */}
@@ -170,10 +177,12 @@ export default function Locations() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="max-w-3xl mr-auto mb-8 md:mb-10"
+          className="max-w-3xl mr-auto mb-6 md:mb-8"
         >
-          <h2 className="lc-section-title mb-3">ЛОКАЦІЇ</h2>
-          <p className="lc-section-lead">
+          <h2 className="text-white text-[30px] md:text-[40px] font-extrabold uppercase tracking-[-0.04em] leading-[0.92] mb-2.5">
+            ЛОКАЦІЇ
+          </h2>
+          <p className="text-white/84 text-[15px] md:text-[17px] leading-relaxed">
             Зручні та безпечні школи розташовані у різних районах Львова,
             обладнані за останніми технологічними стандартами для комфортного
             навчання
@@ -186,9 +195,9 @@ export default function Locations() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-8 md:mb-10"
+          className="mb-6 md:mb-8"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             {locations.map((location) => (
               <motion.div
                 key={location.id}
@@ -197,13 +206,13 @@ export default function Locations() {
                 onClick={() => handleLocationClick(location.id)}
               >
                 <div
-                  className={`h-full overflow-hidden transition-all duration-300 border cursor-pointer relative bg-[#FBFCF9] p-4 md:p-5 ${
+                  className={`h-full overflow-hidden rounded-[8px] transition-all duration-300 border cursor-pointer relative bg-[#2A2D35] p-3.5 md:p-4 ${
                     activeTab === location.id
-                      ? 'border-[#88C980] bg-[linear-gradient(180deg,#F8FBF5_0%,#F2F6EE_100%)]'
-                      : 'border-[#D7DDD3] hover:border-[#BDD2B5]'
+                      ? 'border-[#88C980]/80 bg-[linear-gradient(180deg,#2F343D_0%,#2A2D35_100%)]'
+                      : 'border-white/10 hover:border-white/25'
                   }`}
                 >
-                  <div className="relative h-52 md:h-56 overflow-hidden border border-[#D7DDD3]">
+                  <div className="relative h-44 md:h-48 overflow-hidden border border-white/10 rounded-[6px]">
                     <Image
                       src={location.images[0]}
                       alt={location.name}
@@ -215,27 +224,27 @@ export default function Locations() {
                   </div>
 
                   <div className="pt-4 bg-transparent">
-                    <h3 className="font-bold text-[20px] md:text-[22px] mb-2.5 flex items-start leading-tight text-[#262C28] tracking-[-0.03em]">
+                    <h3 className="font-bold text-[19px] md:text-[21px] mb-2 flex items-start leading-tight text-white tracking-[-0.03em]">
                       <MapPin className="h-5 w-5 mr-2 mt-0.5 text-[#76C36D] shrink-0" />
                       <span>{location.name}</span>
                     </h3>
 
-                    <div className="mt-2 space-y-2.5 text-sm md:text-[15px] text-[#556056]">
+                    <div className="mt-2 space-y-2 text-sm md:text-[14px] text-white/78">
                       <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-2 text-[#8F998E] shrink-0" />
+                        <Clock className="h-4 w-4 mr-2 text-white/55 shrink-0" />
                         <span>{location.hours}</span>
                       </div>
                       <div className="flex items-center">
-                        <Phone className="h-4 w-4 mr-2 text-[#8F998E] shrink-0" />
+                        <Phone className="h-4 w-4 mr-2 text-white/55 shrink-0" />
                         <span>{location.phone}</span>
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-4 border-t border-[#D7DDD3] flex justify-between items-center">
-                      <span className="text-xs md:text-[13px] font-semibold uppercase tracking-[0.08em] text-[#4B564A]">
+                    <div className="mt-3 pt-3 border-t border-white/10 flex justify-between items-center">
+                      <span className="text-xs md:text-[13px] font-semibold uppercase tracking-[0.08em] text-white/70">
                         Львів
                       </span>
-                      <button className="text-[#3E7F3C] hover:text-[#336A31] flex items-center text-sm font-semibold uppercase tracking-[0.04em] transition-colors">
+                      <button className="text-[#9CDD90] hover:text-[#B4EAA9] flex items-center text-sm font-semibold uppercase tracking-[0.04em] transition-colors">
                         Деталі
                         <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                       </button>
@@ -255,7 +264,7 @@ export default function Locations() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="relative overflow-hidden border border-[#D7DDD3] bg-[#FBFCF9] mb-16 p-4 md:p-5 lg:p-6 scroll-mt-24"
+            className="relative overflow-hidden rounded-[10px] border border-white/10 bg-[#2A2D35] mb-10 p-3.5 md:p-4 lg:p-5 scroll-mt-24"
           >
             {/* Scroll Indicator - only shown on mobile when a location is selected */}
             {showScrollIndicator && isMobile && (
@@ -265,13 +274,13 @@ export default function Locations() {
                 transition={{ duration: 2, times: [0, 0.2, 0.8, 1] }}
                     className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-10 flex flex-col items-center"
               >
-                  <span className="text-sm text-[#556056] font-medium mb-2">
+                  <span className="text-sm text-white/75 font-medium mb-2">
                     Деталі нижче
                   </span>
                 <motion.div
                   animate={{ y: [0, 10, 0] }}
                   transition={{ repeat: 2, duration: 1 }}
-                    className="w-6 h-6 flex justify-center items-center bg-[#78C86F] rounded-[3px]"
+                    className="w-6 h-6 flex justify-center items-center bg-[#78C86F] rounded-[4px]"
                   >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -291,9 +300,17 @@ export default function Locations() {
               </motion.div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeLocation.id}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6"
+              >
               {/* Image gallery */}
-              <div className="relative h-72 md:h-[420px] overflow-hidden border border-[#D7DDD3] bg-[#EEF5E9]">
+              <div className="relative h-64 md:h-[360px] overflow-hidden border border-white/10 bg-[#23262E] rounded-[8px]">
                 <AnimatePresence initial={false} mode="sync">
                   <motion.div
                     key={activeImageIndex}
@@ -348,50 +365,50 @@ export default function Locations() {
               </div>
 
               {/* Location details */}
-              <div className="p-1 md:p-2 lg:p-3">
-                <h3 className="text-[24px] md:text-[28px] font-extrabold tracking-[-0.03em] mb-5 flex items-center text-[#242926]">
+              <div className="p-1 md:p-1.5 lg:p-2">
+                <h3 className="text-[22px] md:text-[26px] font-extrabold tracking-[-0.03em] mb-4 flex items-center text-white">
                   <MapPin className="h-6 w-6 mr-2 text-[#76C36D]" />
                   {activeLocation.name}
                 </h3>
 
-                <div className="space-y-4 mb-7">
-                  <div className="flex border border-[#D7DDD3] bg-[#F7FAF4] p-3 md:p-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-[3px] border border-[#D0D8CD] bg-white flex items-center justify-center mr-4">
+                <div className="space-y-3 mb-5">
+                  <div className="flex border border-white/10 bg-[#2F333C] rounded-[6px] p-2.5 md:p-3">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-[4px] border border-white/10 bg-[#272B33] flex items-center justify-center mr-4">
                       <Phone className="h-5 w-5 text-[#76C36D]" />
                     </div>
                     <div>
-                      <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-[#647064] mb-1">
+                      <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-white/55 mb-1">
                         Телефон
                       </p>
-                      <p className="text-[#283028] font-semibold">
+                      <p className="text-white/92 font-semibold">
                         {activeLocation.phone}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex border border-[#D7DDD3] bg-[#F7FAF4] p-3 md:p-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-[3px] border border-[#D0D8CD] bg-white flex items-center justify-center mr-4">
+                  <div className="flex border border-white/10 bg-[#2F333C] rounded-[6px] p-2.5 md:p-3">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-[4px] border border-white/10 bg-[#272B33] flex items-center justify-center mr-4">
                       <Clock className="h-5 w-5 text-[#76C36D]" />
                     </div>
                     <div>
-                      <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-[#647064] mb-1">
+                      <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-white/55 mb-1">
                         Години роботи
                       </p>
-                      <p className="text-[#283028] font-semibold">
+                      <p className="text-white/92 font-semibold">
                         {activeLocation.hours.split(',')[0]}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex border border-[#D7DDD3] bg-[#F7FAF4] p-3 md:p-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-[3px] border border-[#D0D8CD] bg-white flex items-center justify-center mr-4">
+                  <div className="flex border border-white/10 bg-[#2F333C] rounded-[6px] p-2.5 md:p-3">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-[4px] border border-white/10 bg-[#272B33] flex items-center justify-center mr-4">
                       <Calendar className="h-5 w-5 text-[#76C36D]" />
                     </div>
                     <div>
-                      <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-[#647064] mb-1">
+                      <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-white/55 mb-1">
                         Дні роботи
                       </p>
-                      <p className="text-[#283028] font-semibold">
+                      <p className="text-white/92 font-semibold">
                         {activeLocation.hours.includes(',')
                           ? activeLocation.hours.split(',')[1].trim()
                           : 'Пн-Сб'}
@@ -399,10 +416,10 @@ export default function Locations() {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                <div className="flex flex-col sm:flex-row gap-3 mt-3">
                   <button
                     onClick={openFreeLesson}
-                    className="inline-flex items-center justify-center bg-[#78C86F] text-[#1C241A] py-3 px-6 text-base font-extrabold uppercase tracking-[-0.02em] rounded-[4px] hover:bg-[#86D17C] transition-colors duration-200"
+                    className="inline-flex items-center justify-center bg-[#7DCC72] text-[#1C241A] py-2.5 px-5 text-[15px] font-extrabold uppercase tracking-[-0.02em] rounded-[4px] hover:bg-[#8DD882] transition-colors duration-200"
                   >
                     <Calendar className="mr-2 h-5 w-5" />
                     <span>Записатись на екскурсію</span>
@@ -411,70 +428,19 @@ export default function Locations() {
 
                   <button
                     onClick={handleShowMap}
-                    className="bg-[#FBFCF9] border border-[#D7DDD3] hover:border-[#B8CDB0] text-[#2F362F] font-semibold py-3 px-6 text-base rounded-[4px] transition-colors duration-200 flex items-center justify-center uppercase tracking-[0.02em]"
+                    className="bg-[#2F333C] border border-white/15 hover:border-[#9DDD93]/65 text-white/90 font-semibold py-2.5 px-5 text-[15px] rounded-[4px] transition-colors duration-200 flex items-center justify-center uppercase tracking-[0.02em]"
                   >
                     <Map className="mr-2 h-5 w-5 text-[#76C36D]" />
                     <span>Показати на карті</span>
                   </button>
                 </div>
               </div>
-            </div>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
         )}
 
-        {/* Map Modal */}
-        {showMap && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-            <div className="relative bg-[#FBFCF9] shadow-2xl w-full max-w-4xl animate-in fade-in zoom-in-95 duration-300 border border-[#D7DDD3]">
-              <div className="p-5 border-b border-[#D7DDD3] flex justify-between items-center">
-                <h3 className="text-xl font-bold flex items-center text-[#262C28]">
-                  <MapPin className="h-5 w-5 mr-2 text-[#76C36D]" />
-                  {activeLocation?.name}
-                </h3>
-                <button
-                  onClick={handleCloseMap}
-                  className="text-[#6A7469] hover:text-[#2A312A] p-2 rounded-[4px] hover:bg-[#F1F5EE] transition-colors"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-x"
-                  >
-                    <path d="M18 6 6 18"></path>
-                    <path d="m6 6 12 12"></path>
-                  </svg>
-                </button>
-              </div>
-              <div className="h-[500px] w-full">
-                <iframe
-                  src={getMapEmbedUrl()}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen={true}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-              </div>
-              <div className="absolute bottom-4 left-4 bg-[#FBFCF9] px-4 py-3 shadow-lg z-10 max-w-xs border border-[#D7DDD3]">
-                <h4 className="font-bold text-sm text-[#262C28]">{activeLocation?.name}</h4>
-                <p className="text-xs text-[#556056] mt-1">
-                  {activeLocation?.address}
-                </p>
-                <p className="text-xs text-[#76C36D] font-semibold mt-2">
-                  {activeLocation?.phone}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        <LocationMapModal location={mapLocation} onClose={handleCloseMap} />
       </div>
       <style jsx global>{`
         @keyframes shimmer {

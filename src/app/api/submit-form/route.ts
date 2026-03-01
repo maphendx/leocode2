@@ -11,6 +11,7 @@ interface FormData {
   course?: string
   childName?: string
   childAge?: number | string
+  location?: string
   source?: string
   isSummerCamp?: boolean
   [key: string]: string | number | boolean | undefined // For additional dynamic fields
@@ -149,7 +150,7 @@ const applyTableFormatting = async (
                 startRowIndex: 0,
                 endRowIndex: 1000,
                 startColumnIndex: 0,
-                endColumnIndex: 6,
+                endColumnIndex: 8,
               },
               top: {
                 style: 'SOLID',
@@ -189,7 +190,7 @@ const applyTableFormatting = async (
                 sheetId: sheetId,
                 dimension: 'COLUMNS',
                 startIndex: 0,
-                endIndex: 6,
+                endIndex: 8,
               },
             },
           },
@@ -281,8 +282,15 @@ const ensureSheetExists = async (
 export async function POST(request: Request): Promise<any> {
   try {
     const formData: FormData = await request.json()
-    const { parentName, childName, childAge, direction, phone, isSummerCamp } =
-      formData
+    const {
+      parentName,
+      childName,
+      childAge,
+      direction,
+      location,
+      phone,
+      isSummerCamp,
+    } = formData
 
     const validation = validateFormData(formData)
 
@@ -343,6 +351,7 @@ export async function POST(request: Request): Promise<any> {
       'Дитина',
       'Вік дитини',
       'Напрямок',
+      'Локація',
       'Телефон',
     ]
     await ensureSheetExists(
@@ -358,12 +367,13 @@ export async function POST(request: Request): Promise<any> {
       childName || '',
       childAge || '',
       direction || '',
+      location || '',
       `'${phone.replace(/^\+/, '+')}`,
     ]
 
     const responseForm = await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: 'Відповіді форми!A:F',
+      range: 'Відповіді форми!A:G',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [dataRowFormResponses],
@@ -416,6 +426,7 @@ export async function POST(request: Request): Promise<any> {
         'Батько/мама',
         'Телефон',
         'Вік дитини',
+        'Локація',
       ]
       await ensureSheetExists(
         sheets,
@@ -429,6 +440,7 @@ export async function POST(request: Request): Promise<any> {
         parentName || '',
         `'${phone.replace(/^\+/, '+')}`,
         childAge || '',
+        location || '',
       ]
 
       const responseRegistration = await sheets.spreadsheets.values.append({
@@ -516,13 +528,8 @@ const validateFormData = (
     errors.name = "Ім'я повинно містити не менше 2 символів"
   }
 
-  // Updated regex for phone validation that accepts international format
-  if (
-    !data.phone ||
-    !/^(\+?38)?\s?0\d{2}[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}$|^\+\d{12}$/.test(
-      data.phone
-    )
-  ) {
+  const normalizedPhone = (data.phone || '').toString().replace(/[^\d+]/g, '')
+  if (!normalizedPhone || !/^\+\d{8,15}$/.test(normalizedPhone)) {
     errors.phone = 'Введіть коректний номер телефону'
   }
 

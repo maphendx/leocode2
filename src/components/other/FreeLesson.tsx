@@ -1,20 +1,19 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import {
   X,
   CheckCircle2,
-  BookOpen,
-  Calendar,
   User,
   Award,
   ArrowRight,
   ChevronDown,
   Baby,
   Phone,
+  MapPin,
 } from 'lucide-react'
 
-// Define common country codes with emoji flags (same as Probne)
 const countryCodes = [
   { code: '+380', flag: '🇺🇦', country: 'Ukraine' },
   { code: '+48', flag: '🇵🇱', country: 'Poland' },
@@ -34,12 +33,57 @@ const countryCodes = [
   { code: '+90', flag: '🇹🇷', country: 'Turkey' },
 ]
 
+const ageOptions = Array.from({ length: 9 }, (_, i) => `${i + 7} років`)
+
+const locationOptions = ['вул. Мазепи, 25Д', 'вул. Наукова, 49', 'Онлайн']
+
+const DEFAULT_COUNTRY_CODE = '+380'
+
 interface FreeLessonProps {
   isOpen: boolean
   onClose: () => void
 }
 
+type FormState = {
+  parentName: string
+  childName: string
+  childAge: string
+  location: string
+  phone: string
+}
+
+type ValidationErrors = {
+  parentName: string
+  childName: string
+  phone: string
+}
+
+const initialFormData: FormState = {
+  parentName: '',
+  childName: '',
+  childAge: '',
+  location: '',
+  phone: DEFAULT_COUNTRY_CODE,
+}
+
+const initialErrors: ValidationErrors = {
+  parentName: '',
+  childName: '',
+  phone: '',
+}
+
+const normalizePhone = (value: string) => {
+  const digits = value.replace(/\D/g, '')
+  return digits ? `+${digits}` : ''
+}
+
+const hasValidPhoneDigits = (value: string) => {
+  const normalized = normalizePhone(value)
+  return /^\+\d{8,15}$/.test(normalized)
+}
+
 const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
+  const [isClientMounted, setIsClientMounted] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [shouldRender, setShouldRender] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -48,73 +92,59 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
   const [formProgress, setFormProgress] = useState(0)
   const [showAgeDropdown, setShowAgeDropdown] = useState(false)
   const [showCountryDropdown, setShowCountryDropdown] = useState(false)
-  const [showDirectionDropdown, setShowDirectionDropdown] = useState(false)
-  const [countryCode, setCountryCode] = useState('+380')
-  const [validationErrors, setValidationErrors] = useState({
-    parentName: '',
-    childName: '',
-    phone: '',
-  })
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false)
+  const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_CODE)
+  const [validationErrors, setValidationErrors] =
+    useState<ValidationErrors>(initialErrors)
+  const [formData, setFormData] = useState<FormState>(initialFormData)
 
   const ageDropdownRef = useRef<HTMLDivElement>(null)
   const phoneDropdownRef = useRef<HTMLDivElement>(null)
-  const directionDropdownRef = useRef<HTMLDivElement>(null)
+  const locationDropdownRef = useRef<HTMLDivElement>(null)
 
-  const [formData, setFormData] = useState({
-    parentName: '',
-    childName: '',
-    childAge: '',
-    direction: '',
-    phone: '',
-  })
+  const resetForm = () => {
+    setFormData(initialFormData)
+    setValidationErrors(initialErrors)
+    setCurrentStep(1)
+    setCountryCode(DEFAULT_COUNTRY_CODE)
+    setShowAgeDropdown(false)
+    setShowCountryDropdown(false)
+    setShowLocationDropdown(false)
+    setIsSubmitting(false)
+    setSubmitted(false)
+    setFormProgress(0)
+  }
 
-  // Available age options as individual ages rather than ranges
-  const ageOptions = [
-    '6 років',
-    '7 років',
-    '8 років',
-    '9 років',
-    '10 років',
-    '11 років',
-    '12 років',
-    '13 років',
-    '14 років',
-    '15 років',
-    '16 років',
-    '17 років',
-    '18 років',
-  ]
-
-  // Direction options
-  const directionOptions = ['IT Напрямок', 'ДРОН Напрямок']
-
-  // Update form progress based on filled fields
   useEffect(() => {
-    let progress = 0
-    if (formData.parentName) progress += 20
-    if (formData.childName) progress += 20
-    if (formData.childAge) progress += 20
-    if (formData.direction) progress += 20
-    if (formData.phone) progress += 20
-    setFormProgress(progress)
+    setIsClientMounted(true)
+  }, [])
+
+  useEffect(() => {
+    const filled = [
+      Boolean(formData.parentName.trim()),
+      Boolean(formData.childName.trim()),
+      Boolean(formData.childAge),
+      Boolean(formData.location),
+      hasValidPhoneDigits(formData.phone),
+    ].filter(Boolean).length
+
+    setFormProgress(filled * 20)
   }, [formData])
 
   useEffect(() => {
     if (isOpen) {
+      resetForm()
       setShouldRender(true)
       setTimeout(() => setIsAnimating(true), 10)
-      setSubmitted(false)
     } else {
       setIsAnimating(false)
       const timer = setTimeout(() => {
         setShouldRender(false)
-        setSubmitted(false)
-      }, 400)
+      }, 350)
       return () => clearTimeout(timer)
     }
   }, [isOpen])
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -132,10 +162,10 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
       }
 
       if (
-        directionDropdownRef.current &&
-        !directionDropdownRef.current.contains(event.target as Node)
+        locationDropdownRef.current &&
+        !locationDropdownRef.current.contains(event.target as Node)
       ) {
-        setShowDirectionDropdown(false)
+        setShowLocationDropdown(false)
       }
     }
 
@@ -146,140 +176,146 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
   }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target
+    const { name, value } = e.target
 
-    // For name fields, only allow letters
     if (name === 'parentName' || name === 'childName') {
-      // Check if input contains only letters (supports Unicode letters including Ukrainian)
-      const isValid = /^[\p{L}\p{M}\s]*$/u.test(value)
+      const isValid = /^[\p{L}\p{M}\s'-]*$/u.test(value)
 
-      setValidationErrors({
-        ...validationErrors,
+      setValidationErrors((prev) => ({
+        ...prev,
         [name]: isValid ? '' : "Ім'я повинно містити тільки літери",
-      })
+      }))
 
-      if (isValid) {
-        setFormData({
-          ...formData,
-          [name]: value,
-        })
-      }
-    } else {
-      setFormData({
-        ...formData,
-        [name]: type === 'checkbox' ? checked : value,
-      })
+      if (!isValid) return
     }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
   }
 
   const handleAgeSelect = (age: string) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       childAge: age,
-    })
+    }))
     setShowAgeDropdown(false)
   }
 
-  const handleDirectionSelect = (direction: string) => {
-    setFormData({
-      ...formData,
-      direction: direction,
-    })
-    setShowDirectionDropdown(false)
+  const handleLocationSelect = (location: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      location,
+    }))
+    setShowLocationDropdown(false)
   }
 
-  // Handle country code selection
   const handleCountrySelect = (code: string) => {
+    const previousCodeDigits = countryCode.replace('+', '')
+    const currentDigits = formData.phone.replace(/\D/g, '')
+    const phoneDigits = currentDigits.startsWith(previousCodeDigits)
+      ? currentDigits.slice(previousCodeDigits.length)
+      : currentDigits
+
     setCountryCode(code)
     setShowCountryDropdown(false)
 
-    // Preserve phone number digits when changing country code
-    const phoneWithoutCode = formData.phone.replace(/^\+\d+\s*/, '')
-    const newPhone = code + (phoneWithoutCode ? ' ' + phoneWithoutCode : '')
+    const updatedPhone = `${code}${phoneDigits}`
+    setFormData((prev) => ({
+      ...prev,
+      phone: updatedPhone,
+    }))
 
-    setFormData({
-      ...formData,
-      phone: newPhone,
-    })
+    setValidationErrors((prev) => ({
+      ...prev,
+      phone: phoneDigits.length === 0 || hasValidPhoneDigits(updatedPhone)
+        ? ''
+        : 'Введіть коректний номер телефону',
+    }))
   }
 
-  // Handle phone input with proper formatting and validation for digits only
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value
+    const rawValue = e.target.value
 
-    // If field is empty, reset but keep country code
-    if (!inputValue) {
-      setFormData({
-        ...formData,
-        phone: countryCode,
-      })
-      setValidationErrors({
-        ...validationErrors,
-        phone: '',
-      })
+    if (!rawValue.trim()) {
+      setFormData((prev) => ({ ...prev, phone: countryCode }))
+      setValidationErrors((prev) => ({ ...prev, phone: '' }))
       return
     }
 
-    // Find the country code part (starts with +)
-    const countryCodeMatch = inputValue.match(/^\+\d+/)
-    const currentCountryCode = countryCodeMatch
-      ? countryCodeMatch[0]
-      : countryCode
+    const codeDigits = countryCode.replace('+', '')
+    const onlyDigits = rawValue.replace(/\D/g, '')
+    const numberDigits = onlyDigits.startsWith(codeDigits)
+      ? onlyDigits.slice(codeDigits.length)
+      : onlyDigits
 
-    // Get everything after the country code
-    const phoneNumberPart = inputValue.replace(currentCountryCode, '').trim()
+    const updatedPhone = `${countryCode}${numberDigits}`
 
-    // Check if phone number part contains only digits
-    const isValid = /^\d*$/.test(phoneNumberPart)
+    setFormData((prev) => ({
+      ...prev,
+      phone: updatedPhone,
+    }))
 
-    if (!isValid) {
-      setValidationErrors({
-        ...validationErrors,
-        phone: 'Номер телефону повинен містити тільки цифри',
-      })
-      // Keep the old valid value
-      return
+    setValidationErrors((prev) => ({
+      ...prev,
+      phone:
+        numberDigits.length === 0 || hasValidPhoneDigits(updatedPhone)
+          ? ''
+          : 'Введіть коректний номер телефону',
+    }))
+  }
+
+  const canProceed = () => {
+    if (currentStep === 1) {
+      return (
+        formData.parentName.trim().length > 2 &&
+        formData.childName.trim().length > 2 &&
+        !validationErrors.parentName &&
+        !validationErrors.childName
+      )
     }
 
-    // Update validation state
-    setValidationErrors({
-      ...validationErrors,
-      phone: '',
-    })
+    if (currentStep === 2) {
+      return (
+        Boolean(formData.childAge) &&
+        Boolean(formData.location) &&
+        hasValidPhoneDigits(formData.phone) &&
+        !validationErrors.phone
+      )
+    }
 
-    // Update phone number
-    const formattedPhone = phoneNumberPart
-      ? `${currentCountryCode} ${phoneNumberPart}`
-      : currentCountryCode
+    return true
+  }
 
-    setFormData({
-      ...formData,
-      phone: formattedPhone,
-    })
+  const nextStep = () => {
+    if (canProceed()) {
+      setCurrentStep((prev) => Math.min(prev + 1, 3))
+    }
+  }
+
+  const prevStep = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 1))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Final validation before submitting
-    if (
-      validationErrors.parentName ||
-      validationErrors.childName ||
-      validationErrors.phone
-    ) {
-      return
-    }
+    if (!canProceed()) return
 
     setIsSubmitting(true)
 
     try {
-      // Send data to our API endpoint
       const response = await fetch('/api/submit-form', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          direction: '',
+          phone: normalizePhone(formData.phone),
+        }),
       })
 
       const result = await response.json()
@@ -287,26 +323,11 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
       if (result.success) {
         setSubmitted(true)
 
-        // Close after showing success message
         setTimeout(() => {
           onClose()
-          setFormData({
-            parentName: '',
-            childName: '',
-            childAge: '',
-            direction: '',
-            phone: '',
-          })
-          setCurrentStep(1)
-          setCountryCode('+380')
-          setValidationErrors({
-            parentName: '',
-            childName: '',
-            phone: '',
-          })
-        }, 3000)
+          resetForm()
+        }, 2500)
       } else {
-        // Show error notification
         alert(`Помилка: ${result.message || 'Не вдалося відправити форму'}`)
         setIsSubmitting(false)
       }
@@ -322,64 +343,30 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
     onClose()
   }
 
-  // Check if we can proceed to next step
-  const canProceed = () => {
-    if (currentStep === 1) {
-      return (
-        formData.parentName.length > 2 &&
-        formData.childName.length > 2 &&
-        !validationErrors.parentName &&
-        !validationErrors.childName
-      )
-    }
-    return true
-  }
+  if (!shouldRender || !isClientMounted) return null
 
-  // Go to next step
-  const nextStep = () => {
-    if (canProceed()) {
-      setCurrentStep((prev) => Math.min(prev + 1, 3))
-    }
-  }
-
-  // Go to previous step
-  const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1))
-  }
-
-  if (!shouldRender) return null
-
-  return (
-    <div className="fixed inset-0 z-[15000] overflow-hidden perspective consultation-modal-open">
-      {/* Backdrop with blur effect */}
+  const modal = (
+    <div className="fixed inset-0 z-[15000] overflow-hidden consultation-modal-open">
       <div
-        className={`fixed inset-0 bg-black transition-all duration-400 ease-in-out pointer-events-none modal-backdrop z-[14999] ${
-          isAnimating
-            ? 'opacity-50 backdrop-blur-md'
-            : 'opacity-0 backdrop-blur-none'
+        className={`fixed inset-0 bg-[#0B0E14] transition-all duration-300 ease-in-out z-[14999] ${
+          isAnimating ? 'opacity-70 backdrop-blur-sm' : 'opacity-0'
         }`}
         aria-hidden="true"
-      ></div>
+      />
 
       <div
-        className="fixed inset-0 flex items-center justify-center p-4 md:p-6 z-[15001] perspective-1000 modal-content"
+        className="fixed inset-0 flex items-center justify-center p-3 md:p-6 z-[15001]"
         onClick={onClose}
       >
         <div
-          className={`bg-white rounded-[30px] w-full max-w-md relative transition-all duration-500 ease-out overflow-hidden ${
-            isAnimating
-              ? 'opacity-100 transform scale-100 translate-z-0'
-              : 'opacity-0 transform scale-75 translate-z-n50'
+          className={`relative w-full max-w-[680px] max-h-[95vh] overflow-hidden overflow-y-auto rounded-[22px] border border-white/10 bg-[linear-gradient(180deg,#2A2F38_0%,#232831_100%)] shadow-[0_30px_70px_rgba(0,0,0,0.55)] transition-all duration-400 ease-out ${
+            isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
           onClick={(e) => e.stopPropagation()}
-          style={{
-            boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
-            transitionDuration: '500ms',
-          }}
         >
-          <div className="relative">
+          <div className="relative border-b border-white/10 px-5 md:px-8 pt-7 pb-5">
             <button
-              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 z-50 p-2 rounded-full transition-colors duration-200 hover:bg-gray-100 bg-white bg-opacity-80 backdrop-blur-sm"
+              className="absolute right-4 top-4 z-50 p-2 rounded-full border border-white/12 text-white/65 hover:text-white hover:bg-white/8 transition-colors duration-200"
               onClick={handleClose}
               aria-label="Close"
               type="button"
@@ -387,173 +374,158 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
               <X className="h-5 w-5" />
             </button>
 
-            {/* Main title of the form with accent color matching site theme */}
-            <div className="pt-8 pb-4 text-center">
-              <h2 className="text-xl md:text-2xl font-bold text-text">
-                Запис на <span className="text-accent-hover">пробне</span>
+            <div className="text-center pr-10 pl-2">
+              <h2 className="text-[28px] md:text-[36px] font-extrabold tracking-[-0.03em] text-white leading-tight">
+                Запис на <span className="text-[#8ED28A]">безкоштовне</span>{' '}
+                заняття
               </h2>
-              <h2 className="text-xl md:text-2xl font-bold text-text mb-2">
-                безкоштовне заняття
-              </h2>
-              <p className="text-sm text-gray-500">
+              <p className="mt-2 text-sm md:text-base text-white/70">
                 Заповніть форму для запису вашої дитини
               </p>
             </div>
 
-            {/* Progress indicator */}
             {!submitted && (
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gray-100 z-20">
+              <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/7">
                 <div
-                  className="h-full bg-accent transition-all duration-300 ease-in-out rounded-r-full"
+                  className="h-full bg-[#78C86F] transition-all duration-300 ease-in-out"
                   style={{ width: `${formProgress}%` }}
                 />
               </div>
             )}
           </div>
 
-          <div className="p-6 md:p-8 pt-4">
+          <div className="p-5 md:p-8">
             {submitted ? (
-              <div className="text-center py-8 px-4">
-                <div className="relative mb-8">
+              <div className="text-center py-8 px-2">
+                <div className="relative mb-6">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="h-24 w-24 rounded-full bg-accent bg-opacity-10 animate-ping" />
+                    <div className="h-20 w-20 rounded-full bg-[#78C86F]/15 animate-ping" />
                   </div>
                   <div className="relative flex justify-center">
-                    <div className="h-24 w-24 rounded-full bg-accent bg-opacity-20 flex items-center justify-center">
-                      <CheckCircle2 className="h-12 w-12 text-accent" />
+                    <div className="h-20 w-20 rounded-full bg-[#78C86F]/20 flex items-center justify-center border border-[#78C86F]/35">
+                      <CheckCircle2 className="h-10 w-10 text-[#8ED28A]" />
                     </div>
                   </div>
                 </div>
 
-                <h2 className="text-2xl font-bold text-accent mb-4">
-                  Дякуємо за заявку!
-                </h2>
-                <p className="text-gray-600 mb-4">
-                  Ми зв'яжемося з вами найближчим часом для уточнення деталей та
-                  запису на заняття.
+                <h2 className="text-2xl font-bold text-white mb-3">Дякуємо за заявку!</h2>
+                <p className="text-white/75 mb-4 max-w-[46ch] mx-auto">
+                  Наш менеджер Вам зателефонує для уточнення деталей запису.
                 </p>
-                <div className="flex justify-center">
-                  <div className="bg-amber-50 rounded-[20px] px-5 py-3 inline-flex items-center gap-2 border border-amber-100">
-                    <Calendar className="h-5 w-5 text-accent-hover" />
-                    <span className="text-sm font-medium text-gray-700">
-                      Очікуйте на дзвінок від нашого менеджера
-                    </span>
-                  </div>
+                <div className="mx-auto max-w-[440px] rounded-[10px] border border-[#86CC82]/35 bg-[#1C2A20] px-4 py-3 text-sm text-[#D5F2D3]">
+                  Очікуйте на дзвінок найближчим часом.
                 </div>
               </div>
             ) : (
               <>
-                {/* Step indicator - Intuitive navigation */}
-                <div className="flex justify-between items-center mb-8">
+                <div className="flex justify-between items-center mb-8 gap-3">
                   {[1, 2, 3].map((step) => (
                     <div
                       key={step}
-                      className={`flex flex-col items-center ${
+                      className={`flex flex-col items-center text-center ${
                         step < currentStep ? 'cursor-pointer' : ''
                       }`}
                       onClick={() => step < currentStep && setCurrentStep(step)}
                     >
                       <div
-                        className={`h-10 w-10 rounded-full flex items-center justify-center transition-all ${
+                        className={`h-10 w-10 rounded-full flex items-center justify-center border transition-all ${
                           step === currentStep
-                            ? 'bg-accent text-white'
+                            ? 'bg-[#78C86F] text-[#1B2718] border-[#78C86F]'
                             : step < currentStep
-                            ? 'bg-accent text-white shadow-sm'
-                            : 'bg-gray-100 text-gray-400'
+                              ? 'bg-[#6CBF63] text-[#1B2718] border-[#6CBF63]'
+                              : 'bg-white/5 text-white/55 border-white/15'
                         }`}
                       >
                         {step < currentStep ? (
-                          <CheckCircle2 className="h-5 w-5 text-white" />
+                          <CheckCircle2 className="h-5 w-5" />
                         ) : (
                           step
                         )}
                       </div>
                       <span
-                        className={`text-xs mt-2 ${
+                        className={`text-[11px] md:text-xs mt-2 ${
                           step === currentStep
-                            ? 'text-accent font-medium'
+                            ? 'text-[#9BE296] font-semibold'
                             : step < currentStep
-                            ? 'text-green'
-                            : 'text-gray-400'
+                              ? 'text-[#8ED28A]'
+                              : 'text-white/50'
                         }`}
                       >
                         {step === 1
                           ? 'Персональні дані'
                           : step === 2
-                          ? 'Контакти'
-                          : 'Підтвердження'}
+                            ? 'Контакти'
+                            : 'Підтвердження'}
                       </span>
                     </div>
                   ))}
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
-                  {/* Step 1: Personal info */}
                   {currentStep === 1 && (
                     <div className="space-y-5">
-                      <h2 className="text-xl font-bold text-center mb-4 text-text">
+                      <h2 className="text-xl font-bold text-center text-white">
                         Персональні дані
                       </h2>
-                      <p className="text-gray-600 text-center text-sm mb-6">
-                        Заповніть інформацію для запису на безкоштовне пробне
-                        заняття
+                      <p className="text-white/65 text-center text-sm">
+                        Заповніть основну інформацію для запису
                       </p>
 
                       <div className="relative">
-                        <label className="block text-sm font-medium mb-2 text-gray-700">
-                          Ваше ім'я (Батько/мама)
+                        <label className="block text-sm font-medium mb-2 text-white/80">
+                          Ваше ім'я (батько/мама)
                         </label>
                         <div className="relative">
-                          <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                          <User className="absolute left-3 top-3.5 h-5 w-5 text-white/45" />
                           <input
                             type="text"
                             name="parentName"
                             value={formData.parentName}
                             onChange={handleInputChange}
-                            className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent bg-gray-50"
+                            className="w-full pl-11 pr-4 py-3.5 border border-white/12 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#78C86F]/70 bg-[#2C313A] text-white placeholder:text-white/45"
                             placeholder="Ім'я одного з батьків"
                             required
                           />
-                          {validationErrors.parentName && (
-                            <p className="text-sm text-red-500 mt-1">
-                              {validationErrors.parentName}
-                            </p>
-                          )}
                         </div>
+                        {validationErrors.parentName && (
+                          <p className="text-sm text-red-400 mt-1">
+                            {validationErrors.parentName}
+                          </p>
+                        )}
                       </div>
 
                       <div className="relative">
-                        <label className="block text-sm font-medium mb-2 text-gray-700">
+                        <label className="block text-sm font-medium mb-2 text-white/80">
                           Ім'я дитини
                         </label>
                         <div className="relative">
-                          <Baby className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                          <Baby className="absolute left-3 top-3.5 h-5 w-5 text-white/45" />
                           <input
                             type="text"
                             name="childName"
                             value={formData.childName}
                             onChange={handleInputChange}
-                            className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent bg-gray-50"
+                            className="w-full pl-11 pr-4 py-3.5 border border-white/12 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#78C86F]/70 bg-[#2C313A] text-white placeholder:text-white/45"
                             placeholder="Ім'я дитини"
                             required
                           />
-                          {validationErrors.childName && (
-                            <p className="text-sm text-red-500 mt-1">
-                              {validationErrors.childName}
-                            </p>
-                          )}
                         </div>
+                        {validationErrors.childName && (
+                          <p className="text-sm text-red-400 mt-1">
+                            {validationErrors.childName}
+                          </p>
+                        )}
                       </div>
 
-                      <div className="pt-6">
+                      <div className="pt-4">
                         <button
                           type="button"
                           disabled={!canProceed()}
                           onClick={nextStep}
-                          className={`w-full bg-accent text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 flex justify-center items-center gap-2 ${
+                          className={`w-full bg-[#78C86F] text-[#192518] font-bold py-3.5 px-4 rounded-[10px] transition-all duration-200 flex justify-center items-center gap-2 ${
                             !canProceed()
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-accent-hover'
+                              ? 'opacity-45 cursor-not-allowed'
+                              : 'hover:bg-[#8BD582]'
                           }`}
                         >
                           Далі
@@ -563,168 +535,153 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                     </div>
                   )}
 
-                  {/* Step 2: Contact info with age selector and country code */}
                   {currentStep === 2 && (
                     <div className="space-y-5">
-                      <h2 className="text-xl font-bold text-center mb-4 text-text">
+                      <h2 className="text-xl font-bold text-center text-white">
                         Дані для запису
                       </h2>
 
                       <div className="relative">
-                        <label className="block text-sm font-medium mb-2 text-gray-700">
-                          Вік дитини
+                        <label className="block text-sm font-medium mb-2 text-white/80">
+                          Вік дитини (від 7 до 15)
                         </label>
                         <div className="relative" ref={ageDropdownRef}>
-                          <Baby className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                          <div className="relative">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setShowAgeDropdown(!showAgeDropdown)
+                          <Baby className="absolute left-3 top-3.5 h-5 w-5 text-white/45" />
+                          <button
+                            type="button"
+                            onClick={() => setShowAgeDropdown((prev) => !prev)}
+                            className="w-full pl-11 pr-10 py-3.5 border border-white/12 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#78C86F]/70 text-left bg-[#2C313A] flex items-center justify-between"
+                          >
+                            <span
+                              className={
+                                formData.childAge ? 'text-white' : 'text-white/45'
                               }
-                              className="w-full pl-11 pr-10 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent text-left bg-gray-50 flex items-center justify-between"
                             >
-                              <span
-                                className={
-                                  formData.childAge
-                                    ? 'text-gray-900'
-                                    : 'text-gray-400'
-                                }
-                              >
-                                {formData.childAge || 'Оберіть вік дитини'}
-                              </span>
-                              <ChevronDown className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
-                            </button>
+                              {formData.childAge || 'Оберіть вік дитини'}
+                            </span>
+                            <ChevronDown className="absolute right-3 top-3.5 h-5 w-5 text-white/45" />
+                          </button>
 
-                            {showAgeDropdown && (
-                              <div
-                                className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-y-auto"
-                                style={{ maxHeight: '200px' }}
-                              >
-                                {ageOptions.map((age) => (
-                                  <div
-                                    key={age}
-                                    className="px-4 py-3 hover:bg-amber-50 cursor-pointer text-gray-700 hover:text-accent-hover transition-colors"
-                                    onClick={() => handleAgeSelect(age)}
-                                  >
-                                    {age}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
+                          {showAgeDropdown && (
+                            <div
+                              className="absolute z-50 mt-1 w-full bg-[#2C313A] border border-white/12 rounded-[10px] shadow-lg overflow-y-auto animate-dropdown"
+                              style={{ maxHeight: '220px' }}
+                            >
+                              {ageOptions.map((age) => (
+                                <div
+                                  key={age}
+                                  className="px-4 py-3 hover:bg-white/8 cursor-pointer text-white/85 hover:text-white transition-colors"
+                                  onClick={() => handleAgeSelect(age)}
+                                >
+                                  {age}
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
 
                       <div className="relative">
-                        <label className="block text-sm font-medium mb-2 text-gray-700">
-                          Напрямок навчання
+                        <label className="block text-sm font-medium mb-2 text-white/80">
+                          Локація
                         </label>
-                        <div className="relative" ref={directionDropdownRef}>
-                          <BookOpen className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                          <div className="relative">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setShowDirectionDropdown(!showDirectionDropdown)
+                        <div className="relative" ref={locationDropdownRef}>
+                          <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-white/45" />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setShowLocationDropdown((prev) => !prev)
+                            }
+                            className="w-full pl-11 pr-10 py-3.5 border border-white/12 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#78C86F]/70 text-left bg-[#2C313A] flex items-center justify-between"
+                          >
+                            <span
+                              className={
+                                formData.location
+                                  ? 'text-white'
+                                  : 'text-white/45'
                               }
-                              className="w-full pl-11 pr-10 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent text-left bg-gray-50 flex items-center justify-between"
                             >
-                              <span
-                                className={
-                                  formData.direction
-                                    ? 'text-gray-900'
-                                    : 'text-gray-400'
-                                }
-                              >
-                                {formData.direction ||
-                                  'Оберіть напрямок навчання'}
-                              </span>
-                              <ChevronDown className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
-                            </button>
+                              {formData.location || 'Оберіть локацію'}
+                            </span>
+                            <ChevronDown className="absolute right-3 top-3.5 h-5 w-5 text-white/45" />
+                          </button>
 
-                            {showDirectionDropdown && (
-                              <div
-                                className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-y-auto"
-                                style={{ maxHeight: '200px' }}
-                              >
-                                {directionOptions.map((direction) => (
-                                  <div
-                                    key={direction}
-                                    className="px-4 py-3 hover:bg-amber-50 cursor-pointer text-gray-700 hover:text-accent-hover transition-colors"
-                                    onClick={() =>
-                                      handleDirectionSelect(direction)
-                                    }
-                                  >
-                                    {direction}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
+                          {showLocationDropdown && (
+                            <div
+                              className="absolute z-50 mt-1 w-full bg-[#2C313A] border border-white/12 rounded-[10px] shadow-lg overflow-y-auto animate-dropdown"
+                              style={{ maxHeight: '260px' }}
+                            >
+                              {locationOptions.map((location) => (
+                                <button
+                                  type="button"
+                                  key={location}
+                                  className="w-full text-left px-4 py-3 hover:bg-white/8 cursor-pointer text-white/85 hover:text-white transition-colors border-b border-white/6 last:border-b-0"
+                                  onClick={() => handleLocationSelect(location)}
+                                >
+                                  {location}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
 
                       <div className="relative">
-                        <label className="block text-sm font-medium mb-2 text-gray-700">
+                        <label className="block text-sm font-medium mb-2 text-white/80">
                           Номер телефону
                         </label>
                         <div className="relative" ref={phoneDropdownRef}>
                           <div className="relative flex items-center">
-                            <div
-                              className="absolute left-0 top-0 bottom-0 flex items-center gap-1 px-3 cursor-pointer hover:bg-gray-100 rounded-l-xl transition-colors border-r border-gray-200"
+                            <button
+                              type="button"
+                              className="absolute left-0 top-0 bottom-0 flex items-center gap-1 px-3 cursor-pointer hover:bg-white/7 rounded-l-[10px] transition-colors border-r border-white/12"
                               onClick={() =>
-                                setShowCountryDropdown(!showCountryDropdown)
+                                setShowCountryDropdown((prev) => !prev)
                               }
-                              style={{
-                                width: '70px',
-                                justifyContent: 'center',
-                              }}
+                              style={{ width: '74px', justifyContent: 'center' }}
                             >
                               <span className="text-lg">
-                                {countryCodes.find(
-                                  (c) => c.code === countryCode
-                                )?.flag || '🌍'}
+                                {countryCodes.find((c) => c.code === countryCode)
+                                  ?.flag || '🌍'}
                               </span>
-                              <ChevronDown className="h-4 w-4 text-gray-400" />
-                            </div>
+                              <ChevronDown className="h-4 w-4 text-white/45" />
+                            </button>
+                            <Phone className="absolute left-[84px] top-3.5 h-5 w-5 text-white/45" />
                             <input
                               type="tel"
                               name="phone"
                               value={formData.phone}
                               onChange={handlePhoneChange}
-                              placeholder="50 123 4567"
-                              className="w-full pl-20 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent bg-gray-50"
+                              placeholder="501234567"
+                              className="w-full pl-[112px] pr-4 py-3.5 border border-white/12 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#78C86F]/70 bg-[#2C313A] text-white placeholder:text-white/40"
                               required
                             />
                           </div>
+
                           {validationErrors.phone && (
-                            <p className="text-sm text-red-500 mt-1">
+                            <p className="text-sm text-red-400 mt-1">
                               {validationErrors.phone}
                             </p>
                           )}
 
-                          {/* Country code dropdown */}
                           {showCountryDropdown && (
                             <div
-                              className="absolute z-50 mt-1 left-0 bg-white border border-gray-200 rounded-xl shadow-lg overflow-y-auto"
-                              style={{ maxHeight: '200px', width: '250px' }}
+                              className="absolute z-50 mt-1 left-0 bg-[#2C313A] border border-white/12 rounded-[10px] shadow-lg overflow-y-auto animate-dropdown"
+                              style={{ maxHeight: '240px', width: '280px' }}
                             >
                               {countryCodes.map((country) => (
                                 <div
                                   key={country.code}
-                                  className="px-4 py-3 hover:bg-amber-50 cursor-pointer flex items-center gap-2 border-b border-gray-50 last:border-0"
+                                  className="px-4 py-3 hover:bg-white/8 cursor-pointer flex items-center gap-2 border-b border-white/8 last:border-0"
                                   onClick={() =>
                                     handleCountrySelect(country.code)
                                   }
                                 >
-                                  <span className="text-lg">
-                                    {country.flag}
-                                  </span>
-                                  <span className="font-medium">
+                                  <span className="text-lg">{country.flag}</span>
+                                  <span className="font-medium text-white">
                                     {country.code}
                                   </span>
-                                  <span className="text-gray-500 text-sm">
+                                  <span className="text-white/55 text-sm">
                                     {country.country}
                                   </span>
                                 </div>
@@ -734,28 +691,22 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                         </div>
                       </div>
 
-                      <div className="flex gap-4 pt-6">
+                      <div className="flex gap-3 pt-5">
                         <button
                           type="button"
                           onClick={prevStep}
-                          className="w-1/3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-3 rounded-xl transition-all duration-200"
+                          className="w-1/3 bg-white/8 border border-white/12 hover:bg-white/12 text-white/80 font-medium py-3 rounded-[10px] transition-all duration-200"
                         >
                           Назад
                         </button>
                         <button
                           type="button"
                           onClick={nextStep}
-                          disabled={
-                            !formData.childAge ||
-                            !formData.phone ||
-                            !formData.direction
-                          }
-                          className={`w-2/3 bg-accent text-white font-medium py-3 rounded-xl transition-all duration-200 flex justify-center items-center gap-2 ${
-                            !formData.childAge ||
-                            !formData.phone ||
-                            !formData.direction
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-accent-hover'
+                          disabled={!canProceed()}
+                          className={`w-2/3 bg-[#78C86F] text-[#192518] font-bold py-3 rounded-[10px] transition-all duration-200 flex justify-center items-center gap-2 ${
+                            !canProceed()
+                              ? 'opacity-45 cursor-not-allowed'
+                              : 'hover:bg-[#8BD582]'
                           }`}
                         >
                           Далі
@@ -765,134 +716,101 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                     </div>
                   )}
 
-                  {/* Step 3: Confirmation */}
                   {currentStep === 3 && (
                     <div className="space-y-5">
-                      <h2 className="text-xl font-bold text-center mb-4 text-text">
+                      <h2 className="text-xl font-bold text-center text-white">
                         Підтвердження запису
                       </h2>
 
-                      <div className="bg-amber-50 rounded-xl p-5 mb-4 border border-amber-100">
-                        <h3 className="font-medium text-gray-800 mb-3">
+                      <div className="rounded-[12px] p-5 border border-white/12 bg-[#252B34]">
+                        <h3 className="font-semibold text-white mb-3">
                           Інформація про запис:
                         </h3>
                         <ul className="space-y-3">
                           <li className="flex items-start gap-3">
-                            <User className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+                            <User className="h-5 w-5 text-[#8ED28A] mt-0.5 flex-shrink-0" />
                             <div>
-                              <p className="text-sm font-medium">
+                              <p className="text-sm font-medium text-white/85">
                                 Ім'я батька/мами:
                               </p>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-white/70">
                                 {formData.parentName}
                               </p>
                             </div>
                           </li>
                           <li className="flex items-start gap-3">
-                            <Baby className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+                            <Baby className="h-5 w-5 text-[#8ED28A] mt-0.5 flex-shrink-0" />
                             <div>
-                              <p className="text-sm font-medium">
+                              <p className="text-sm font-medium text-white/85">
                                 Ім'я дитини:
                               </p>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-white/70">
                                 {formData.childName}
                               </p>
                             </div>
                           </li>
                           <li className="flex items-start gap-3">
-                            <Baby className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+                            <Baby className="h-5 w-5 text-[#8ED28A] mt-0.5 flex-shrink-0" />
                             <div>
-                              <p className="text-sm font-medium">Вік дитини:</p>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm font-medium text-white/85">
+                                Вік дитини:
+                              </p>
+                              <p className="text-sm text-white/70">
                                 {formData.childAge}
                               </p>
                             </div>
                           </li>
                           <li className="flex items-start gap-3">
-                            <BookOpen className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+                            <MapPin className="h-5 w-5 text-[#8ED28A] mt-0.5 flex-shrink-0" />
                             <div>
-                              <p className="text-sm font-medium">Напрямок:</p>
-                              <p className="text-sm text-gray-600">
-                                {formData.direction}
+                              <p className="text-sm font-medium text-white/85">
+                                Локація:
+                              </p>
+                              <p className="text-sm text-white/70">
+                                {formData.location}
                               </p>
                             </div>
                           </li>
                           <li className="flex items-start gap-3">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5 text-accent mt-0.5 flex-shrink-0"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                            </svg>
+                            <Phone className="h-5 w-5 text-[#8ED28A] mt-0.5 flex-shrink-0" />
                             <div>
-                              <p className="text-sm font-medium">Телефон:</p>
-                              <p className="text-sm text-gray-600">
-                                {formData.phone}
+                              <p className="text-sm font-medium text-white/85">
+                                Телефон:
+                              </p>
+                              <p className="text-sm text-white/70">
+                                {normalizePhone(formData.phone)}
                               </p>
                             </div>
                           </li>
                         </ul>
 
-                        <div className="mt-4 pt-4 border-t border-amber-200">
-                          <h4 className="text-sm font-medium text-gray-800 mb-2">
-                            Що вас очікує:
-                          </h4>
-                          <ul className="space-y-2">
-                            <li className="flex items-start gap-2">
-                              <div className="mt-0.5 h-4 w-4 rounded-full bg-accent flex items-center justify-center">
-                                <CheckCircle2 className="h-3 w-3 text-white" />
-                              </div>
-                              <span className="text-sm">
-                                60 хвилин індивідуального заняття
-                              </span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <div className="mt-0.5 h-4 w-4 rounded-full bg-accent flex items-center justify-center">
-                                <CheckCircle2 className="h-3 w-3 text-white" />
-                              </div>
-                              <span className="text-sm">
-                                Персональний підхід до навчання
-                              </span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <div className="mt-0.5 h-4 w-4 rounded-full bg-accent flex items-center justify-center">
-                                <CheckCircle2 className="h-3 w-3 text-white" />
-                              </div>
-                              <span className="text-sm">
-                                Знайомство з напрямками LEO CODE
-                              </span>
-                            </li>
-                          </ul>
+                        <div className="mt-4 rounded-[10px] border border-[#86CC82]/35 bg-[#1C2A20] px-4 py-3 text-[#D5F2D3] text-sm">
+                          Наш менеджер Вам зателефонує для уточнення деталей
+                          запису.
                         </div>
                       </div>
 
-                      <div className="flex gap-4 pt-6">
+                      <div className="flex gap-3 pt-4">
                         <button
                           type="button"
                           onClick={prevStep}
-                          className="w-1/3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-3 rounded-xl transition-all duration-200"
+                          className="w-1/3 bg-white/8 border border-white/12 hover:bg-white/12 text-white/80 font-medium py-3 rounded-[10px] transition-all duration-200"
                         >
                           Назад
                         </button>
                         <button
                           type="submit"
                           disabled={isSubmitting}
-                          className={`w-2/3 bg-accent font-medium py-3 rounded-xl transition-all duration-200 flex justify-center items-center gap-2 ${
+                          className={`w-2/3 bg-[#78C86F] text-[#192518] font-bold py-3 rounded-[10px] transition-all duration-200 flex justify-center items-center gap-2 ${
                             isSubmitting
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-accent-hover text-white'
+                              ? 'opacity-45 cursor-not-allowed'
+                              : 'hover:bg-[#8BD582]'
                           }`}
                         >
                           {isSubmitting ? (
                             <>
                               <svg
-                                className="animate-spin h-5 w-5 text-white"
+                                className="animate-spin h-5 w-5"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
@@ -930,25 +848,26 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
         </div>
       </div>
 
-      {/* Add dropdown animation styles */}
       <style jsx global>{`
         @keyframes dropdown {
           from {
             opacity: 0;
-            transform: scale(0.95);
+            transform: translateY(-4px);
           }
           to {
             opacity: 1;
-            transform: scale(1);
+            transform: translateY(0);
           }
         }
 
         .animate-dropdown {
-          animation: dropdown 0.2s ease-out forwards;
+          animation: dropdown 0.18s ease-out forwards;
         }
       `}</style>
     </div>
   )
+
+  return createPortal(modal, document.body)
 }
 
 export default FreeLesson
