@@ -8,7 +8,7 @@ import { Navigation, Autoplay, A11y } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import FreeLesson from '../other/FreeLesson'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import type { Swiper as SwiperType } from 'swiper'
 
 const useIsMounted = () => {
@@ -67,7 +67,7 @@ const SkillsDevelopment = () => {
           'Детальний опис курсу з графічного дизайну в Canva',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
-        age: '6-15 років',
+        age: '7-15 років',
         ageGroup: 'middle',
         image: '/images/canva.jpeg',
         tag: 'IT школа',
@@ -92,12 +92,12 @@ const SkillsDevelopment = () => {
       {
         title: '3D-друк та моделювання ThinkerCad',
         description:
-          'Цей курс ідеально підходить для дітей 7-9 років, які хочуть навчитись створювати власні 3D-моделі та реалізовувати свої творчі ідеї за допомогою сучасних технологій.',
+          'Цей курс ідеально підходить для дітей 7-15 років, які хочуть навчитись створювати власні 3D-моделі та реалізовувати свої творчі ідеї за допомогою сучасних технологій.',
         detailedDescription:
           'Під час курсу діти навчаться:\n• Створювати 3D-моделі\n• Працювати з 3D-принтером\n• Розуміти принципи 3D-моделювання\n• Реалізовувати власні проекти',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
-        age: '7-14 років',
+        age: '7-15 років',
         ageGroup: 'young',
         image: '/images/course.jpeg',
         tag: 'IT школа',
@@ -125,7 +125,7 @@ const SkillsDevelopment = () => {
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
-        age: '8-15 років',
+        age: '7-15 років',
         ageGroup: 'middle',
         image: '/images/course.jpeg',
         tag: 'IT школа',
@@ -154,7 +154,7 @@ const SkillsDevelopment = () => {
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
-        age: '7-14 років',
+        age: '7-15 років',
         ageGroup: 'middle',
         image: '/images/canva.jpeg',
         tag: 'IT школа',
@@ -184,7 +184,7 @@ const SkillsDevelopment = () => {
           'На курсі з Figma діти вивчають основи веб-дизайну та створення інтерфейсів, розвивають креативне мислення та реалізовують власні дизайн проєкти.',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
-        age: '10-16 років',
+        age: '7-15 років',
         ageGroup: 'middle',
         image: '/images/figma.jpeg',
         tag: 'IT школа',
@@ -207,13 +207,42 @@ const SkillsDevelopment = () => {
         ],
       },
       {
+        title: 'Веб дизайн',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        detailedDescription:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        duration: '9 місяців',
+        schedule: '2 рази на тиждень або субота, 2 години',
+        age: '7-15 років',
+        ageGroup: 'middle',
+        image: '/images/figma.jpeg',
+        tag: 'IT школа',
+        tagColor: 'blue',
+        colorClass: 'blue',
+        bgClass: 'bg-[#6FAE64]',
+        textClass: 'text-primary-light',
+        hoverClass: 'hover:bg-blue/80',
+        price: '2400 грн/місяць',
+        skills: [
+          { name: 'UI дизайн', level: 'початковий' },
+          { name: 'Композиція', level: 'середній' },
+          { name: 'Типографіка', level: 'середній' },
+        ],
+        progressSteps: [
+          'Lorem ipsum',
+          'Dolor sit amet',
+          'Consectetur adipiscing',
+          'Elit sed do',
+        ],
+      },
+      {
         title: 'Python - легкий старт в програмуванні',
         description:
           'Введення у світ програмування через прості та зрозумілі завдання на мові Python.',
         detailedDescription: 'Детальний опис курсу Python',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
-        age: '10-16 років',
+        age: '7-15 років',
         ageGroup: 'teen',
         image: '/images/python.jpeg',
         tag: 'IT школа',
@@ -242,7 +271,7 @@ const SkillsDevelopment = () => {
         detailedDescription: 'Детальний опис курсу Scratch',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
-        age: '6-10 років',
+        age: '7-15 років',
         ageGroup: 'middle',
         image: '/images/scratch.jpeg',
         tag: 'IT школа',
@@ -272,7 +301,7 @@ const SkillsDevelopment = () => {
           'Детальний опис курсу з програмування та керування дронами',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
-        age: '7-16 років',
+        age: '7-15 років',
         ageGroup: 'middle',
         image: '/images/drone.jpeg',
         tag: 'DRONE школа',
@@ -797,68 +826,87 @@ const SkillsDevelopment = () => {
         </h2>
         <div className="flex flex-col gap-5 md:flex-row md:justify-between md:items-center mb-4 md:mb-6">
           <div className="flex flex-wrap gap-2.5 md:gap-3.5 text-sm">
-            {filters.map((filter) => (
-              <motion.button
-                key={filter.id}
-                onClick={() => handleFilterClick(filter)}
-                disabled={filter.disabled}
-                className={`px-5 md:px-6 py-3 text-[14px] md:text-[16px] rounded-[4px] transition-all duration-300 border font-semibold ${
-                  filter.disabled
-                    ? 'border-[#C9CBC7] bg-[#F0F1EE] text-[#A6A8A4] cursor-not-allowed'
-                    : ''
-                } ${
-                  activeFilter === filter.id
-                    ? 'bg-accent border-[#78C86F] hover:bg-[#8BC886] text-[#1C261B] shadow-none'
-                    : !filter.disabled
-                      ? 'bg-transparent border-[#B9BCB6] text-[#4F574E] hover:bg-white/60 hover:text-[#2A2C31]'
+            <LayoutGroup id="courses-filters">
+              {filters.map((filter) => (
+                <motion.button
+                  key={filter.id}
+                  onClick={() => handleFilterClick(filter)}
+                  disabled={filter.disabled}
+                  className={`group relative overflow-hidden px-5 md:px-6 py-3 text-[14px] md:text-[16px] rounded-[4px] transition-colors duration-250 border font-semibold ${
+                    filter.disabled
+                      ? 'border-[#C9CBC7] bg-[#F0F1EE] text-[#A6A8A4] cursor-not-allowed'
                       : ''
-                } ${
-                  filter.id === 'clubs'
-                    ? 'online-filter-chip border-[#86CC82] bg-[#EEF7E8] text-[#2D4328] hover:bg-[#E6F4DF] hover:text-[#21311D]'
-                    : ''
-                }`}
-                whileTap={{ scale: 0.95 }}
-                animate={{
-                  scale: activeFilter === filter.id ? 1.01 : 1,
-                  opacity: isMounted ? 1 : 0,
-                  transition: { duration: 0.3 },
-                }}
-                initial={{ opacity: 0 }}
-              >
-                {filter.label}
-              </motion.button>
-            ))}
+                  } ${
+                    activeFilter === filter.id
+                      ? 'border-transparent text-[#1C261B]'
+                      : !filter.disabled
+                        ? 'bg-transparent border-[#B9BCB6] text-[#4F574E] hover:border-[#98CF93] hover:bg-[#F6F9F3] hover:text-[#3F4B3D]'
+                        : ''
+                  } ${
+                    filter.id === 'clubs' && activeFilter !== filter.id
+                      ? 'online-filter-chip border-[#86CC82] bg-[#EEF7E8] text-[#2D4328]'
+                      : ''
+                  }`}
+                  whileTap={{ scale: 0.97 }}
+                  animate={{
+                    opacity: isMounted ? 1 : 0,
+                    transition: { duration: 0.25 },
+                  }}
+                  initial={{ opacity: 0 }}
+                >
+                  {!filter.disabled && activeFilter !== filter.id && (
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(100deg,rgba(152,207,147,0)_0%,rgba(152,207,147,0.14)_48%,rgba(152,207,147,0)_100%)] opacity-0 -translate-x-1 transition-[opacity,transform] duration-300 ease-out group-hover:opacity-100 group-hover:translate-x-0"
+                    />
+                  )}
+                  {activeFilter === filter.id && !filter.disabled && (
+                    <motion.span
+                      layoutId="courses-filter-active-pill"
+                      className="pointer-events-none absolute inset-0 rounded-[4px] border border-[#78C86F] bg-accent shadow-[0_8px_18px_-12px_rgba(73,128,66,0.5)]"
+                      transition={{
+                        type: 'spring',
+                        stiffness: 420,
+                        damping: 36,
+                        mass: 0.7,
+                      }}
+                    />
+                  )}
+                  <span className="relative z-10 inline-flex">{filter.label}</span>
+                </motion.button>
+              ))}
+            </LayoutGroup>
           </div>
 
           <div className="hidden md:flex gap-3 ml-4 z-10">
             {isMounted && showNav && (
               <>
                 <motion.button
-                  className="static! w-11! h-11! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all p-1"
+                  className="static! w-11! h-11! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:border-[#98CF93] hover:bg-[#F3F8EF] active:bg-[#EAF5E3] transition-colors duration-300 p-1"
                   aria-label="Previous slide"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.03, y: -1 }}
+                  whileTap={{ scale: 0.95, y: 0 }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ type: 'spring', stiffness: 360, damping: 24 }}
                   onClick={(e) => {
                     e.preventDefault()
-                    swiperRef.current?.slidePrev()
+                    swiperRef.current?.slidePrev(560)
                   }}
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </motion.button>
                 <motion.button
-                  className="static! w-11! h-11! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all p-1"
+                  className="static! w-11! h-11! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:border-[#98CF93] hover:bg-[#F3F8EF] active:bg-[#EAF5E3] transition-colors duration-300 p-1"
                   aria-label="Next slide"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.03, y: -1 }}
+                  whileTap={{ scale: 0.95, y: 0 }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ type: 'spring', stiffness: 360, damping: 24 }}
                   onClick={(e) => {
                     e.preventDefault()
-                    swiperRef.current?.slideNext()
+                    swiperRef.current?.slideNext(560)
                   }}
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -888,6 +936,7 @@ const SkillsDevelopment = () => {
                     spaceBetween={8}
                     slidesPerView="auto"
                     navigation={false}
+                    speed={560}
                     onSwiper={(swiper) => {
                       swiperRef.current = swiper
                     }}
@@ -922,26 +971,40 @@ const SkillsDevelopment = () => {
                   <div className="flex md:hidden justify-center items-center gap-3 mt-0 mb-3">
                     {isMounted && (
                       <>
-                        <button
-                          className="swiper-button-prev-mobile static! w-10! h-10! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all"
+                        <motion.button
+                          className="swiper-button-prev-mobile static! w-10! h-10! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:border-[#98CF93] hover:bg-[#F3F8EF] active:bg-[#EAF5E3] transition-colors duration-300"
                           aria-label="Previous slide"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 360,
+                            damping: 24,
+                          }}
                           onClick={(e) => {
                             e.preventDefault()
-                            swiperRef.current?.slidePrev()
+                            swiperRef.current?.slidePrev(560)
                           }}
                         >
                           <ChevronLeft className="w-4 h-4" />
-                        </button>
-                        <button
-                          className="swiper-button-next-mobile static! w-10! h-10! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:bg-white/70 transition-all"
+                        </motion.button>
+                        <motion.button
+                          className="swiper-button-next-mobile static! w-10! h-10! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:border-[#98CF93] hover:bg-[#F3F8EF] active:bg-[#EAF5E3] transition-colors duration-300"
                           aria-label="Next slide"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 360,
+                            damping: 24,
+                          }}
                           onClick={(e) => {
                             e.preventDefault()
-                            swiperRef.current?.slideNext()
+                            swiperRef.current?.slideNext(560)
                           }}
                         >
                           <ChevronRight className="w-4 h-4" />
-                        </button>
+                        </motion.button>
                       </>
                     )}
                   </div>
@@ -1145,15 +1208,11 @@ const SkillsDevelopment = () => {
           </AnimatePresence>
         )}
         <div className="text-center pt-6 md:pt-8">
-          <p className="text-base md:text-[18px] font-medium mb-4 text-[#4D4F54]">
-            Хочете, щоб ваша дитина опанувала один із перелічених напрямків?
-            Записуйтеся на заняття.
-          </p>
           <motion.button
             onClick={() => setIsConsultationModalOpen(true)}
             className="inline-block bg-accent text-[#1A2518] py-3.5 px-8 md:px-10 text-base md:text-lg font-extrabold rounded-[4px] hover:bg-[#8BC886] transition hover:scale-[1.02] transform duration-300"
           >
-            Записатися на заняття
+            Записатися на безкоштовне заняття
           </motion.button>
         </div>
       </div>

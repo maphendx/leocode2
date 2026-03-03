@@ -558,6 +558,8 @@ const Results = () => {
                     sizes="(max-width: 1024px) 100vw, 58vw"
                     className="object-cover group-hover:scale-[1.025] transition-transform duration-500"
                     priority
+                    fetchPriority="high"
+                    quality={68}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/8 to-transparent" />
 

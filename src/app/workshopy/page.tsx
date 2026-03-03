@@ -31,7 +31,7 @@ const workshops = [
     description:
       'Створіть свій перший вебсайт за один день! Вивчіть HTML, CSS та основи JavaScript.',
     duration: '4 години',
-    age: '10-16 років',
+    age: '7-15 років',
     level: 'Початковий',
     icon: <Globe className="h-7 w-7" />,
     color: 'from-blue-500/20 to-cyan-500/20',
@@ -43,7 +43,7 @@ const workshops = [
     description:
       'Поринте в світ програмування на Python. Створюйте ігри, чат-ботів та автоматизуйте рутинні задачі.',
     duration: '5 годин',
-    age: '11-17 років',
+    age: '7-15 років',
     level: 'Початковий',
     icon: <Code2 className="h-7 w-7" />,
     color: 'from-green-500/20 to-emerald-500/20',
@@ -55,7 +55,7 @@ const workshops = [
     description:
       'Створіть власний мобільний додаток з нуля, який буде працювати на Android та iOS.',
     duration: '6 годин',
-    age: '13-17 років',
+    age: '7-15 років',
     level: 'Середній',
     icon: <Smartphone className="h-7 w-7" />,
     color: 'from-purple-500/20 to-pink-500/20',
@@ -67,7 +67,7 @@ const workshops = [
     description:
       'Зберіть та запрограмуйте свого першого робота на базі Arduino. Практика з електронікою та сенсорами.',
     duration: '5 годин',
-    age: '9-14 років',
+    age: '7-15 років',
     level: 'Початковий',
     icon: <Cpu className="h-7 w-7" />,
     color: 'from-orange-500/20 to-amber-500/20',
@@ -79,7 +79,7 @@ const workshops = [
     description:
       'Дізнайтесь як працює AI, навчіться створювати промпти та побудуйте свій AI-проєкт.',
     duration: '4 години',
-    age: '12-17 років',
+    age: '7-15 років',
     level: 'Середній',
     icon: <Bot className="h-7 w-7" />,
     color: 'from-indigo-500/20 to-violet-500/20',
@@ -91,7 +91,7 @@ const workshops = [
     description:
       'Навчіться створювати красиві та зручні інтерфейси для вебсайтів та мобільних додатків.',
     duration: '4 години',
-    age: '10-16 років',
+    age: '7-15 років',
     level: 'Початковий',
     icon: <Palette className="h-7 w-7" />,
     color: 'from-pink-500/20 to-rose-500/20',

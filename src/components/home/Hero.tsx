@@ -472,6 +472,7 @@ const Hero = () => {
             alt="Leo Code"
             fill
             priority={true}
+            fetchPriority="high"
             className="object-cover"
             sizes="100vw"
             quality={70}
@@ -513,8 +514,7 @@ const Hero = () => {
         </video>
 
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(12,13,17,0.72)_0%,rgba(17,18,23,0.56)_42%,rgba(17,18,23,0.70)_100%)]" />
-        <div className="absolute inset-y-0 right-0 hidden lg:block w-[42%] bg-[#111318]/38" />
-        <div className="absolute inset-y-0 left-1/2 hidden lg:block w-px bg-white/10" />
+        <div className="absolute inset-y-0 right-0 hidden lg:block w-[42%] bg-[linear-gradient(90deg,rgba(17,19,24,0)_0%,rgba(17,19,24,0.24)_36%,rgba(17,19,24,0.42)_100%)]" />
 
         <div className="relative z-1 container h-full pt-26 pb-6 sm:pt-28 sm:pb-8 lg:pt-33 lg:pb-10">
           <div className="grid h-full grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] gap-6 lg:gap-10 items-center">

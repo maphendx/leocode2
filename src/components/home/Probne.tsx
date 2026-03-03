@@ -40,21 +40,7 @@ const Probne = () => {
   const phoneDropdownRef = useRef<HTMLDivElement>(null)
   const startTimeRef = useRef(Date.now())
 
-  const ageOptions = [
-    '6 років',
-    '7 років',
-    '8 років',
-    '9 років',
-    '10 років',
-    '11 років',
-    '12 років',
-    '13 років',
-    '14 років',
-    '15 років',
-    '16 років',
-    '17 років',
-    '18 років',
-  ]
+  const ageOptions = Array.from({ length: 9 }, (_, i) => `${i + 7} років`)
 
   const validatePhone = (value: string) => {
     const digitsOnly = value.replace(/\s+/g, '')
@@ -78,8 +64,8 @@ const Probne = () => {
     const isAgeValid =
       currentChildAge.trim() !== '' &&
       /^\d+$/.test(currentChildAge) &&
-      parseInt(currentChildAge) >= 5 &&
-      parseInt(currentChildAge) <= 16
+      parseInt(currentChildAge) >= 7 &&
+      parseInt(currentChildAge) <= 15
 
     setValidationErrors({
       name: currentName.trim().length > 0 && !isNameValid,
@@ -245,8 +231,8 @@ const Probne = () => {
     const value = e.target.value
     // Allow only digits
     if (value === '' || /^\d+$/.test(value)) {
-      // Further limit to age range 5-16
-      if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 16)) {
+      // Further limit to age range 7-15
+      if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 15)) {
         setChildAge(value)
         validateForm(name, phone, value)
       }
@@ -266,8 +252,8 @@ const Probne = () => {
         childAge:
           childAge === '' ||
           !/^\d+$/.test(childAge) ||
-          parseInt(childAge) < 5 ||
-          parseInt(childAge) > 16,
+          parseInt(childAge) < 7 ||
+          parseInt(childAge) > 15,
       })
       return
     }
@@ -495,7 +481,7 @@ const Probne = () => {
                         inputMode="numeric"
                         pattern="[0-9]*"
                         className="w-full px-5 py-3 border-0 focus:outline-none focus:ring-0 text-primary rounded-[10px]"
-                        placeholder="Вік дитини (5-16)"
+                        placeholder="Вік дитини (7-15)"
                         name="SiteForm[childAge]"
                         value={childAge}
                         onChange={handleAgeChange}
@@ -505,7 +491,7 @@ const Probne = () => {
                     </div>
                     {validationErrors.childAge && (
                       <p className="text-red-500 text-sm mt-2 text-left ml-2 transition-opacity">
-                        Будь ласка, введіть коректний вік дитини (5-16 років)
+                        Будь ласка, введіть коректний вік дитини (7-15 років)
                       </p>
                     )}
                   </div>

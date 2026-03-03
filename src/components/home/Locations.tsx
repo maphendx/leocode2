@@ -104,7 +104,7 @@ export default function Locations() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.08,
       },
     },
   }
@@ -115,9 +115,8 @@ export default function Locations() {
       opacity: 1,
       y: 0,
       transition: {
-        type: 'spring',
-        stiffness: 100,
-        damping: 15,
+        duration: 0.48,
+        ease: [0.22, 1, 0.36, 1],
       },
     },
   }
@@ -204,6 +203,10 @@ export default function Locations() {
                 variants={itemVariants}
                 className="group"
                 onClick={() => handleLocationClick(location.id)}
+                whileHover={{
+                  y: -2,
+                  transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+                }}
               >
                 <div
                   className={`h-full overflow-hidden rounded-[8px] transition-all duration-300 border cursor-pointer relative bg-[#2A2D35] p-3.5 md:p-4 ${
@@ -218,7 +221,7 @@ export default function Locations() {
                       alt={location.name}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/5 to-transparent"></div>
                   </div>
@@ -326,7 +329,9 @@ export default function Locations() {
                       alt={activeLocation.name}
                       fill
                       sizes="(max-width: 1024px) 100vw, 50vw"
-                      loading={activeImageIndex === 0 ? 'eager' : 'lazy'}
+                      loading="lazy"
+                      fetchPriority="low"
+                      quality={70}
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>

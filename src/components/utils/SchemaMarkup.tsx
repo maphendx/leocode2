@@ -18,7 +18,7 @@ const SchemaMarkup: React.FC = () => {
     url: 'https://leocode.com.ua',
     logo: 'https://leocode.com.ua/icon-512.png',
     description:
-      'LEOCODE - Інноваційний простір для дітей від 5 до 16 років, де кожен може розвивати логічне мислення, креативність та навички вирішення складних завдань.',
+      'LEOCODE - Інноваційний простір для дітей від 7 до 15 років, де кожен може розвивати логічне мислення, креативність та навички вирішення складних завдань.',
     sameAs: [
       // Add your social media profiles here if available
       'https://www.tiktok.com/@leocode.kids',
@@ -46,7 +46,7 @@ const SchemaMarkup: React.FC = () => {
       '@id': 'https://leocode.com.ua/#organization',
     },
     inLanguage: 'uk-UA',
-    description: 'LEOCODE - Інноваційний простір для дітей від 5 до 16 років',
+    description: 'LEOCODE - Інноваційний простір для дітей від 7 до 15 років',
     keywords:
       'leocode, leo code, програмування для дітей, IT курси, школа дронів, робототехніка',
   }
@@ -90,7 +90,7 @@ const SchemaMarkup: React.FC = () => {
     audience: {
       '@type': 'EducationalAudience',
       educationalRole: 'Учень',
-      audienceType: 'Діти віком від 5 до 16 років',
+      audienceType: 'Діти віком від 7 до 15 років',
     },
   }
 

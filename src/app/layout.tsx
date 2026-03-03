@@ -21,10 +21,10 @@ export const metadata: Metadata = {
   title: {
     template: '%s | LEOCODE (LEO CODE) - Інноваційний простір для дітей',
     default:
-      'LEOCODE - Інноваційний простір для дітей від 5 до 16 років у Львові',
+      'LEOCODE - Інноваційний простір для дітей від 7 до 15 років у Львові',
   },
   description:
-    'LEOCODE - Інноваційний простір для дітей від 5 до 16 років, де кожен може розвивати логічне мислення, креативність та навички вирішення складних завдань.',
+    'LEOCODE - Інноваційний простір для дітей від 7 до 15 років, де кожен може розвивати логічне мислення, креативність та навички вирішення складних завдань.',
   keywords: [
     'leocode',
     'leo code',
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     locale: 'uk_UA',
     url: baseUrl,
     siteName: 'LEOCODE',
-    title: 'LEOCODE - Інноваційний простір для дітей від 5 до 16 років',
+    title: 'LEOCODE - Інноваційний простір для дітей від 7 до 15 років',
     images: [{ url: '/new_logo.svg', width: 1200, height: 630 }],
   },
   robots: {
@@ -98,7 +98,7 @@ export default function RootLayout({
         <Script
           src="https://cdn.pulse.is/livechat/loader.js"
           data-live-chat-id="699ecbde408e4cf75b0447cb"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </body>
     </html>

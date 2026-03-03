@@ -67,7 +67,7 @@ const MENU_ITEMS = [
   },
   {
     title: 'Події',
-    href: '/naukovi-yarmarky',
+    href: '/#podii',
     hasDropdown: false,
     isScroll: false,
     isSpecial: false,
@@ -417,14 +417,25 @@ const Header = () => {
                     handleClick(e, item.href, item.isScroll, item.isSpecial)
                   }
                   className={cn(
-                    'flex items-center text-white hover:text-white font-extrabold uppercase',
-                    'tracking-wide transition-colors duration-200 text-[13px] xl:text-[15px] whitespace-nowrap',
-                    item.hasDropdown && 'group-hover:text-white',
+                    'relative flex items-center text-white/92 font-extrabold uppercase',
+                    'tracking-wide transition-colors duration-300 text-[13px] xl:text-[15px] whitespace-nowrap',
+                    'hover:text-[#ECF9EA]',
+                    item.hasDropdown && 'group-hover:text-[#ECF9EA]',
                   )}
                 >
-                  {item.title}
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      'pointer-events-none absolute -bottom-1 left-0 right-0 h-[2px] origin-left scale-x-0',
+                      'bg-[linear-gradient(90deg,rgba(152,207,147,0)_0%,rgba(152,207,147,0.92)_40%,rgba(152,207,147,0.48)_100%)]',
+                      'transition-transform duration-300 group-hover:scale-x-100',
+                    )}
+                  />
+                  <span className="relative z-10 transition-transform duration-300 group-hover:translate-x-[2px]">
+                    {item.title}
+                  </span>
                   {item.hasDropdown && (
-                    <ChevronDown className="ml-1 h-3.5 w-3.5 text-white/80 transition-transform group-hover:rotate-180" />
+                    <ChevronDown className="relative z-10 ml-1 h-3.5 w-3.5 text-white/80 transition-transform duration-300 group-hover:rotate-180 group-hover:translate-x-[2px]" />
                   )}
                 </Link>
                 {item.hasDropdown && (
