@@ -48,7 +48,7 @@ const MENU_ITEMS = [
     dropdownItems: [
       { title: 'ІТ Напрямки', href: '/#napryamki', tag: 'IT школа' },
       { title: 'Дрон Напрямки', href: '/#napryamki', tag: 'DRONE школа' },
-      { title: 'Онлайн навчання', href: '/#probne' },
+      { title: 'Онлайн навчання', href: '/#online-learning' },
     ],
   },
   {

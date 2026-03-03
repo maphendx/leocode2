@@ -117,6 +117,14 @@ const Footer = () => {
               </h4>
               <div className="flex flex-wrap gap-4">
                 <a
+                  href="https://www.facebook.com/p/LeoCodeKids-61565577578490/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[15px] font-semibold text-white/78 hover:text-white transition-colors duration-200"
+                >
+                  Facebook
+                </a>
+                <a
                   href="https://instagram.com/leocode.kids"
                   target="_blank"
                   rel="noopener noreferrer"
