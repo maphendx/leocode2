@@ -338,7 +338,7 @@ const Hero = () => {
   useEffect(() => {
     const updateViewportFlags = () => {
       const isDesktop = window.innerWidth >= 1024
-      const isShortHeight = window.innerHeight <= 860
+      const isShortHeight = window.innerHeight <= 760
       setIsShortDesktopViewport(isDesktop && isShortHeight)
     }
 
