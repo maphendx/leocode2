@@ -10,6 +10,7 @@ const mulish = Mulish({
   weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin', 'cyrillic'],
   display: 'swap',
+  preload: false,
 })
 
 // Get environment variables
@@ -91,15 +92,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const isProduction = process.env.NODE_ENV === 'production'
+
   return (
     <html lang="uk" className={mulish.variable}>
       <body className="antialiased" suppressHydrationWarning>
         <ClientBody>{children}</ClientBody>
-        <Script
-          src="https://cdn.pulse.is/livechat/loader.js"
-          data-live-chat-id="699ecbde408e4cf75b0447cb"
-          strategy="lazyOnload"
-        />
+        {isProduction && (
+          <Script
+            src="https://cdn.pulse.is/livechat/loader.js"
+            data-live-chat-id="699ecbde408e4cf75b0447cb"
+            strategy="lazyOnload"
+          />
+        )}
       </body>
     </html>
   )
