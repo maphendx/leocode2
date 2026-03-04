@@ -13,7 +13,7 @@ const Footer = () => {
                 alt="LeoCode"
                 width={180}
                 height={72}
-                className="h-12 w-auto object-contain object-left"
+                className="h-auto w-[clamp(92px,30vw,160px)] object-contain object-left"
               />
             </Link>
             <p className="max-w-[380px] text-[17px] leading-relaxed text-white/76">

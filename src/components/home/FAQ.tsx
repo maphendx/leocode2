@@ -12,8 +12,8 @@ const faqItems: FAQItem[] = [
     question: 'У якому віці можна навчатись у LeoCode?',
     answer: (
       <p>
-        Навчання в нашому освітньому просторі доступне для дітей віком від 7 до
-        15 років. Ми розробили програми для різних вікових категорій та рівнів
+        Навчання в нашому освітньому просторі можуть відвідувати діти віком від
+        7 до 15 років. Ми розробили програми для різного віку та рівнів
         підготовки, щоб забезпечити комфортний темп навчання для кожної дитини.
       </p>
     ),
@@ -25,12 +25,12 @@ const faqItems: FAQItem[] = [
         <p>
           Безкоштовне заняття триває одну годину. Протягом цього часу діти
           проходять внутрішнє тестування для визначення рівня комп&apos;ютерної
-          грамотності та схильностей до творчого або технічного напряму.
+          грамотності та схильностей дитини до творчого або технічного напрямку.
         </p>
         <p className="mt-3">
-          Діти знайомляться з такими професіями, як дизайнер інтер&apos;єру,
-          графічний дизайнер та розробник сайтів. Також передбачена екскурсія
-          освітнім простором і 3D-фермою та демонстраційний політ на дроні з
+          Знайомляться з такими професіями, як дизайнер інтер&apos;єру, графічним
+          дизайнером та розробником сайтів. Також передбачена екскурсія освітнім
+          простором і 3D-фермою та демонстраційний політ на дроні з
           використанням VR-окулярів.
         </p>
         <p className="mt-3">
@@ -46,12 +46,12 @@ const faqItems: FAQItem[] = [
     answer: (
       <>
         <p>
-          У будні (з понеділка по п&apos;ятницю) заняття можна відвідувати 2 рази
-          на тиждень по 1 годині.
+          У будні, з понеділка по п&apos;ятницю, заняття можна відвідувати 2 рази на
+          тиждень по 1 годині.
         </p>
         <p className="mt-3">
-          У суботу та неділю є можливість відвідувати 1 раз на тиждень, 2
-          години поспіль.
+          На вихідних, в суботу або неділю, є можливість відвідувати 1 раз на
+          тиждень, 2 години поспіль.
         </p>
       </>
     ),
@@ -78,18 +78,20 @@ const faqItems: FAQItem[] = [
     answer: (
       <>
         <p>
-          Наявність домашніх завдань залежить від обраного формату навчання:
+          Наявність домашніх завдань залежить від обраного формату навчання -
           офлайн або онлайн.
         </p>
         <p className="mt-3">
-          В офлайн-форматі домашні завдання не передбачені, оскільки весь
-          практичний матеріал опрацьовується безпосередньо під час занять під
-          супроводом викладача.
+          В офлайн-форматі домашні завдання не передбачені, оскільки вся теорія
+          та практика опрацьовується безпосередньо під час занять під
+          супроводом викладача. Такий підхід забезпечує повне засвоєння теми в
+          межах уроку та надає можливість одразу отримати фідбек й підтримку.
         </p>
         <p className="mt-3">
-          В онлайн-форматі домашні завдання надаються один раз на два тижні та
-          мають системний характер. Усі виконані завдання перевіряються
-          викладачем із наданням зворотного зв&apos;язку.
+          В онлайн-форматі домашні завдання надаються один раз на два тижні. Усі
+          виконані завдання обов&apos;язково перевіряються викладачем із наданням
+          зворотного зв&apos;язку, що дозволяє своєчасно скоригувати помилки та
+          поглибити розуміння теми.
         </p>
       </>
     ),
@@ -114,10 +116,10 @@ const faqItems: FAQItem[] = [
     question: 'Чи переходять діти в укриття у разі повітряної тривоги?',
     answer: (
       <p>
-        Адміністрація LeoCode слідкує за актуальною ситуацією та сигналами
-        повітряної тривоги. У разі реальної загрози всі учні переводяться в
-        безпечне укриття, розташоване поруч із навчальною локацією, щоб
-        гарантувати їхню безпеку та спокій.
+        Адміністрація слідкує за актуальною ситуацією та сигналами повітряної
+        тривоги. У разі реальної загрози всі учні переводяться в безпечне
+        укриття, розташоване поруч із навчальною локацією, щоб гарантувати
+        їхню безпеку та спокій.
       </p>
     ),
   },
@@ -150,27 +152,27 @@ const faqItems: FAQItem[] = [
     ),
   },
   {
-    question: 'Як обрати напрямок або курс навчання, якщо дитина не визначилась?',
+    question: 'Як обрати напрямок або курс навчання, якщо дитина не може визначитися?',
     answer: (
       <p>
-        Якщо дитина ще не визначилася з напрямком або курсом, є можливість
-        відвідати безкоштовне заняття, щоб визначити її інтереси та підібрати
-        оптимальний формат навчання.
+        Якщо дитина ще не визначилася з напрямком/курсом, то є можливість
+        відвідати безкоштовне заняття.
       </p>
     ),
   },
 ]
 
 export default function FAQ() {
-  const [openItems, setOpenItems] = useState<number[]>([0]) // First item open by default
+  const [openItem, setOpenItem] = useState<number | null>(null)
   const answerRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
   const [heights, setHeights] = useState<{ [key: number]: number }>({})
+  const midpoint = Math.ceil(faqItems.length / 2)
   const leftColumnItems = faqItems
+    .slice(0, midpoint)
     .map((item, index) => ({ item, index }))
-    .filter(({ index }) => index % 2 === 0)
   const rightColumnItems = faqItems
-    .map((item, index) => ({ item, index }))
-    .filter(({ index }) => index % 2 !== 0)
+    .slice(midpoint)
+    .map((item, index) => ({ item, index: index + midpoint }))
 
   const updateHeights = () => {
     faqItems.forEach((_, index) => {
@@ -204,23 +206,19 @@ export default function FAQ() {
     }, 50)
 
     return () => clearTimeout(timer)
-  }, [openItems])
+  }, [openItem])
 
   const toggleItem = (index: number) => {
-    setOpenItems((prevOpenItems) =>
-      prevOpenItems.includes(index)
-        ? prevOpenItems.filter((i) => i !== index)
-        : [...prevOpenItems, index]
-    )
+    setOpenItem((prevOpenItem) => (prevOpenItem === index ? null : index))
   }
 
   const renderFaqItem = (item: FAQItem, index: number) => {
-    const isOpen = openItems.includes(index)
+    const isOpen = openItem === index
 
     return (
       <div
         key={index}
-        className={`bg-white transition-all duration-300 ${
+        className={`rounded-[4px] border border-black/[0.04] bg-white transition-all duration-300 ${
           isOpen
             ? 'shadow-[0_12px_30px_rgba(34,38,44,0.06)]'
             : 'shadow-[0_2px_10px_rgba(34,38,44,0.03)]'
@@ -228,16 +226,16 @@ export default function FAQ() {
       >
         <button
           type="button"
-          className="flex w-full items-start justify-between gap-4 px-4 py-4 text-left md:px-5 md:py-5"
+          className="flex w-full items-start justify-between gap-3 px-[clamp(14px,1.3vw,22px)] py-[clamp(14px,1.1vw,20px)] text-left"
           onClick={() => toggleItem(index)}
           aria-expanded={isOpen}
           aria-controls={`faq-answer-${index}`}
         >
-          <h3 className="pr-2 text-[17px] font-semibold leading-snug text-[#232529] md:text-[18px]">
+          <h3 className="pr-2 text-[clamp(16px,1.05vw,20px)] font-semibold leading-[1.34] text-[#232529]">
             {item.question}
           </h3>
           <span
-            className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center text-[#232529] transition-all duration-300 ${
+            className={`mt-0.5 flex h-[clamp(30px,2.2vw,38px)] w-[clamp(30px,2.2vw,38px)] shrink-0 items-center justify-center text-[#232529] transition-all duration-300 ${
               isOpen
                 ? 'bg-primary/12'
                 : 'bg-black/[0.03]'
@@ -274,7 +272,7 @@ export default function FAQ() {
             ref={(el) => {
               answerRefs.current[index] = el
             }}
-            className="px-4 pb-4 pt-1 text-[15px] leading-relaxed text-[#4f545a] md:px-5 md:pb-5"
+            className="px-[clamp(14px,1.3vw,22px)] pb-[clamp(14px,1.2vw,22px)] pt-1 text-[clamp(15px,0.9vw,17px)] leading-[1.72] text-[#4f545a]"
           >
             <div className="mb-4 h-px w-full bg-black/6" />
             {item.answer}
@@ -286,23 +284,23 @@ export default function FAQ() {
 
   return (
     <section
-      className="lc-section py-16 w-full md:py-20"
+      className="lc-section w-full py-14 sm:py-16 md:py-20"
       id="faq"
     >
       <div className="container w-full">
-        <h2 className="lc-section-title text-center mb-4 w-full">
+        <h2 className="lc-section-title mb-4 w-full text-center">
           ПОШИРЕНІ ПИТАННЯ
         </h2>
-        <p className="lc-section-lead text-center max-w-3xl mx-auto mb-10 md:mb-12">
+        <p className="lc-section-lead mx-auto mb-8 max-w-3xl text-center md:mb-12">
           Короткі відповіді на найчастіші запитання про навчання, формат та
           запис на заняття.
         </p>
 
-        <div className="mx-auto grid w-full grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-5">
-          <div className="space-y-4">
+        <div className="mx-auto flex w-full flex-col gap-3 sm:gap-4 lg:flex-row lg:items-start lg:gap-5">
+          <div className="space-y-3 sm:space-y-4 lg:basis-0 lg:flex-1">
             {leftColumnItems.map(({ item, index }) => renderFaqItem(item, index))}
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4 lg:basis-0 lg:flex-1">
             {rightColumnItems.map(({ item, index }) => renderFaqItem(item, index))}
           </div>
         </div>

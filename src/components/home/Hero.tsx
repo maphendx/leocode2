@@ -236,6 +236,7 @@ const Hero = () => {
   const [videoError, setVideoError] = useState(false)
   const [videoLoaded, setVideoLoaded] = useState(false)
   const [isInViewport, setIsInViewport] = useState(false)
+  const [isShortDesktopViewport, setIsShortDesktopViewport] = useState(false)
   const [leadForm, setLeadForm] = useState<HeroLeadFormState>(initialHeroLeadForm)
   const [leadErrors, setLeadErrors] = useState<HeroLeadFormErrors>(initialHeroLeadErrors)
   const [isLeadSubmitting, setIsLeadSubmitting] = useState(false)
@@ -333,6 +334,18 @@ const Hero = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [videoLoaded, videoError, isInViewport])
+
+  useEffect(() => {
+    const updateViewportFlags = () => {
+      const isDesktop = window.innerWidth >= 1024
+      const isShortHeight = window.innerHeight <= 860
+      setIsShortDesktopViewport(isDesktop && isShortHeight)
+    }
+
+    updateViewportFlags()
+    window.addEventListener('resize', updateViewportFlags)
+    return () => window.removeEventListener('resize', updateViewportFlags)
+  }, [])
 
   const handleVideoCanPlay = () => {
     setVideoLoaded(true)
@@ -516,8 +529,16 @@ const Hero = () => {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(12,13,17,0.72)_0%,rgba(17,18,23,0.56)_42%,rgba(17,18,23,0.70)_100%)]" />
         <div className="absolute inset-y-0 right-0 hidden lg:block w-[42%] bg-[linear-gradient(90deg,rgba(17,19,24,0)_0%,rgba(17,19,24,0.24)_36%,rgba(17,19,24,0.42)_100%)]" />
 
-        <div className="relative z-1 container h-full pt-26 pb-6 sm:pt-28 sm:pb-8 lg:pt-33 lg:pb-10">
-          <div className="grid h-full grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] gap-6 lg:gap-10 items-center">
+        <div
+          className={`relative z-1 container h-full pt-26 pb-6 sm:pt-28 sm:pb-8 ${
+            isShortDesktopViewport ? 'lg:pt-30 lg:pb-8' : 'lg:pt-33 lg:pb-10'
+          }`}
+        >
+          <div
+            className={`grid h-full grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] gap-6 lg:gap-10 ${
+              isShortDesktopViewport ? 'lg:items-start' : 'lg:items-center'
+            }`}
+          >
             <div className="flex flex-col justify-center lg:pr-6 text-white">
               <h1 className="m-0 max-w-195 text-[clamp(2.05rem,5vw,4.5rem)] font-extrabold leading-[1.03] tracking-[-0.02em] text-white">
                 <span className="block whitespace-nowrap text-[clamp(1.35rem,4.6vw,4.5rem)]">
@@ -552,8 +573,18 @@ const Hero = () => {
               </div>
             </div>
 
-            <div className="hidden lg:flex items-center justify-end">
-              <div className="relative h-135 xl:h-160 w-full max-w-135 rounded-[8px] border border-white/10 bg-[#171A21]/58 shadow-[0_30px_70px_rgba(5,8,12,0.35)] backdrop-blur-[2px]">
+            <div
+              className={`hidden lg:flex justify-end ${
+                isShortDesktopViewport ? 'items-start' : 'items-center'
+              }`}
+            >
+              <div
+                className={`relative w-full max-w-135 rounded-[8px] border border-white/10 bg-[#171A21]/58 shadow-[0_30px_70px_rgba(5,8,12,0.35)] backdrop-blur-[2px] ${
+                  isShortDesktopViewport
+                    ? 'min-h-[31rem] xl:min-h-[34rem]'
+                    : 'h-135 xl:h-160'
+                }`}
+              >
                 <div className="absolute inset-0 rounded-[8px] bg-linear-to-b from-white/4 via-transparent to-black/15" />
                 <div className="absolute inset-0 rounded-[8px] bg-[radial-gradient(circle_at_18%_12%,rgba(255,255,255,0.06),transparent_35%),radial-gradient(circle_at_86%_80%,rgba(255,255,255,0.04),transparent_40%)]" />
                 <div className="relative h-full p-5 xl:p-6">

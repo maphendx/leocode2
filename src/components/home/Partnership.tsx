@@ -30,15 +30,27 @@ const Partnership = () => {
               </h2>
               <div className="max-w-[64ch] space-y-3 md:space-y-3.5 lg:border-l lg:border-white/10 lg:pl-6">
                 <p className="text-white/88 text-[16px] md:text-[18px] leading-[1.55]">
-                  LeoCode співпрацює зі школами, щоб зробити сучасну
-                  технологічну освіту доступною для дітей уже під час
-                  навчання.
+                  <strong className="font-extrabold text-white">LEOCODE</strong>{' '}
+                  співпрацює зі <strong className="font-semibold text-white">школами</strong>,
+                  щоб зробити{' '}
+                  <strong className="font-semibold text-white">
+                    сучасну технологічну освіту доступною
+                  </strong>{' '}
+                  для дітей уже{' '}
+                  <strong className="font-semibold text-white">під час навчання</strong>.
                 </p>
                 <p className="text-white/80 text-[16px] md:text-[18px] leading-[1.55]">
-                  Разом із вчителями ми доповнюємо шкільну програму практикою:
-                  програмуванням, 3D-моделюванням і роботою з дронами. Так
-                  учні отримують реальний досвід і легше обирають технологічний
-                  напрямок, який їм близький.
+                  Разом із вчителями ми{' '}
+                  <strong className="font-semibold text-white">
+                    доповнюємо шкільну програму практикою
+                  </strong>
+                  : <strong className="font-semibold text-white">програмуванням</strong>,{' '}
+                  <strong className="font-semibold text-white">3D-моделюванням</strong> і{' '}
+                  <strong className="font-semibold text-white">роботою з дронами</strong>. Так
+                  учні <strong className="font-semibold text-white">отримують реальний досвід</strong>{' '}
+                  і легше обирають{' '}
+                  <strong className="font-semibold text-white">технологічний напрямок</strong>,
+                  який їм близький.
                 </p>
               </div>
             </div>
@@ -92,7 +104,7 @@ const Partnership = () => {
               <div className="relative grid min-h-[200px] grid-cols-1 md:min-h-[245px] lg:min-h-[285px] lg:grid-cols-[1.06fr_0.94fr]">
                 <div className="relative min-h-[155px] lg:order-1">
                   <Image
-                    src="/images/course.jpeg"
+                    src="/images/quest/quest1.jpeg"
                     alt="Науковий Квест"
                     fill
                     sizes="(max-width: 1024px) 100vw, 42vw"
@@ -139,7 +151,7 @@ const Partnership = () => {
                 </div>
                 <div className="relative order-1 min-h-[155px] lg:order-2">
                   <Image
-                    src="/images/course.jpeg"
+                    src="/images/yarmarka/yar_1.jpg"
                     alt="Наукові ярмарки"
                     fill
                     sizes="(max-width: 1024px) 100vw, 42vw"

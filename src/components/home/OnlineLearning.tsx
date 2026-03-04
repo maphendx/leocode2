@@ -9,6 +9,7 @@ type OnlineCard = {
   title: string
   age: string
   image: string
+  imagePosition: string
   skills: string[]
 }
 
@@ -16,8 +17,9 @@ const onlineCards: OnlineCard[] = [
   {
     label: 'для дітей',
     title: 'Онлайн програма для дітей',
-    age: '7-15 років',
-    image: '/images/scratch.jpeg',
+    age: '7-10 років',
+    image: '/images/online/7-10.png',
+    imagePosition: 'center 36%',
     skills: [
       "Комп'ютерна грамотність",
       'Дизайн у Canva (комікс)',
@@ -28,8 +30,9 @@ const onlineCards: OnlineCard[] = [
   {
     label: 'для підлітків',
     title: 'Онлайн програма для підлітків',
-    age: '7-15 років',
-    image: '/images/figma.jpeg',
+    age: '11-14 років',
+    image: '/images/online/11-14.png',
+    imagePosition: 'center 34%',
     skills: [
       'Дизайн у Canva (брендбук)',
       'Прототипування у Figma',
@@ -100,13 +103,14 @@ const OnlineLearning = () => {
                 </div>
               </div>
 
-              <div className="relative h-[190px] md:h-[220px]">
+              <div className="relative h-[220px] md:h-[280px]">
                 <Image
                   src={card.image}
                   alt={card.title}
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  style={{ objectPosition: card.imagePosition }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/8 to-black/24" />
                 <div className="absolute inset-x-0 bottom-0 p-3">
@@ -226,15 +230,20 @@ const OnlineLearning = () => {
                       <div className="inline-flex px-3 py-1 rounded-[4px] border border-white/25 text-white/90 text-[12px] font-semibold uppercase">
                         24 заняття
                       </div>
-                      <div className="inline-flex px-2 py-1 rounded-[4px] bg-[#8ED28A] text-[#1A2518] text-[11px] font-extrabold uppercase">
-                        Вигідно
-                      </div>
+                      <motion.div
+                        className="inline-flex origin-center rotate-[-6deg] px-3.5 py-1.5 rounded-[6px] bg-[#8ED28A] text-[#132116] text-[16px] font-extrabold uppercase shadow-[0_8px_18px_rgba(142,210,138,0.24)]"
+                        animate={{ y: [0, -2, 0], scale: [1, 1.04, 1] }}
+                        transition={{
+                          duration: 2.6,
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                        }}
+                      >
+                        -20%
+                      </motion.div>
                     </div>
                     <div className="mt-3 text-[#8ED28A] text-[30px] md:text-[34px] font-extrabold leading-none tracking-[-0.03em]">
                       7140 грн
-                    </div>
-                    <div className="mt-2 inline-flex px-2.5 py-1 rounded-[4px] border border-[#8ED28A]/55 text-[#C2F0BF] text-[16px] font-extrabold leading-none">
-                      -20%
                     </div>
                   </motion.div>
                 </div>

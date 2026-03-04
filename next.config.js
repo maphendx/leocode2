@@ -1,17 +1,8 @@
-// Remove the NextPWA import and wrapper for now
-// import NextPWA from 'next-pwa';
-// 
-// const withPWA = NextPWA({
-//   dest: 'public',
-//   disable: true,
-//   register: true,
-//   skipWaiting: true,
-// });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  
+
   images: {
     remotePatterns: [
       {
@@ -33,7 +24,7 @@ const nextConfig = {
   },
   poweredByHeader: false,
   compress: true,
-  
+
   // Security Headers
   async headers() {
     return [
