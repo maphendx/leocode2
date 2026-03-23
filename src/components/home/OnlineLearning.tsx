@@ -239,7 +239,7 @@ const OnlineLearning = () => {
                           ease: 'easeInOut',
                         }}
                       >
-                        -20%
+                        -15%
                       </motion.div>
                     </div>
                     <div className="mt-3 text-[#8ED28A] text-[30px] md:text-[34px] font-extrabold leading-none tracking-[-0.03em]">

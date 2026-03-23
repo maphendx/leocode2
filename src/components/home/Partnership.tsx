@@ -30,27 +30,26 @@ const Partnership = () => {
               </h2>
               <div className="max-w-[64ch] space-y-3 md:space-y-3.5 lg:border-l lg:border-white/10 lg:pl-6">
                 <p className="text-white/88 text-[16px] md:text-[18px] leading-[1.55]">
-                  <strong className="font-extrabold text-white">LEOCODE</strong>{' '}
-                  співпрацює зі <strong className="font-semibold text-white">школами</strong>,
-                  щоб зробити{' '}
+                  <strong className="font-extrabold text-white">LeoCode</strong>{' '}
+                  активно співпрацює з{' '}
                   <strong className="font-semibold text-white">
-                    сучасну технологічну освіту доступною
-                  </strong>{' '}
-                  для дітей уже{' '}
-                  <strong className="font-semibold text-white">під час навчання</strong>.
+                    державними навчальними закладами
+                  </strong>
+                  , щоб зробити{' '}
+                  <strong className="font-semibold text-white">
+                    технологічну освіту доступною для дітей
+                  </strong>
+                  .
                 </p>
                 <p className="text-white/80 text-[16px] md:text-[18px] leading-[1.55]">
-                  Разом із вчителями ми{' '}
+                  Наша мета —{' '}
                   <strong className="font-semibold text-white">
-                    доповнюємо шкільну програму практикою
-                  </strong>
-                  : <strong className="font-semibold text-white">програмуванням</strong>,{' '}
-                  <strong className="font-semibold text-white">3D-моделюванням</strong> і{' '}
-                  <strong className="font-semibold text-white">роботою з дронами</strong>. Так
-                  учні <strong className="font-semibold text-white">отримують реальний досвід</strong>{' '}
-                  і легше обирають{' '}
-                  <strong className="font-semibold text-white">технологічний напрямок</strong>,
-                  який їм близький.
+                    доповнити шкільну програму практичними навичками
+                  </strong>{' '}
+                  з <strong className="font-semibold text-white">програмування</strong>,{' '}
+                  <strong className="font-semibold text-white">3D-моделювання</strong> та{' '}
+                  <strong className="font-semibold text-white">дронів</strong>, надихаючи учнів на
+                  вибір <strong className="font-semibold text-white">технологічних професій</strong>.
                 </p>
               </div>
             </div>

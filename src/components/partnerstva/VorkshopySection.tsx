@@ -9,7 +9,6 @@ import {
   Users,
 } from 'lucide-react'
 import PartnershipSection from './PartnershipSection'
-import WorkshopMediaSlider from './WorkshopMediaSlider'
 
 type InfoCard = {
   icon: LucideIcon
@@ -18,20 +17,20 @@ type InfoCard = {
 }
 
 const directions = [
-  { title: 'Canva', description: 'афіша, банер і візуал для продукту' },
-  { title: 'HTML', description: 'односторінкова веб-сторінка продукту' },
-  { title: '3D-моделювання', description: '3D-прототип іграшки для магазину' },
+  { title: 'Canva', description: 'візуальний контент для магазину' },
+  { title: 'HTML', description: 'базова веб-сторінка продукту' },
+  { title: '3D-моделювання', description: 'створення іграшки для магазину' },
 ]
 
 const highlights = [
-  'Практичний STEM-воркшоп для 6-8 класів у форматі командного мініспринту.',
-  'Учні проходять шлях від ідеї до презентації готового результату.',
-  'Формуємо цифрові, креативні та комунікаційні навички через реальний кейс.',
+  'Мета воркшопу — ознайомити учнів 6–8 класів із цифровими та креативними напрямками через практичну роботу над реальним проєктом.',
+  'Діяльність учнів спрямована на розвиток цифрової грамотності, креативного мислення та первинного розуміння професій у сфері ІТ.',
+  'Воркшоп показує міжпредметну інтеграцію та практико-орієнтоване навчання з використанням Canva, HTML і 3D.',
 ]
 
 const logisticsCards: InfoCard[] = [
   { icon: Clock3, label: 'Тривалість', value: '1,5 години' },
-  { icon: Users, label: 'Учасники', value: 'від 20 учнів' },
+  { icon: Users, label: 'Кількість учасників', value: 'від 20 учнів' },
   {
     icon: CalendarDays,
     label: 'Графік',
@@ -43,12 +42,12 @@ const supportCards: InfoCard[] = [
   {
     icon: Gift,
     label: 'Подарунки',
-    value: 'Брендований подарунок для кожного учня та вчителя.',
+    value: 'Брендовані подарунки від нашого простору для кожного учня та вчителя.',
   },
   {
     icon: FilePenLine,
     label: 'Реєстрація',
-    value: 'На старті учні заповнюють коротку Google-форму.',
+    value: 'Реєстрація дітей здійснюється шляхом заповнення Google-форми учнями.',
   },
 ]
 
@@ -74,14 +73,12 @@ export default function VorkshopySection() {
   return (
     <PartnershipSection id="vorkshopy" title="ВОРКШОПИ" theme="dark">
       <div className="space-y-4 md:space-y-5">
-        <WorkshopMediaSlider />
-
         <div className="grid grid-cols-1 xl:grid-cols-[1.15fr_1fr] gap-3.5">
           <div className="space-y-3.5">
             <article className="rounded-[8px] border border-white/10 bg-[linear-gradient(180deg,#2F343D_0%,#2A2D35_100%)] p-4">
               <p className="text-white/92 text-[16px] md:text-[18px] font-semibold leading-relaxed">
                 ВОРКШОП — робота над реальним бізнес-кейсом зі створення
-                продукту для уявного магазину.
+                продукту для магазину іграшок у таких напрямках:
               </p>
             </article>
 
@@ -134,16 +131,20 @@ export default function VorkshopySection() {
               </summary>
               <div className="mt-3 space-y-3 text-white/78 text-[14px] leading-relaxed">
                 <p>
-                  Формат побудований як короткий спринт: ідея, створення,
-                  презентація.
+                  Для освітнього процесу воркшоп є можливістю показати
+                  міжпредметну інтеграцію та впровадження
+                  практико-орієнтованого навчання з використанням сучасних
+                  інструментів: Canva, HTML та 3D.
                 </p>
                 <p>
-                  Учні працюють у командах, а викладачі супроводжують кожен
-                  етап і допомагають презентувати результат.
+                  Окрім розвитку цифрових і креативних навичок, воркшоп має на
+                  меті сформувати в учнів розуміння повного циклу створення
+                  продукту — від ідеї до реалізації готового результату.
                 </p>
                 <p>
-                  Школа отримує готовий інтерактивний формат події, що підсилює
-                  STEM-напрям без додаткового навантаження на вчителів.
+                  Діти вчаться бачити зв’язок між дизайном, технологіями та
+                  бізнесом, усвідомлюють, як створюється продукт для реального
+                  ринку.
                 </p>
               </div>
             </details>
@@ -158,7 +159,7 @@ export default function VorkshopySection() {
 
             <article className="rounded-[8px] border border-white/10 bg-[#2A2D35] p-3.5">
               <p className="text-[11px] uppercase tracking-[0.08em] text-white/60">
-                Локації
+                Локації проведення
               </p>
               <ul className="mt-2 space-y-1.5">
                 {locations.map((location) => (

@@ -54,6 +54,120 @@ interface FilterOption {
 
 const COURSE_GROUP_SIZE_TEXT = 'Кількість дітей в навчальній групі 6-8'
 
+const ProgressPathIcon = ({
+  index,
+  lastIndex,
+}: {
+  index: number
+  lastIndex: number
+}) => {
+  if (index === 0) {
+    return <Star size={16} />
+  }
+
+  if (index === lastIndex) {
+    return <Trophy size={16} />
+  }
+
+  return <Award size={16} />
+}
+
+const buildProgressThreadPath = (count: number) => {
+  if (count < 2) {
+    return ''
+  }
+
+  const step = 1000 / count
+  const centers = Array.from({ length: count }, (_, idx) => step * (idx + 0.5))
+
+  if (count === 2) {
+    const [x1, x2] = centers
+    return `M ${x1} 26 C ${x1 + 55} 38, ${x2 - 55} 38, ${x2} 26`
+  }
+
+  if (count === 3) {
+    const [x1, x2, x3] = centers
+    return [
+      `M ${x1} 26`,
+      `C ${x1 + 55} 38, ${x2 - 65} 38, ${x2} 26`,
+      `C ${x2 + 32} 8, ${x2 + 92} 6, ${x2 + 78} 34`,
+      `C ${x2 + 62} 58, ${x2 + 8} 56, ${x2 + 14} 24`,
+      `C ${x2 + 24} 6, ${x3 - 52} 14, ${x3} 26`,
+    ].join(' ')
+  }
+
+  if (count === 4) {
+    const [x1, x2, x3, x4] = centers
+    const loopAnchor = (x2 + x3) / 2
+
+    return [
+      `M ${x1} 26`,
+      `C ${x1 + 58} 40, ${x2 - 72} 42, ${x2} 26`,
+      `C ${x2 + 28} 10, ${loopAnchor - 8} -2, ${loopAnchor + 10} 18`,
+      `C ${loopAnchor + 34} 42, ${loopAnchor + 20} 60, ${loopAnchor - 18} 58`,
+      `C ${loopAnchor - 64} 54, ${loopAnchor - 76} 10, ${loopAnchor - 18} 18`,
+      `C ${loopAnchor + 40} 28, ${x3 - 42} 12, ${x3} 26`,
+      `C ${x3 + 54} 8, ${x4 - 64} 10, ${x4} 26`,
+    ].join(' ')
+  }
+
+  return centers.slice(1).reduce((path, center, idx) => {
+    const previous = centers[idx]
+    const segment = center - previous
+    const lift = idx % 2 === 0 ? -12 : 12
+
+    return `${path} C ${previous + segment * 0.24} ${26 + lift}, ${center - segment * 0.24} ${26 - lift}, ${center} 26`
+  }, `M ${centers[0]} 26`)
+}
+
+const ProgressRowThread = ({ count }: { count: number }) => {
+  const path = buildProgressThreadPath(count)
+
+  if (!path) {
+    return null
+  }
+
+  return (
+    <svg
+      viewBox="0 0 1000 64"
+      className="pointer-events-none absolute inset-x-0 top-0 h-14 w-full"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <path
+        d={path}
+        fill="none"
+        stroke="rgba(255,255,255,0.14)"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+const ProgressTurnThread = ({
+  side,
+}: {
+  side: 'left' | 'right'
+}) => {
+  const path =
+    side === 'right'
+      ? 'M20 0 C 36 2, 41 14, 30 18 C 18 22, 15 30, 20 38'
+      : 'M20 0 C 4 2, -1 14, 10 18 C 22 22, 25 30, 20 38'
+
+  return (
+    <svg viewBox="0 0 40 38" className="h-full w-full" aria-hidden="true">
+      <path
+        d={path}
+        fill="none"
+        stroke="rgba(255,255,255,0.14)"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 const SkillsDevelopment = () => {
   const isMounted = useIsMounted()
 
@@ -62,9 +176,9 @@ const SkillsDevelopment = () => {
       {
         title: 'Графічний дизайн. Сервіс Canva',
         description:
-          'Курс допомагає дітям розвинути креативність та навички дизайну за допомогою зручного онлайн-сервісу Canva. Діти навчаться створювати яскраві презентації, постери та інші візуальні матеріали.',
+          'Курс знайомить дітей з основами графічного дизайну та навчає працювати в сучасному онлайн-сервісі Canva. Учні опановують композицію, колір, типографію та візуальну комунікацію через створення власних дизайнерських проєктів.',
         detailedDescription:
-          'Детальний опис курсу з графічного дизайну в Canva',
+          'Курс знайомить дітей з основами графічного дизайну та навчає працювати в сучасному онлайн-сервісі Canva. Учні опановують основи композиції, кольору, типографії та візуальної комунікації через створення власних дизайнерських проєктів: постерів, презентацій, контенту для соцмереж, коміксу, журналу, концепції власної події та брендбуку.',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
         age: '7-15 років',
@@ -78,23 +192,31 @@ const SkillsDevelopment = () => {
         hoverClass: 'hover:bg-accent-hover',
         price: '2400 грн/місяць',
         skills: [
-          { name: 'Дизайн', level: 'початковий' },
+          { name: 'Дизайн', level: 'базовий' },
           { name: 'Креативність', level: 'середній' },
           { name: 'Композиція', level: 'середній' },
+          { name: 'Колористика', level: 'середній' },
+          { name: 'Типографія', level: 'середній' },
+          { name: 'Брендинг', level: 'базовий' },
+          { name: 'Візуальна комунікація', level: 'середній' },
         ],
         progressSteps: [
-          'Знайомство з Canva',
-          'Створення перших дизайнів',
-          'Розробка комплексних проектів',
-          'Створення власного портфоліо',
+          'Знайомство з Canva та основами дизайну',
+          'Вивчення композиції, кольору та типографії',
+          'Створення комплексних дизайнерських проєктів',
+          'Знайомство з основами вебдизайну та створення сайту',
+          'Робота з різними стилями графічного дизайну',
+          'Розробка концепції для власної події',
+          'Створення брендбуку',
+          'Формування дизайнерського портфоліо',
         ],
       },
       {
-        title: '3D-друк та моделювання ThinkerCad',
+        title: '3D-моделювання та друк. TinkerCad',
         description:
-          'Цей курс ідеально підходить для дітей 7-15 років, які хочуть навчитись створювати власні 3D-моделі та реалізовувати свої творчі ідеї за допомогою сучасних технологій.',
+          'Курс знайомить дітей із основами 3D-моделювання у сервісі Tinkercad. Навчання побудоване за принципом «теорія + багато практики», де кожен проєкт розвиває логіку, просторову уяву та творчі здібності.',
         detailedDescription:
-          'Під час курсу діти навчаться:\n• Створювати 3D-моделі\n• Працювати з 3D-принтером\n• Розуміти принципи 3D-моделювання\n• Реалізовувати власні проекти',
+          'Курс знайомить дітей із основами 3D-моделювання у сервісі Tinkercad. Навчання побудоване за принципом «теорія + багато практики», де кожен проєкт розвиває логіку, просторову уяву та творчі здібності. Учні створюють обширні тематичні проєкти: персонажі з мультфільмів, космічні станції, котеджі, кафе, гірськолижний курорт, парк атракціонів та інші масштабні локації. Особливість курсу: кожного місяця учні отримують власну розроблену фігурку, яка друкується на 3D-принтері.',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
         age: '7-15 років',
@@ -108,21 +230,27 @@ const SkillsDevelopment = () => {
         hoverClass: 'hover:bg-blue/80',
         price: '2800 грн/місяць',
         skills: [
-          { name: 'Просторове мислення', level: 'базовий' },
-          { name: 'Технічне конструювання', level: 'базовий' },
+          { name: '3D-моделювання', level: 'середній' },
+          { name: 'Просторове та інженерне мислення', level: 'середній' },
+          { name: 'Розуміння принципу роботи 3D-принтерів', level: 'середній' },
+          { name: 'Підготовка до 3D-друку', level: 'середній' },
         ],
         progressSteps: [
-          'Створення першої простої моделі',
-          "Розробка об'єктів з декількох елементів",
-          'Створення функціональних моделей',
-          'Розробка власного проєкту',
+          'Знайомство з Tinkercad та основами 3D-моделювання',
+          'Робота з базовими формами та булевими операціями',
+          "Створення рухомих об'єктів та механізмів",
+          "Проєктування масштабних локацій та архітектурних об'єктів",
+          'Підготовка моделей до 3D-друку',
+          "Створення власних фінальних проєктів",
+          'Формування портфоліо 3D-моделей',
         ],
       },
       {
-        title: '3Д моделювання в Blockbench',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        title: '3D-моделювання. Blockbench',
+        description:
+          "Курс розвиває навички 3D-моделювання, занурюючи дітей у світ полігональних моделей, анімації та створення 3D-об'єктів. Учні навчаються працювати з текстурами, рухомими об'єктами та складними сценами.",
         detailedDescription:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          "Курс розвиває навички 3D-моделювання, занурюючи дітей у світ полігональних моделей, анімації та створення 3D-об'єктів. Учні навчаються працювати з текстурами, рухомими об'єктами та складними сценами. Протягом курсу розробляють обширні тематичні проєкти: екстер'єр та інтер'єр фантастичного будинку, НЛО та прибульці, гелікоптер, острів зі скарбами, ігровий світ, анімацію персонажів та домашніх улюбленців з Minecraft, станцію метро, космічну станцію, архітектурні пам'ятки. Особливість курсу: кожних три місяці учні моделюють свій проєкт на друк, що друкується на 3D-принтері.",
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
         age: '7-15 років',
@@ -136,15 +264,19 @@ const SkillsDevelopment = () => {
         hoverClass: 'hover:bg-blue/80',
         price: '2400 грн/місяць',
         skills: [
-          { name: '3D-моделювання', level: 'початковий' },
-          { name: 'Креативність', level: 'середній' },
-          { name: 'Робота з формами', level: 'середній' },
+          { name: 'Полігональне 3D-моделювання', level: 'середній' },
+          { name: "Анімація персонажів та об'єктів", level: 'середній' },
+          { name: 'Робота з текстурами та деталізацією моделей', level: 'середній' },
+          { name: "Створення рухомих механізмів та інтерактивних елементів", level: 'середній' },
+          { name: 'Просторове мислення та інженерний підхід', level: 'середній' },
         ],
         progressSteps: [
-          'Знайомство з Blockbench',
-          'Створення базових моделей',
-          'Деталізація та текстурування',
-          'Власний 3D-проєкт',
+          'Знайомство з інтерфейсом Blockbench і основами полігональної моделі',
+          'Створення анімацій (рух, обертання, відкриття/закриття)',
+          'Робота з текстурами та деталями моделей',
+          'Проєктування обширних проєктів',
+          'Підготовка моделей до 3D-друку',
+          'Формування портфоліо',
         ],
       },
       {
@@ -177,11 +309,11 @@ const SkillsDevelopment = () => {
         ],
       },
       {
-        title: 'Figma - курс для дизайнерів',
+        title: 'UI/UX-дизайн. Figma',
         description:
-          'Опанування основ дизайну та роботи з макетами у Figma для дітей, які хочуть створювати візуальні проєкти.',
+          'Курс знайомить дітей з основами UI/UX дизайну та навчає працювати в сучасному інструменті Figma. Учні вчаться проєктувати інтерфейси сайтів і мобільних додатків, працювати з елементами інтерфейсу, прототипами та адаптивним дизайном.',
         detailedDescription:
-          'На курсі з Figma діти вивчають основи веб-дизайну та створення інтерфейсів, розвивають креативне мислення та реалізовують власні дизайн проєкти.',
+          'Курс знайомить дітей з основами UI/UX дизайну та навчає працювати в сучасному інструменті Figma. Учні навчаються проєктувати інтерфейси сайтів і мобільних додатків, працювати з елементами інтерфейсу, прототипами та адаптивним дизайном. Під час навчання діти створюють власні дизайнерські проєкти: рекламні креативи, презентації, лендинги та багатосторінкові сайти, мобільні додатки, UI kit та оформлюють свої проєкти на Behance, формуючи професійне дизайнерське портфоліо.',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
         age: '7-15 років',
@@ -195,22 +327,27 @@ const SkillsDevelopment = () => {
         hoverClass: 'hover:bg-red/80',
         price: '2400 грн/місяць',
         skills: [
-          { name: 'UI дизайн', level: 'середній' },
-          { name: 'Розробка інтерфейсів', level: 'початковий' },
-          { name: 'Візуальна комунікація', level: 'середній' },
+          { name: 'UI/UX дизайн', level: 'середній' },
+          { name: 'Прототипування', level: 'середній' },
+          { name: 'Адаптивний дизайн', level: 'середній' },
+          { name: 'UI-kit', level: 'середній' },
+          { name: 'Креативні цифрові проєкти', level: 'середній' },
         ],
         progressSteps: [
-          'Знайомство з інтерфейсом Figma',
-          'Створення перших макетів',
-          'Розробка інтерактивних прототипів',
-          'Дизайн власного проєкту',
+          'Знайомство з Figma та основами UI/UX',
+          'Робота з кольором, шрифтами та композицією',
+          'Створення професійних презентацій та рекламних креативів',
+          'Проєктування прототипів сайтів і мобільних додатків',
+          'Створення UI-kit та адаптивних інтерфейсів',
+          'Презентація та демонстрація власних робіт на Behance',
         ],
       },
       {
         title: 'Веб дизайн',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description:
+          'Курс знайомить дітей з основами створення сучасних вебсайтів та навчає працювати з професійними інструментами для дизайну та верстки. Учні опановують принципи графічного та UI/UX дизайну, вебпрототипування та верстки за допомогою HTML/CSS.',
         detailedDescription:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          'Курс знайомить дітей з основами створення сучасних вебсайтів та навчає працювати з професійними інструментами для дизайну та верстки. Учні опанують принципи графічного та UI/UX дизайну, вебпрототипування та верстки за допомогою HTML/CSS. Протягом курсу діти створять три практичні проєкти: сайт для Yoga Studio, Food-блог та Travel-портал, а потім інтегрують їх в особистий сайт-портфоліо. Усі сайти будуть адаптивними, з SEO-оптимізацією та розміщені онлайн через хостинг на GitHub.',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
         age: '7-15 років',
@@ -224,15 +361,22 @@ const SkillsDevelopment = () => {
         hoverClass: 'hover:bg-blue/80',
         price: '2400 грн/місяць',
         skills: [
-          { name: 'UI дизайн', level: 'початковий' },
-          { name: 'Композиція', level: 'середній' },
-          { name: 'Типографіка', level: 'середній' },
+          { name: 'Створення графічних елементів у Canva', level: 'середній' },
+          { name: 'UI/UX та прототипування у Figma', level: 'середній' },
+          { name: 'Верстка HTML/CSS', level: 'середній' },
+          { name: 'Адаптивний дизайн для різних пристроїв', level: 'середній' },
+          { name: 'SEO-оптимізація вебсайтів', level: 'середній' },
+          { name: 'Публікація та хостинг сайту на GitHub', level: 'середній' },
+          { name: 'Формування власного сайт-портфоліо', level: 'середній' },
         ],
         progressSteps: [
-          'Lorem ipsum',
-          'Dolor sit amet',
-          'Consectetur adipiscing',
-          'Elit sed do',
+          'Розробка графічних елементів для сайту в Canva',
+          'Створення прототипу вебсайту у Figma',
+          'Основи верстки HTML та стилізація сторінок CSS',
+          'Розробка трьох практичних проєктів: Yoga Studio, Food, Travel',
+          "Створення особистого сайту-портфоліо з усіма проєктами",
+          'Освоєння адаптивного дизайну',
+          'SEO-оптимізація та публікація сайтів через GitHub',
         ],
       },
       {
@@ -265,10 +409,11 @@ const SkillsDevelopment = () => {
         ],
       },
       {
-        title: 'Графіка та анімація в Scratch',
+        title: 'Scratch',
         description:
-          'Курс знайомить дітей з основами програмування та створення анімацій на платформі Scratch.',
-        detailedDescription: 'Детальний опис курсу Scratch',
+          'Курс знайомить дітей з основами програмування у візуальному середовищі Scratch. Учні навчаються створювати власні ігри, анімації, мультфільми та інтерактивні проєкти.',
+        detailedDescription:
+          'Курс знайомить дітей з основами програмування у візуальному середовищі Scratch. Учні навчаються створювати власні ігри, анімації, мультфільми та інтерактивні проєкти. Курс побудований від простих алгоритмів до складних ігрових механік, що дозволяє поступово розвивати логічне мислення, креативність і навички проєктної роботи. Особливу увагу приділено практиці: кожна тема закріплюється створенням реального проєкту. Протягом курсу діти розробляють ігри різних жанрів, працюють зі змінними, циклами, розгалуженнями, клонами, списками, подіями та функціями.',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
         age: '7-15 років',
@@ -282,23 +427,27 @@ const SkillsDevelopment = () => {
         hoverClass: 'hover:bg-accent-hover',
         price: '2400 грн/місяць',
         skills: [
-          { name: 'Програмування', level: 'початковий' },
-          { name: 'Анімація', level: 'середній' },
-          { name: 'Креативність', level: 'середній' },
+          { name: 'Програмування у Scratch', level: 'середній' },
+          { name: 'Логічне та алгоритмічне мислення', level: 'середній' },
+          { name: 'Розвиток креативності та уяви', level: 'середній' },
+          { name: 'Розробка ігор та інтерактивних проєктів', level: 'середній' },
+          { name: 'Робота зі змінними, циклами, подіями та клонуванням', level: 'середній' },
+          { name: 'Створення власного портфоліо проєктів', level: 'середній' },
         ],
         progressSteps: [
-          'Знайомство з Scratch',
-          'Створення перших анімацій',
-          'Розробка інтерактивних проектів',
-          'Створення власного проєкту',
+          'Знайомство зі Scratch та основами блокового програмування',
+          'Вивчення циклів, змінних, подій та клонування',
+          'Основи теорії ігор та розробка правил, рівнів та механік',
+          'Практичне створення власних ігор та їх тестування',
+          'Формування портфоліо',
         ],
       },
       {
-        title: 'ДРОНИ - курс для майбутніх пілотів',
+        title: 'Drone-напрямок',
         description:
-          'Курс навчає дітей основам керування дронами, розвиває просторове мислення та технічні навички. Діти вивчають принципи польотів та програмування безпілотників.',
+          'Drone-напрямок — авторська програма, що поєднує комплексне вивчення дронів через інженерію, електроніку, 3D-моделювання та основи програмування. Навчання включає конструювання, паяння, програмування та керування дронами.',
         detailedDescription:
-          'Детальний опис курсу з програмування та керування дронами',
+          'Drone-напрямок — авторська програма, що поєднує комплексне вивчення дронів через інженерію, електроніку, 3D-моделювання та основи програмування. Навчання включає конструювання, паяння, програмування та керування дронами. За перший рік навчання кожен учень створить до 4 власних моделей дронів, а також літатиме унікальними картами та проходитиме дрон-перегони. Програма триває 3 роки та побудована за модульною системою: від базового вивчення аеродинаміки, будови дронів і пілотування до алгоритмізації, програмування та інженерного проєктування власних моделей з друком деталей на 3D-принтерах.',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
         age: '7-15 років',
@@ -312,15 +461,20 @@ const SkillsDevelopment = () => {
         hoverClass: 'hover:bg-blue/80',
         price: '2400 грн/місяць',
         skills: [
-          { name: 'Програмування', level: 'початковий' },
-          { name: 'Авіація', level: 'середній' },
-          { name: 'Креативність', level: 'середній' },
+          { name: 'Розуміння принципів роботи дронів', level: 'середній' },
+          { name: 'Впевнене керування дроном і орієнтація в просторі', level: 'середній' },
+          { name: 'Інженерне мислення та вирішення технічних задач', level: 'середній' },
+          { name: 'Збирання, налаштування та обслуговування дронів', level: 'середній' },
+          { name: 'Паяння та складання електронних компонентів', level: 'середній' },
+          { name: 'Основи 3D-моделювання та створення власних деталей', level: 'середній' },
+          { name: 'Базові знання програмування та логіки керування пристроями', level: 'середній' },
         ],
         progressSteps: [
-          'Знайомство з дронами',
-          'Основи програмування дронів',
-          'Розробка польотних завдань',
-          'Створення власного проєкту',
+          'Ознайомлення з будовою дронів та збірка до 4 власних моделей',
+          'Паяння та налаштування електричних схем',
+          'Керування дронами, польоти за маршрутами та дрон-перегони',
+          'Освоєння програмування, алгоритмізації та логіки роботи дронів',
+          'Розробка 3D-моделей дронів та друк деталей на 3D-принтері',
         ],
       },
     ],
@@ -768,46 +922,104 @@ const SkillsDevelopment = () => {
   CourseCard.displayName = 'CourseCard'
 
   const ProgressPath = memo(({ steps }: { steps: string[] }) => {
-    const [isMobile, setIsMobile] = useState(false)
+    const items = steps.map((step, idx) => ({ step, idx }))
+    const rows: Array<typeof items> = []
+    const rowSize = steps.length <= 6 ? Math.ceil(steps.length / 2) : 4
 
-    useEffect(() => {
-      if (typeof window !== 'undefined') {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768)
-        checkMobile()
-        window.addEventListener('resize', checkMobile)
-        return () => window.removeEventListener('resize', checkMobile)
-      }
-    }, [])
+    for (let i = 0; i < items.length; i += rowSize) {
+      rows.push(items.slice(i, i + rowSize))
+    }
 
     return (
       <div className="mt-6 mb-8">
         <h4 className="font-semibold mb-3 text-white">Шлях розвитку:</h4>
-        <div
-          className={`flex items-center ${
-            isMobile ? 'overflow-x-auto pb-2 hide-scrollbar' : ''
-          }`}
-        >
-          {steps.map((step, idx) => (
-            <div key={idx} className="flex items-center shrink-0">
-              <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-accent text-[#1A2318]">
-                  {idx === 0 ? (
-                    <Star size={16} />
-                  ) : idx === steps.length - 1 ? (
-                    <Trophy size={16} />
-                  ) : (
-                    <Award size={16} />
-                  )}
-                </div>
-                <p className="text-xs text-center mt-1 w-24 line-clamp-2 text-white/75">
-                  {step}
-                </p>
+        <div className="grid grid-cols-2 gap-x-3 gap-y-4 md:hidden">
+          {items.map((item) => (
+            <div
+              key={item.idx}
+              className="flex items-start gap-2.5 rounded-[10px] border border-white/6 bg-white/[0.02] px-2.5 py-2"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-[#1A2318]">
+                <ProgressPathIcon
+                  index={item.idx}
+                  lastIndex={steps.length - 1}
+                />
               </div>
-              {idx < steps.length - 1 && (
-                <div className="h-0.5 w-6 bg-white/15 mx-1"></div>
-              )}
+              <p className="text-left text-[12px] leading-[1.3] text-white/78">
+                {item.step}
+              </p>
             </div>
           ))}
+        </div>
+
+        <div className="hidden md:flex md:flex-col gap-2">
+          {rows.map((row, rowIndex) => {
+            const visualRow = rowIndex % 2 === 0 ? row : [...row].reverse()
+            const gridTemplateColumns = `repeat(${visualRow.length}, minmax(0, 1fr))`
+            const labelMaxWidthClass =
+              visualRow.length <= 3 ? 'max-w-[190px]' : 'max-w-[150px]'
+
+            return (
+              <div key={`row-${rowIndex}`} className={rowIndex > 0 ? '-mt-1' : ''}>
+                <div className="relative">
+                  <ProgressRowThread count={visualRow.length} />
+                  <div
+                    className="relative z-10 grid items-start gap-x-4"
+                    style={{ gridTemplateColumns }}
+                  >
+                    {visualRow.map((item) => (
+                      <div
+                        key={`step-${item.idx}`}
+                        className="flex min-w-0 flex-col items-center gap-2 px-2 text-center"
+                      >
+                        <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-[#1A2318] shadow-[0_0_0_6px_#2F323A]">
+                          <ProgressPathIcon
+                            index={item.idx}
+                            lastIndex={steps.length - 1}
+                          />
+                        </div>
+                        <p
+                          className={`${labelMaxWidthClass} text-[12px] leading-[1.28] text-white/78`}
+                        >
+                          {item.step}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {rowIndex < rows.length - 1 && (
+                  <div className="-mt-1 grid" style={{ gridTemplateColumns }}>
+                    {rowIndex % 2 === 0 ? (
+                      <>
+                        {Array.from(
+                          { length: visualRow.length - 1 },
+                          (_, emptyIdx) => (
+                          <div key={`empty-right-${rowIndex}-${emptyIdx}`} />
+                          ),
+                        )}
+                        <div className="justify-self-center h-10 w-10">
+                          <ProgressTurnThread side="right" />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="justify-self-center h-10 w-10">
+                          <ProgressTurnThread side="left" />
+                        </div>
+                        {Array.from(
+                          { length: visualRow.length - 1 },
+                          (_, emptyIdx) => (
+                          <div key={`empty-left-${rowIndex}-${emptyIdx}`} />
+                          ),
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
     )
@@ -1112,7 +1324,7 @@ const SkillsDevelopment = () => {
                             (skill, idx) => (
                               <motion.div
                                 key={`skill-${idx}`}
-                                className="px-3 py-1.5 bg-white/5 rounded-[6px] text-sm flex items-center border border-white/10 text-white"
+                                className="px-3 py-2 bg-white/5 rounded-[6px] text-sm flex items-center border border-white/10 text-white"
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{
@@ -1122,17 +1334,6 @@ const SkillsDevelopment = () => {
                               >
                                 <span className="font-medium">
                                   {skill.name}
-                                </span>
-                                <span
-                                  className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-                                    skill.level === 'базовий'
-                                      ? 'bg-[#202A1F] text-[#99D08E]'
-                                      : skill.level === 'середній'
-                                        ? 'bg-[#1F252E] text-[#AFC4FF]'
-                                        : 'bg-[#25272D] text-[#D5D7DB]'
-                                  }`}
-                                >
-                                  {skill.level}
                                 </span>
                               </motion.div>
                             ),
@@ -1145,7 +1346,7 @@ const SkillsDevelopment = () => {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3, delay: 0.4 }}
-                          className="overflow-x-auto pb-2"
+                          className="pb-2"
                         >
                           <ProgressPath
                             steps={
