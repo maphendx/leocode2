@@ -1,3 +1,9 @@
 [build]
   command = "npm run build:no-lint"
   publish = ".next"
+
+[[redirects]]
+  from = "https://www.leocode.com.ua/*"
+  to = "https://leocode.com.ua/:splat"
+  status = 301
+  force = true

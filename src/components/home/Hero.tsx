@@ -127,7 +127,7 @@ const HeroLeadForm = ({
   return (
     <form onSubmit={onSubmit} className="h-full flex flex-col">
       <div className={compact ? 'mb-4' : 'mb-6'}>
-        <h2
+        <p
           className={`text-white font-semibold tracking-[-0.02em] ${
             compact
               ? 'text-lg leading-tight'
@@ -135,7 +135,7 @@ const HeroLeadForm = ({
           }`}
         >
           Залиште заявку
-        </h2>
+        </p>
         <p className={`mt-1.5 text-white ${compact ? 'text-xs' : 'text-sm xl:text-[15px]'}`}>
           і наш адміністратор зателефонує вам
         </p>
@@ -538,6 +538,13 @@ const Hero = () => {
                   7-15 років
                 </span>
               </h1>
+
+              <p className="mt-5 max-w-[42rem] text-[15px] leading-[1.6] text-white/84 sm:text-[17px]">
+                <strong className="font-extrabold text-white">LEOCODE</strong>{' '}
+                - освітній простір у Львові для дітей 7-15 років, де
+                навчаємо програмуванню, дронам, англійській мові та цифровим
+                навичкам онлайн й офлайн.
+              </p>
 
               <div className="mt-6 sm:mt-8">
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#23262D]/80 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-[0_10px_22px_rgba(0,0,0,0.18)] backdrop-blur-md">
