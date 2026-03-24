@@ -97,9 +97,9 @@ const OnlineLearning = () => {
                       {card.title}
                     </p>
                   </div>
-                  <h3 className="shrink-0 text-[22px] md:text-[30px] font-extrabold leading-none tracking-[-0.03em] text-white">
+                  <p className="shrink-0 text-[22px] md:text-[30px] font-extrabold leading-none tracking-[-0.03em] text-white">
                     {card.age}
-                  </h3>
+                  </p>
                 </div>
               </div>
 

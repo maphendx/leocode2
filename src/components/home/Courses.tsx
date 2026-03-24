@@ -862,9 +862,9 @@ const SkillsDevelopment = () => {
               } transition-all duration-300 ease-in-out`}
               style={{ willChange: isMobile ? 'auto' : 'height' }}
             >
-              <h3 className="relative z-10 text-[17px] md:text-[18px] font-extrabold text-white leading-tight line-clamp-2 transform-[translateZ(0)]">
+              <p className="relative z-10 text-[17px] md:text-[18px] font-extrabold text-white leading-tight line-clamp-2 transform-[translateZ(0)]">
                 {course.title}
-              </h3>
+              </p>
               <div className="pointer-events-none absolute left-5 right-5 top-14 hidden md:flex flex-wrap gap-2 opacity-0 translate-y-1 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0">
                 <span className="rounded-[6px] border border-white/20 bg-white/12 px-2.5 py-1 text-[11px] font-semibold text-white/95">
                   {course.duration}
@@ -1327,9 +1327,9 @@ const SkillsDevelopment = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: 0.3 }}
                       >
-                        <h3 className="font-semibold mb-3 text-white">
+                        <p className="font-semibold mb-3 text-white">
                           Навички, які здобуде дитина:
-                        </h3>
+                        </p>
                         <div className="flex flex-wrap gap-2">
                           {filteredCourses[expandedCourse]?.skills?.map(
                             (skill, idx) => (

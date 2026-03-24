@@ -227,10 +227,10 @@ export default function Locations() {
                   </div>
 
                   <div className="pt-4 bg-transparent">
-                    <h3 className="font-bold text-[19px] md:text-[21px] mb-2 flex items-start leading-tight text-white tracking-[-0.03em]">
+                    <p className="font-bold text-[19px] md:text-[21px] mb-2 flex items-start leading-tight text-white tracking-[-0.03em]">
                       <MapPin className="h-5 w-5 mr-2 mt-0.5 text-[#76C36D] shrink-0" />
                       <span>{location.name}</span>
-                    </h3>
+                    </p>
 
                     <div className="mt-2 space-y-2 text-sm md:text-[14px] text-white/78">
                       <div className="flex items-center">
@@ -371,10 +371,10 @@ export default function Locations() {
 
               {/* Location details */}
               <div className="p-1 md:p-1.5 lg:p-2">
-                <h3 className="text-[22px] md:text-[26px] font-extrabold tracking-[-0.03em] mb-4 flex items-center text-white">
+                <p className="text-[22px] md:text-[26px] font-extrabold tracking-[-0.03em] mb-4 flex items-center text-white">
                   <MapPin className="h-6 w-6 mr-2 text-[#76C36D]" />
                   {activeLocation.name}
-                </h3>
+                </p>
 
                 <div className="space-y-3 mb-5">
                   <div className="flex border border-white/10 bg-[#2F333C] rounded-[6px] p-2.5 md:p-3">

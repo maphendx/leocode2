@@ -231,9 +231,9 @@ export default function FAQ() {
           aria-expanded={isOpen}
           aria-controls={`faq-answer-${index}`}
         >
-          <h3 className="pr-2 text-[clamp(16px,1.05vw,20px)] font-semibold leading-[1.34] text-[#232529]">
+          <span className="pr-2 text-[clamp(16px,1.05vw,20px)] font-semibold leading-[1.34] text-[#232529]">
             {item.question}
-          </h3>
+          </span>
           <span
             className={`mt-0.5 flex h-[clamp(30px,2.2vw,38px)] w-[clamp(30px,2.2vw,38px)] shrink-0 items-center justify-center text-[#232529] transition-all duration-300 ${
               isOpen

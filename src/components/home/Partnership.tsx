@@ -75,7 +75,7 @@ const Partnership = () => {
                   />
                 </div>
                 <div className="relative flex items-start p-4 sm:p-4 md:p-5 lg:p-5 lg:order-2">
-                  <h3 className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[14ch] md:max-w-[10ch] transition-transform duration-300 group-hover:translate-x-0.5">
+                  <p className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[14ch] md:max-w-[10ch] transition-transform duration-300 group-hover:translate-x-0.5">
                     <span className="relative inline-block pb-1">
                       Майстер класи для шкіл
                       <span
@@ -83,7 +83,7 @@ const Partnership = () => {
                         className="pointer-events-none absolute -bottom-1 left-0 right-0 h-[2px] origin-left scale-x-0 bg-[linear-gradient(90deg,rgba(152,207,147,0)_0%,rgba(152,207,147,0.92)_40%,rgba(152,207,147,0.48)_100%)] transition-transform duration-300 group-hover:scale-x-100"
                       />
                     </span>
-                  </h3>
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -111,7 +111,7 @@ const Partnership = () => {
                   />
                 </div>
                 <div className="relative flex items-start p-4 sm:p-4 md:p-5 lg:p-5 lg:order-2">
-                  <h3 className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[14ch] md:max-w-[10ch] transition-transform duration-300 group-hover:translate-x-0.5">
+                  <p className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[14ch] md:max-w-[10ch] transition-transform duration-300 group-hover:translate-x-0.5">
                     <span className="relative inline-block pb-1">
                       Науковий Квест
                       <span
@@ -119,7 +119,7 @@ const Partnership = () => {
                         className="pointer-events-none absolute -bottom-1 left-0 right-0 h-[2px] origin-left scale-x-0 bg-[linear-gradient(90deg,rgba(152,207,147,0)_0%,rgba(152,207,147,0.92)_40%,rgba(152,207,147,0.48)_100%)] transition-transform duration-300 group-hover:scale-x-100"
                       />
                     </span>
-                  </h3>
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -138,7 +138,7 @@ const Partnership = () => {
             >
               <div className="relative grid min-h-[200px] grid-cols-1 md:min-h-[245px] lg:min-h-[285px] lg:grid-cols-[0.94fr_1.06fr]">
                 <div className="relative order-2 flex items-start p-4 sm:p-4 md:p-5 lg:p-5 lg:order-1">
-                  <h3 className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[14ch] md:max-w-[10ch] transition-transform duration-300 group-hover:translate-x-0.5">
+                  <p className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[14ch] md:max-w-[10ch] transition-transform duration-300 group-hover:translate-x-0.5">
                     <span className="relative inline-block pb-1">
                       Наукові ярмарки
                       <span
@@ -146,7 +146,7 @@ const Partnership = () => {
                         className="pointer-events-none absolute -bottom-1 left-0 right-0 h-[2px] origin-left scale-x-0 bg-[linear-gradient(90deg,rgba(152,207,147,0)_0%,rgba(152,207,147,0.92)_40%,rgba(152,207,147,0.48)_100%)] transition-transform duration-300 group-hover:scale-x-100"
                       />
                     </span>
-                  </h3>
+                  </p>
                 </div>
                 <div className="relative order-1 min-h-[155px] lg:order-2">
                   <Image
@@ -174,7 +174,7 @@ const Partnership = () => {
             >
               <div className="relative grid min-h-[200px] grid-cols-1 md:min-h-[245px] lg:min-h-[285px] lg:grid-cols-[0.94fr_1.06fr]">
                 <div className="relative order-2 flex items-start p-4 sm:p-4 md:p-5 lg:p-5 lg:order-1">
-                  <h3 className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[14ch] md:max-w-[10ch] transition-transform duration-300 group-hover:translate-x-0.5">
+                  <p className="text-white text-[23px] sm:text-[25px] md:text-[28px] lg:text-[32px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95] max-w-[14ch] md:max-w-[10ch] transition-transform duration-300 group-hover:translate-x-0.5">
                     <span className="relative inline-block pb-1">
                       Воркшопи
                       <span
@@ -182,7 +182,7 @@ const Partnership = () => {
                         className="pointer-events-none absolute -bottom-1 left-0 right-0 h-[2px] origin-left scale-x-0 bg-[linear-gradient(90deg,rgba(152,207,147,0)_0%,rgba(152,207,147,0.92)_40%,rgba(152,207,147,0.48)_100%)] transition-transform duration-300 group-hover:scale-x-100"
                       />
                     </span>
-                  </h3>
+                  </p>
                 </div>
                 <div className="relative order-1 min-h-[155px] lg:order-2">
                   <Image

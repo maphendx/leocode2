@@ -47,9 +47,9 @@ const Events = () => {
                 </span>
               </div>
 
-              <h3 className="text-[#252C27] text-[20px] md:text-[24px] font-extrabold tracking-[-0.03em] leading-[1.02] mb-3 transition-transform duration-300 group-hover:translate-x-0.5">
+              <p className="text-[#252C27] text-[20px] md:text-[24px] font-extrabold tracking-[-0.03em] leading-[1.02] mb-3 transition-transform duration-300 group-hover:translate-x-0.5">
                 {event.title}
-              </h3>
+              </p>
 
               <p className="text-[#4F594F] text-[14px] md:text-[15px] leading-relaxed mb-4">
                 {event.description}

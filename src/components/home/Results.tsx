@@ -425,9 +425,9 @@ const Results = () => {
                   >
                     {outcome.icon}
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-text">
+                  <p className="text-xl font-bold mb-2 text-text">
                     {outcome.title}
-                  </h3>
+                  </p>
                   <p className="text-primary/75 flex-grow text-sm">
                     {outcome.description}
                   </p>
@@ -452,9 +452,9 @@ const Results = () => {
             transition={{ duration: 0.8 }}
             className="relative z-10"
           >
-            <h3 className="text-2xl md:text-3xl font-bold text-center mb-10 text-text">
+            <p className="text-2xl md:text-3xl font-bold text-center mb-10 text-text">
               Наші досягнення у цифрах
-            </h3>
+            </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 stats-section">
               {[
@@ -510,9 +510,9 @@ const Results = () => {
                     >
                       {stat.icon}
                     </div>
-                    <h4 className="text-3xl md:text-4xl font-bold mb-2 text-text tracking-tight">
+                    <p className="text-3xl md:text-4xl font-bold mb-2 text-text tracking-tight">
                       {stat.title}
-                    </h4>
+                    </p>
                     <p className="text-primary/70 text-sm">
                       {stat.description}
                     </p>
@@ -583,9 +583,9 @@ const Results = () => {
                   </div>
 
                   <div className="absolute left-0 right-0 bottom-0 p-4 md:p-5">
-                    <h3 className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.38)] text-[21px] md:text-[30px] font-extrabold uppercase tracking-[-0.03em] leading-[0.94] max-w-[22ch]">
+                    <p className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.38)] text-[21px] md:text-[30px] font-extrabold uppercase tracking-[-0.03em] leading-[0.94] max-w-[22ch]">
                       {activeProject.title}
-                    </h3>
+                    </p>
                   </div>
                 </div>
 

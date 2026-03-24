@@ -24,7 +24,7 @@ export const homeEvents: HomeEvent[] = [
     description:
       'Готуємо насичену літню програму з IT, творчими завданнями, командними активностями та новими знайомствами.',
     ctaHref: '/#contacts',
-    ctaLabel: 'Запитати деталі',
+    ctaLabel: 'Деталі літнього табору',
   },
   {
     id: 'event-002',
@@ -37,7 +37,7 @@ export const homeEvents: HomeEvent[] = [
     description:
       'Плануємо зимову програму з технологіями, практичними заняттями, іграми та командними активностями на канікулах.',
     ctaHref: '/#contacts',
-    ctaLabel: 'Запитати деталі',
+    ctaLabel: 'Деталі зимового табору',
   },
   {
     id: 'event-003',
@@ -50,6 +50,6 @@ export const homeEvents: HomeEvent[] = [
     description:
       'Працюємо над новими подіями, форматами та активностями. Скоро поділимося всіма деталями на сайті та в соцмережах LEOCODE.',
     ctaHref: 'https://instagram.com/leocode.kids',
-    ctaLabel: 'Стежити за новинами',
+    ctaLabel: 'Стежити за новинами LEOCODE',
   },
 ]

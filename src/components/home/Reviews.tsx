@@ -166,9 +166,9 @@ export default function Reviews() {
                     <UserAvatar />
                   </div>
                   <div>
-                    <h3 className="text-[#242926] text-[18px] md:text-[20px] font-bold tracking-[-0.03em]">
+                    <p className="text-[#242926] text-[18px] md:text-[20px] font-bold tracking-[-0.03em]">
                       {featuredTestimonial.author}
-                    </h3>
+                    </p>
                     <p className="text-[#5A6458] text-[13px] md:text-[14px] leading-tight">
                       {featuredTestimonial.role}
                     </p>
@@ -235,9 +235,9 @@ export default function Reviews() {
                     <UserAvatar />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-[#262C28] font-bold text-[16px] md:text-[17px] tracking-[-0.02em]">
+                    <p className="text-[#262C28] font-bold text-[16px] md:text-[17px] tracking-[-0.02em]">
                       {item.author}
-                    </h4>
+                    </p>
                     <p className="text-[#5B655A] text-[12px] md:text-[13px] leading-tight">
                       {item.role}
                     </p>
