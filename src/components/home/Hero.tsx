@@ -245,10 +245,7 @@ const Hero = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null)
   const isPlayingRef = useRef(false)
 
-  const videoSources = {
-    mp4: '/video.mp4',
-    webm: '/video.webm',
-  }
+  const videoSource = '/video.mp4'
   const posterImageSrc = '/main-poster.jpg'
 
   useIntersectionObserver(
@@ -508,19 +505,11 @@ const Hero = () => {
           preload="none"
         >
           <source
-            src={videoSources.mp4}
+            src={videoSource}
             type="video/mp4"
             onError={() => {
               console.error('MP4 format not supported')
               console.warn('MP4 format not supported, trying fallback')
-            }}
-          />
-          <source
-            src={videoSources.webm}
-            type="video/webm"
-            onError={() => {
-              console.error('WebM format not supported')
-              setVideoError(true)
             }}
           />
           Your browser does not support the video tag.

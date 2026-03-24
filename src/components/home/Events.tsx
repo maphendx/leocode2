@@ -5,12 +5,6 @@ import { CalendarDays, Clock3, MapPin, Users } from 'lucide-react'
 import { homeEvents } from '@/data/events'
 import { motion } from 'framer-motion'
 
-const formatClasses: Record<string, string> = {
-  Офлайн: 'bg-[#EAF5E3] text-[#2E6B2A] border-[#BFDAB7]',
-  Онлайн: 'bg-[#E7F0FF] text-[#2B4F8A] border-[#BFD0EC]',
-  Гібрид: 'bg-[#F2EAFD] text-[#5B3F8D] border-[#D5C7EE]',
-}
-
 const Events = () => {
   return (
     <section id="podii" className="lc-section-soft py-12 md:py-16">
@@ -25,7 +19,8 @@ const Events = () => {
           <div>
             <h2 className="lc-section-title mb-3">ПОДІЇ LEO CODE</h2>
             <p className="lc-section-lead max-w-3xl">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Слідкуйте за найближчими таборами та новими анонсами від
+              LEOCODE.
             </p>
           </div>
         </motion.div>
@@ -45,12 +40,7 @@ const Events = () => {
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              <div className="mb-4 flex items-start justify-between gap-3">
-                <span
-                  className={`inline-flex rounded-[4px] border px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.05em] ${formatClasses[event.format] || 'bg-[#EEF2EC] text-[#3F4A3F] border-[#D1DAD0]'}`}
-                >
-                  {event.format}
-                </span>
+              <div className="mb-4">
                 <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#4E594E]">
                   <Users className="h-3.5 w-3.5" />
                   {event.age}

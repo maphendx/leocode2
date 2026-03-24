@@ -12,12 +12,18 @@ import Events from '@/components/home/Events'
 import FAQ from '@/components/home/FAQ'
 import Locations from '@/components/home/Locations'
 import Reviews from '@/components/home/Reviews'
+import { buildPageMetadata, siteConfig } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'LEOCODE - Інноваційний простір для дітей від 7 до 15 років у Львові',
-  description:
-    'LEOCODE - інноваційний освітній простір для дітей від 7 до 15 років у Львові: IT-напрямки, дрони, онлайн та офлайн навчання.',
-}
+export const metadata: Metadata = buildPageMetadata({
+  title: siteConfig.defaultTitle,
+  description: siteConfig.description,
+  path: '/',
+  keywords: [
+    'онлайн навчання для дітей',
+    'дрони для дітей Львів',
+    'LEOCODE Львів',
+  ],
+})
 
 const MediaErrorFallback = ({
   message = 'Виникла помилка при завантаженні',

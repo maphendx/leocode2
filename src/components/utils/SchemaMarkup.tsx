@@ -1,112 +1,96 @@
-'use client'
+import { getAbsoluteUrl, siteConfig } from '@/lib/seo'
 
-import React from 'react'
-import Script from 'next/script'
+const SchemaMarkup = () => {
+  const organizationId = `${siteConfig.url}/#organization`
+  const websiteId = `${siteConfig.url}/#website`
 
-/**
- * Component for adding Schema.org structured data to the website
- * This improves SEO by providing search engines with detailed information about your content
- */
-const SchemaMarkup: React.FC = () => {
-  // Organization schema for your business entity
-  const organizationSchema = {
+  const schemaGraph = {
     '@context': 'https://schema.org',
-    '@type': 'EducationalOrganization',
-    '@id': 'https://leocode.com.ua/#organization',
-    name: 'LEOCODE',
-    alternateName: ['LEO CODE', 'ЛеоКод', 'Лео Код'],
-    url: 'https://leocode.com.ua',
-    logo: 'https://leocode.com.ua/icon-512.png',
-    description:
-      'LEOCODE - Інноваційний простір для дітей від 7 до 15 років, де кожен може розвивати логічне мислення, креативність та навички вирішення складних завдань.',
-    sameAs: [
-      // Add your social media profiles here if available
-      'https://www.tiktok.com/@leocode.kids',
-      'https://www.instagram.com/leocode.kids',
+    '@graph': [
+      {
+        '@type': 'EducationalOrganization',
+        '@id': organizationId,
+        name: siteConfig.name,
+        alternateName: ['LEO CODE', 'ЛеоКод', 'Лео Код'],
+        url: siteConfig.url,
+        logo: getAbsoluteUrl('/icon-512.png'),
+        image: getAbsoluteUrl('/logo.png'),
+        description: siteConfig.description,
+        sameAs: [
+          'https://www.facebook.com/p/LeoCodeKids-61565577578490/',
+          'https://www.instagram.com/leocode.kids',
+          'https://www.tiktok.com/@leocode.kids',
+        ],
+        contactPoint: [
+          {
+            '@type': 'ContactPoint',
+            contactType: 'customer support',
+            telephone: '0800300648',
+            areaServed: 'UA',
+            availableLanguage: ['uk', 'en'],
+          },
+        ],
+        location: [
+          {
+            '@type': 'Place',
+            name: 'LEOCODE Наукова',
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: 'вул. Наукова, 49',
+              addressLocality: 'Львів',
+              addressRegion: 'Львівська область',
+              addressCountry: 'UA',
+            },
+          },
+          {
+            '@type': 'Place',
+            name: 'LEOCODE Мазепи',
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: 'вул. Мазепи, 25Д',
+              addressLocality: 'Львів',
+              addressRegion: 'Львівська область',
+              addressCountry: 'UA',
+            },
+          },
+        ],
+      },
+      {
+        '@type': 'WebSite',
+        '@id': websiteId,
+        url: siteConfig.url,
+        name: siteConfig.name,
+        inLanguage: 'uk-UA',
+        description: siteConfig.description,
+        publisher: {
+          '@id': organizationId,
+        },
+      },
+      {
+        '@type': 'Course',
+        '@id': `${siteConfig.url}/#courses`,
+        name: 'Курси програмування для дітей LEOCODE',
+        description:
+          'LEOCODE навчає дітей програмуванню, STEM-напрямкам, польотам на дронах та іншим сучасним IT навичкам.',
+        provider: {
+          '@id': organizationId,
+        },
+        educationalCredentialAwarded: 'Сертифікат про завершення курсу',
+        audience: {
+          '@type': 'EducationalAudience',
+          educationalRole: 'Учень',
+          audienceType: 'Діти віком від 7 до 15 років',
+        },
+      },
     ],
-    telephone: '+380687388608', // Replace with your actual phone
-    email: 'droneschoollviv@gmail.com', // Replace with your actual email
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Львів',
-      addressRegion: 'Львівська область',
-      addressCountry: 'UA',
-    },
-  }
-
-  // WebSite schema
-  const websiteSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    '@id': 'https://leocode.com.ua/#website',
-    name: 'LEOCODE',
-    alternateName: 'LEO CODE',
-    url: 'https://leocode.com.ua',
-    publisher: {
-      '@id': 'https://leocode.com.ua/#organization',
-    },
-    inLanguage: 'uk-UA',
-    description: 'LEOCODE - Інноваційний простір для дітей від 7 до 15 років',
-    keywords:
-      'leocode, leo code, програмування для дітей, IT курси, школа дронів, робототехніка',
-  }
-
-  // Local Business schema for physical locations
-  const localBusinessSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    '@id': 'https://leocode.com.ua/#localbusiness',
-    name: 'LEOCODE',
-    alternateName: 'LEO CODE',
-    url: 'https://leocode.com.ua',
-    image: 'https://leocode.com.ua/icon-512.png',
-    description:
-      'LEOCODE - Школа програмування та IT навичок для дітей у Львові',
-    telephone: '+380687388608', // Replace with your actual phone
-    priceRange: '₴₴',
-    openingHours: 'Mo,Tu,We,Th,Fr,Sa 9:00-20:00',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Львів',
-      addressRegion: 'Львівська область',
-      addressCountry: 'UA',
-    },
-    parentOrganization: {
-      '@id': 'https://leocode.com.ua/#organization',
-    },
-  }
-
-  // Course offer schema
-  const courseSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Course',
-    name: 'Курси програмування для дітей LEOCODE',
-    description:
-      'LEOCODE (LEO CODE) навчає дітей програмуванню, польоту на дронах та іншим IT навичкам.',
-    provider: {
-      '@id': 'https://leocode.com.ua/#organization',
-    },
-    educationalCredentialAwarded: 'Сертифікат про завершення курсу',
-    audience: {
-      '@type': 'EducationalAudience',
-      educationalRole: 'Учень',
-      audienceType: 'Діти віком від 7 до 15 років',
-    },
   }
 
   return (
-    <Script
+    <script
       id="schema-markup"
       type="application/ld+json"
-      strategy="afterInteractive"
-    >
-      {JSON.stringify([
-        organizationSchema,
-        websiteSchema,
-        localBusinessSchema,
-        courseSchema,
-      ])}
-    </Script>
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
+    />
   )
 }
 

@@ -4,7 +4,6 @@ import { useEffect, useState, createContext } from 'react'
 import { MotionConfig } from 'framer-motion'
 import CookieConsent from '@/components/cookies/CookieConsent'
 import { ModalProvider } from '@/contexts/ModalContext'
-import SchemaMarkup from '@/components/utils/SchemaMarkup'
 
 export const AnimationContext = createContext({
   isReducedMotion: false,
@@ -59,9 +58,6 @@ export default function ClientBody({
       }}
     >
       <MotionConfig reducedMotion={isReducedMotion ? 'always' : 'never'}>
-        {/* Schema.org structured data */}
-        <SchemaMarkup />
-
         <ModalProvider>{children}</ModalProvider>
 
         {/* Cookie Consent Banner */}

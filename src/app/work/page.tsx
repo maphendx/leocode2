@@ -2,6 +2,16 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Вакансії та робота в LEOCODE у Львові',
+  description:
+    'Актуальні вакансії LEOCODE у Львові: викладачі, менеджери та методисти для дитячого освітнього простору.',
+  path: '/work',
+  keywords: ['вакансії Львів', 'робота викладач Львів', 'вакансії LEOCODE'],
+})
 
 export default function WorkPage() {
   return (
@@ -11,7 +21,7 @@ export default function WorkPage() {
         {/* Hero Section */}
         <section className="relative py-24 md:py-32 bg-gradient-to-r from-primary to-[#1F2421] text-white overflow-hidden">
           {/* Decorative elements */}
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('/images/pattern-dots.svg')] opacity-10 z-0"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-[url('/pattern.svg')] opacity-10 z-0"></div>
           <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-accent/20 blur-3xl"></div>
           <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-accent/20 blur-3xl"></div>
 
@@ -79,10 +89,11 @@ export default function WorkPage() {
                 <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-xl">
                   <div className="absolute inset-0 bg-gradient-to-r from-primary/70 to-primary/40 mix-blend-multiply z-10"></div>
                   <Image
-                    src="/images/team-photo.jpg"
-                    alt="Наша команда"
+                    src="/main-poster.jpg"
+                    alt="Команда LEOCODE"
                     fill
                     className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
                 <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-primary-light rounded-2xl rotate-12 shadow-lg"></div>
