@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 
+const FALLBACK_BASE_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://leocode.com.ua'
+    : 'http://localhost:3000'
+
 export const siteConfig = {
   name: 'LEOCODE',
-  url: (process.env.NEXT_PUBLIC_BASE_URL || 'https://leocode.com.ua').replace(
-    /\/$/,
-    ''
-  ),
+  url: (process.env.NEXT_PUBLIC_BASE_URL || FALLBACK_BASE_URL).replace(/\/$/, ''),
   defaultTitle: 'LEOCODE - Освітній простір для дітей 7-15 років у Львові',
   description:
     'Освітній простір LEOCODE у Львові для дітей 7-15 років: програмування, дрони, англійська та онлайн й офлайн навчання.',
