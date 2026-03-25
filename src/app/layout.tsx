@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Mulish } from 'next/font/google'
-import Script from 'next/script'
 import './globals.css'
 import ClientBody from './ClientBody'
+import LiveChatLoader from '@/components/utils/LiveChatLoader'
 import SchemaMarkup from '@/components/utils/SchemaMarkup'
 import { DEFAULT_KEYWORDS, siteConfig } from '@/lib/seo'
 
@@ -62,19 +62,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   const isProduction = process.env.NODE_ENV === 'production'
+  const liveChatId = '699ecbde408e4cf75b0447cb'
 
   return (
     <html lang="uk" className={mulish.variable}>
       <body className="antialiased" suppressHydrationWarning>
         <SchemaMarkup />
         <ClientBody>{children}</ClientBody>
-        {isProduction && (
-          <Script
-            src="https://cdn.pulse.is/livechat/loader.js"
-            data-live-chat-id="699ecbde408e4cf75b0447cb"
-            strategy="lazyOnload"
-          />
-        )}
+        {isProduction && <LiveChatLoader chatId={liveChatId} />}
       </body>
     </html>
   )
