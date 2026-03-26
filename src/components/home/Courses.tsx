@@ -511,6 +511,7 @@ const SkillsDevelopment = () => {
   const expandedViewRef = useRef<HTMLDivElement>(null)
   const swiperRef = useRef<SwiperType | null>(null)
   const isHashChangeInProgress = useRef(false)
+  const shouldScrollToCoursesAfterClose = useRef(false)
 
   const filteredCourses = useMemo(() => {
     return activeFilter === 'all'
@@ -533,6 +534,27 @@ const SkillsDevelopment = () => {
       behavior: 'smooth',
     })
   }, [])
+
+  const scrollToCoursesSection = useCallback(
+    (behavior: ScrollBehavior = 'smooth') => {
+      if (typeof window === 'undefined') return
+
+      const coursesSection = document.getElementById('napryamki')
+      if (!coursesSection) return
+
+      const headerOffset = window.innerWidth < 768 ? 76 : 88
+      const targetTop = Math.max(
+        coursesSection.getBoundingClientRect().top + window.scrollY - headerOffset,
+        0,
+      )
+
+      window.scrollTo({
+        top: targetTop,
+        behavior,
+      })
+    },
+    [],
+  )
 
   const handleFilterClick = useCallback(
     (filter: FilterOption) => {
@@ -636,66 +658,12 @@ const SkillsDevelopment = () => {
     }
   }, [expandedCourse, handleCourseClick])
 
-  const smoothScrollTo = useCallback((top: number, duration = 820) => {
-    if (typeof window === 'undefined') return
-
-    const reduceMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
-
-    if (reduceMotion) {
-      window.scrollTo({ top, behavior: 'auto' })
-      return
-    }
-
-    const startY = window.scrollY
-    const distance = top - startY
-
-    if (Math.abs(distance) < 2) {
-      window.scrollTo({ top, behavior: 'auto' })
-      return
-    }
-
-    const startTime = performance.now()
-    const easeInOutCubic = (t: number) =>
-      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-
-    const step = (currentTime: number) => {
-      const elapsed = currentTime - startTime
-      const progress = Math.min(elapsed / duration, 1)
-      const easedProgress = easeInOutCubic(progress)
-
-      window.scrollTo({
-        top: startY + distance * easedProgress,
-        behavior: 'auto',
-      })
-
-      if (progress < 1) {
-        window.requestAnimationFrame(step)
-      }
-    }
-
-    window.requestAnimationFrame(step)
-  }, [])
-
   const handleCloseAndScrollToCourses = useCallback(() => {
     if (typeof window === 'undefined' || expandedCourse === null) return
 
-    const coursesSection = document.getElementById('napryamki')
-    const headerOffset = 88
-    const targetTop = coursesSection
-      ? Math.max(
-          coursesSection.getBoundingClientRect().top +
-            window.scrollY -
-            headerOffset,
-          0,
-        )
-      : 0
-
+    shouldScrollToCoursesAfterClose.current = true
     handleCourseClick(expandedCourse)
-
-    smoothScrollTo(targetTop)
-  }, [expandedCourse, handleCourseClick, smoothScrollTo])
+  }, [expandedCourse, handleCourseClick])
 
   // Hash change detection
   const checkHashForCourse = useCallback(() => {
@@ -806,6 +774,38 @@ const SkillsDevelopment = () => {
     }
   }, [expandedCourse, filteredCourses.length, handleClose])
 
+  useEffect(() => {
+    if (typeof window === 'undefined' || expandedCourse !== null) return
+    if (!shouldScrollToCoursesAfterClose.current) return
+
+    shouldScrollToCoursesAfterClose.current = false
+
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
+    const timeoutId = window.setTimeout(() => {
+      scrollToCoursesSection(reduceMotion ? 'auto' : 'smooth')
+    }, 40)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [expandedCourse, scrollToCoursesSection])
+
+  useEffect(() => {
+    const swiper = swiperRef.current
+    if (!swiper) return
+
+    swiper.allowTouchMove = expandedCourse === null
+
+    if (!swiper.autoplay) return
+
+    if (expandedCourse === null) {
+      swiper.autoplay.start()
+      return
+    }
+
+    swiper.autoplay.stop()
+  }, [expandedCourse])
+
   const CourseCard = memo(
     ({
       course,
@@ -843,7 +843,9 @@ const SkillsDevelopment = () => {
                 : '1px solid rgba(43, 47, 57, 0.9)',
               transformOrigin: 'center center',
               willChange: isMobile ? 'auto' : 'transform, opacity',
-              transform: 'translateZ(0)',
+              transform: isMobile ? 'none' : 'translateZ(0)',
+              backfaceVisibility: isMobile ? 'visible' : 'hidden',
+              WebkitBackfaceVisibility: isMobile ? 'visible' : 'hidden',
               opacity: isMounted ? 1 : 0,
               transition: 'opacity 0.3s ease-in-out',
             }}
@@ -891,6 +893,10 @@ const SkillsDevelopment = () => {
                   fill
                   sizes="(max-width: 768px) 90vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover w-full h-full"
+                  style={{
+                    backfaceVisibility: 'visible',
+                    WebkitBackfaceVisibility: 'visible',
+                  }}
                   loading={isMobile ? 'eager' : 'lazy'}
                   placeholder="blur"
                   blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2YwZjBmMCIvPjwvc3ZnPg=="
@@ -1160,8 +1166,18 @@ const SkillsDevelopment = () => {
                     slidesPerView="auto"
                     navigation={false}
                     speed={560}
+                    allowTouchMove={expandedCourse === null}
                     onSwiper={(swiper) => {
                       swiperRef.current = swiper
+                      swiper.allowTouchMove = expandedCourse === null
+
+                      if (swiper.autoplay) {
+                        if (expandedCourse === null) {
+                          swiper.autoplay.start()
+                        } else {
+                          swiper.autoplay.stop()
+                        }
+                      }
                     }}
                     autoplay={{
                       delay: 5000,
@@ -1273,6 +1289,10 @@ const SkillsDevelopment = () => {
                         fill
                         sizes="(max-width: 768px) 100vw, 360px"
                         className="object-cover w-full h-full"
+                        style={{
+                          backfaceVisibility: 'visible',
+                          WebkitBackfaceVisibility: 'visible',
+                        }}
                         priority
                       />
                       <div className="absolute inset-0 bg-linear-to-r from-black/5 via-transparent to-black/20 md:bg-linear-to-t md:from-black/20 md:to-transparent" />
@@ -1455,27 +1475,39 @@ const SkillsDevelopment = () => {
         .courses-section .swiper-wrapper {
           overflow: visible !important;
           padding: 10px 0;
-          will-change: transform;
-          transform: translate3d(0, 0, 0);
-          backface-visibility: hidden;
-          perspective: 1000px;
+        }
+
+        @media (min-width: 768px) {
+          .courses-section .swiper,
+          .courses-section .swiper-wrapper {
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            perspective: 1000px;
+          }
         }
 
         .courses-section .action-card {
-          backface-visibility: hidden;
-          perspective: 1000px;
-          transform: translate3d(0, 0, 0);
           transition:
             transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1),
             box-shadow 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) !important;
-          will-change: transform, box-shadow;
-        }
-
-        .courses-section .action-card * {
-          backface-visibility: hidden;
         }
 
         @media (hover: hover) and (pointer: fine) {
+          .courses-section .action-card {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            perspective: 1000px;
+            transform: translate3d(0, 0, 0);
+            will-change: transform, box-shadow;
+          }
+
+          .courses-section .action-card * {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+          }
+
           .courses-section .action-card:hover {
             z-index: 20 !important;
             position: relative;
@@ -1485,11 +1517,17 @@ const SkillsDevelopment = () => {
         }
 
         @media (max-width: 767px) {
+          .courses-section .action-card,
+          .courses-section .action-card * {
+            backface-visibility: visible;
+            -webkit-backface-visibility: visible;
+          }
+
           .mobile-expanded-card {
             transform: translateZ(0);
             -webkit-transform: translateZ(0);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
+            backface-visibility: visible;
+            -webkit-backface-visibility: visible;
             will-change: opacity, height;
           }
 
