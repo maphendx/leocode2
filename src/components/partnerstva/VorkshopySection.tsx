@@ -51,7 +51,7 @@ export default function VorkshopySection() {
     >
       <PartnershipShowcase
         theme="dark"
-        imageSrc="/images/course.jpeg"
+        imageSrc="/images/partnership-workshops.jpeg"
         imageAlt="Воркшопи LeoCode для шкіл"
         imageLabel="Реальний бізнес-кейс"
         imageNote="Практичний формат, у якому діти проходять шлях від ідеї до готового цифрового продукту."

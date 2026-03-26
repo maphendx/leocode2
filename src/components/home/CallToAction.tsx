@@ -24,7 +24,7 @@ const CallToAction = () => {
       bgClass: 'bg-accent',
       textClass: 'text-accent',
       hoverClass: 'hover:bg-accent-hover',
-      image: '/images/canva.jpeg',
+      image: '/images/canva-course.jpeg',
       tag: 'IT школа',
     },
     {
@@ -54,7 +54,7 @@ const CallToAction = () => {
       bgClass: 'bg-red',
       textClass: 'text-primary-light',
       hoverClass: 'hover:bg-red/80',
-      image: '/images/figma.jpeg',
+      image: '/images/ux-ui-figma-course.jpeg',
       tag: 'IT школа',
     },
     {
@@ -69,7 +69,7 @@ const CallToAction = () => {
       bgClass: 'bg-primary-light',
       textClass: 'text-primary-light',
       hoverClass: 'hover:bg-primary-light/80',
-      image: '/images/python.jpeg',
+      image: '/images/python-course.jpeg',
       tag: 'IT школа',
     },
     {
@@ -84,7 +84,7 @@ const CallToAction = () => {
       bgClass: 'bg-accent',
       textClass: 'text-accent',
       hoverClass: 'hover:bg-accent-hover',
-      image: '/images/scratch.jpeg',
+      image: '/images/scratch-course.jpeg',
       tag: 'IT школа',
     },
     {

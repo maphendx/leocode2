@@ -288,35 +288,6 @@ const Header = () => {
     }
   }, [isMenuOpen, isCampAdOpen, clearBodyScrollLock])
 
-  useEffect(() => {
-    const handleProjectPreviewModal = (e: CustomEvent) => {
-      if (e.detail?.isOpen) {
-        if (window.innerWidth >= BREAKPOINTS.lg) {
-          setIsVisible(false)
-          document.body.classList.add('project-preview-open')
-        } else {
-          setIsVisible(true)
-        }
-      } else {
-        setIsVisible(true)
-        document.body.classList.remove('project-preview-open')
-      }
-    }
-
-    window.addEventListener(
-      'projectPreviewModal',
-      handleProjectPreviewModal as EventListener,
-    )
-
-    return () => {
-      window.removeEventListener(
-        'projectPreviewModal',
-        handleProjectPreviewModal as EventListener,
-      )
-      document.body.classList.remove('project-preview-open')
-    }
-  }, [])
-
   const toggleSubmenu = useCallback((index: number) => {
     setOpenSubmenu((prev) => (prev === index ? null : index))
   }, [])

@@ -119,31 +119,15 @@ const Probne = () => {
       }
     }
 
-    const handleProjectPreviewModal = (event: Event) => {
-      const customEvent = event as CustomEvent
-      if (customEvent.detail?.isOpen) {
-        // Close any open dropdowns when project preview modal opens
-        setShowCountryDropdown(false)
-      }
-    }
-
     window.addEventListener(
       'consultationModal',
       handleConsultationModal as EventListener
-    )
-    window.addEventListener(
-      'projectPreviewModal',
-      handleProjectPreviewModal as EventListener
     )
 
     return () => {
       window.removeEventListener(
         'consultationModal',
         handleConsultationModal as EventListener
-      )
-      window.removeEventListener(
-        'projectPreviewModal',
-        handleProjectPreviewModal as EventListener
       )
     }
   }, [])
@@ -742,29 +726,9 @@ const Probne = () => {
           }
         }
 
-        /* Fix z-index for modal overlaps */
-        .project-preview-open .header {
-          z-index: 1 !important;
-        }
-
-        .project-preview-open form,
-        .project-preview-open section {
-          z-index: auto !important;
-        }
-
-        .project-preview-open {
-          position: relative;
-        }
-
-        /* Proper z-index hierarchy */
         #form_construct_main {
           z-index: 10;
           position: relative;
-        }
-
-        /* Fix for country code dropdown appearing behind modal */
-        body.project-preview-open .fixed.inset-0.bg-black\/20 {
-          z-index: 10000 !important;
         }
 
         /* Consultation modal has higher priority than Probne */
@@ -778,15 +742,6 @@ const Probne = () => {
 
         body.consultation-modal-open #form_construct_main {
           z-index: auto !important;
-        }
-
-        /* Project preview modal should be highest */
-        body.project-preview-modal-open .probne-section {
-          z-index: auto !important;
-        }
-
-        body.project-preview-modal-open .probne-section .fixed {
-          z-index: 19000 !important;
         }
       `}</style>
     </section>

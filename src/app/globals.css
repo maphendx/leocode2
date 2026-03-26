@@ -387,13 +387,6 @@ header.main-header {
   perspective: 1000px;
 }
 
-/* Header visibility control for project preview */
-body.project-preview-open .main-header {
-  transform: translateY(-100%) !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-}
-
 /* Softer, more premium shadows across cards/surfaces */
 .shadow-sm {
   box-shadow:

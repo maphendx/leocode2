@@ -11,7 +11,6 @@ import {
   CodeSquare,
   Zap,
   FlaskConical,
-  Maximize2,
   Trophy,
   BarChart3,
   Users,
@@ -19,12 +18,9 @@ import {
   Split,
 } 
 from 'lucide-react'
-import ProjectPreview from '../other/ProjectPreview'
 
 const Results = () => {
   const [activeIndex, setActiveIndex] = useState(0)
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
-  const [currentProjectIndex, setCurrentProjectIndex] = useState(0)
   const sectionRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -149,32 +145,6 @@ const Results = () => {
     }
   }, []) // Empty dependency array to ensure it only runs once
 
-  useEffect(() => {
-    if (isPreviewOpen) {
-      document.body.classList.add('project-preview-modal-open')
-      const event = new CustomEvent('projectPreviewModal', {
-        detail: { isOpen: true },
-      })
-      window.dispatchEvent(event)
-    } else {
-      document.body.classList.remove('project-preview-modal-open')
-
-      const previewEvent = new CustomEvent('projectPreviewModal', {
-        detail: { isOpen: false },
-      })
-      window.dispatchEvent(previewEvent)
-    }
-
-    return () => {
-      document.body.classList.remove('project-preview-modal-open')
-
-      const previewEvent = new CustomEvent('projectPreviewModal', {
-        detail: { isOpen: false },
-      })
-      window.dispatchEvent(previewEvent)
-    }
-  }, [isPreviewOpen])
-
   const learningOutcomes = [
     {
       id: 1,
@@ -291,11 +261,6 @@ const Results = () => {
         ? (prev + 1) % studentProjects.length
         : (prev - 1 + studentProjects.length) % studentProjects.length,
     )
-  }
-
-  const openProjectPreview = (projectIndex: number) => {
-    setCurrentProjectIndex(projectIndex)
-    setIsPreviewOpen(true)
   }
 
   const containerVariants: Variants = {
@@ -547,8 +512,7 @@ const Results = () => {
 
             <div className="grid gap-4 lg:gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)]">
               <article
-                className="group relative overflow-hidden rounded-[8px] border border-[#D3DACD] bg-[#F1F4EC] cursor-pointer"
-                onClick={() => openProjectPreview(activeIndex)}
+                className="group relative overflow-hidden rounded-[8px] border border-[#D3DACD] bg-[#F1F4EC]"
               >
                 <div className="relative h-[280px] md:h-[360px] lg:h-[410px] border-b border-[#D3DACD]">
                   <Image
@@ -628,18 +592,6 @@ const Results = () => {
                     >
                       <ChevronRight className="h-4 w-4" />
                     </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        openProjectPreview(activeIndex)
-                      }}
-                      className="inline-flex h-10 items-center justify-center rounded-[4px] border border-[#B8DAB3] bg-[#DFF0D4] px-4 text-[12px] md:text-[13px] font-extrabold uppercase tracking-[0.05em] text-[#2F4E2C] transition-colors hover:bg-[#D4EAC6]"
-                    >
-                      Відкрити проєкт
-                      <Maximize2 className="ml-2 h-3.5 w-3.5" />
-                    </button>
                   </div>
                 </div>
               </article>
@@ -696,22 +648,6 @@ const Results = () => {
         </motion.div>
       </div>
 
-      <ProjectPreview
-        projects={studentProjects}
-        isOpen={isPreviewOpen}
-        currentIndex={currentProjectIndex}
-        onClose={() => setIsPreviewOpen(false)}
-        onNext={() =>
-          setCurrentProjectIndex((prev) => (prev + 1) % studentProjects.length)
-        }
-        onPrev={() =>
-          setCurrentProjectIndex(
-            (prev) =>
-              (prev - 1 + studentProjects.length) % studentProjects.length,
-          )
-        }
-      />
-
       <style jsx global>{`
         .project-rail-scroll::-webkit-scrollbar {
           width: 7px;
@@ -723,9 +659,6 @@ const Results = () => {
         .project-rail-scroll::-webkit-scrollbar-thumb {
           background: #bdd8b3;
           border-radius: 999px;
-        }
-        .project-preview-modal-open {
-          z-index: 20000 !important;
         }
       `}</style>
     </section>

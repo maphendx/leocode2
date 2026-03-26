@@ -186,7 +186,7 @@ const Partnership = () => {
                 </div>
                 <div className="relative order-1 min-h-[155px] lg:order-2">
                   <Image
-                    src="/images/course.jpeg"
+                    src="/images/partnership-workshops.jpeg"
                     alt="Воркшопи"
                     fill
                     sizes="(max-width: 1024px) 100vw, 42vw"
