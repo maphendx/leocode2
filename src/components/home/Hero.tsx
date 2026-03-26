@@ -105,9 +105,10 @@ const HeroLeadForm = ({
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   compact?: boolean
 }) => {
-  const inputSize = compact ? 'text-[17px] sm:text-[18px]' : 'text-[20px] xl:text-[22px]'
+  const inputSize = compact ? 'text-[16px] sm:text-[18px]' : 'text-[20px] xl:text-[22px]'
+  const inputSpacingClass = compact ? 'pt-5 pb-1.5' : 'pt-7 pb-2'
   const floatingLabelClass = compact
-    ? 'top-0 translate-y-0 text-[12px] text-[#98CF93] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[17px] peer-placeholder-shown:sm:text-[18px] peer-placeholder-shown:text-white/62 peer-focus:top-0 peer-focus:translate-y-0 peer-focus:text-[12px] peer-focus:text-[#98CF93]'
+    ? 'top-0 translate-y-0 text-[11px] text-[#98CF93] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[16px] peer-placeholder-shown:sm:text-[18px] peer-placeholder-shown:text-white/62 peer-focus:top-0 peer-focus:translate-y-0 peer-focus:text-[11px] peer-focus:text-[#98CF93]'
     : 'top-0 translate-y-0 text-[13px] xl:text-[14px] text-[#98CF93] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[20px] peer-placeholder-shown:xl:text-[22px] peer-placeholder-shown:text-white/62 peer-focus:top-0 peer-focus:translate-y-0 peer-focus:text-[13px] peer-focus:xl:text-[14px] peer-focus:text-[#98CF93]'
 
   if (submitted) {
@@ -126,22 +127,26 @@ const HeroLeadForm = ({
 
   return (
     <form onSubmit={onSubmit} className="h-full flex flex-col">
-      <div className={compact ? 'mb-4' : 'mb-6'}>
+      <div className={compact ? 'mb-3.5' : 'mb-6'}>
         <p
           className={`text-white font-semibold tracking-[-0.02em] ${
             compact
-              ? 'text-lg leading-tight'
+              ? 'text-[17px] leading-tight sm:text-lg'
               : 'text-[24px] xl:text-[28px] leading-[1.08]'
           }`}
         >
           Залиште заявку
         </p>
-        <p className={`mt-1.5 text-white ${compact ? 'text-xs' : 'text-sm xl:text-[15px]'}`}>
+        <p
+          className={`mt-1 text-white ${
+            compact ? 'text-[11px] leading-[1.4] sm:text-xs' : 'text-sm xl:text-[15px]'
+          }`}
+        >
           і наш адміністратор зателефонує вам
         </p>
       </div>
 
-      <div className={`grid ${compact ? 'grid-cols-1 gap-4.5' : 'grid-cols-1 gap-6'}`}>
+      <div className={`grid ${compact ? 'grid-cols-1 gap-3.5' : 'grid-cols-1 gap-6'}`}>
         <div>
           <div className="relative">
             <input
@@ -151,7 +156,7 @@ const HeroLeadForm = ({
               value={formData.parentName}
               onChange={onChange}
               placeholder=" "
-              className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-7 pb-2 text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
+              className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 ${inputSpacingClass} text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
               required
             />
             <label
@@ -176,7 +181,7 @@ const HeroLeadForm = ({
               onChange={onChange}
               onFocus={onPhoneFocus}
               placeholder=" "
-              className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-7 pb-2 text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
+              className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 ${inputSpacingClass} text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
               required
             />
             <label
@@ -201,7 +206,7 @@ const HeroLeadForm = ({
               value={formData.childAge}
               onChange={onChange}
               placeholder=" "
-              className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 pt-7 pb-2 text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
+              className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 ${inputSpacingClass} text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
               required
             />
             <label
@@ -217,12 +222,12 @@ const HeroLeadForm = ({
         </div>
       </div>
 
-      <div className={`${compact ? 'mt-5' : 'mt-auto pt-6'}`}>
+      <div className={`${compact ? 'mt-4' : 'mt-auto pt-6'}`}>
         <button
           type="submit"
           disabled={isSubmitting}
           className={`w-full rounded-[4px] bg-accent px-6 text-center font-extrabold uppercase tracking-[0.02em] text-[#192518] transition-colors duration-200 hover:bg-[#8BC886] disabled:opacity-60 disabled:cursor-not-allowed ${
-            compact ? 'py-3.5 text-sm sm:text-base' : 'py-5 text-[15px] xl:text-[16px]'
+            compact ? 'py-3 text-[13px] sm:py-3.5 sm:text-sm' : 'py-5 text-[15px] xl:text-[16px]'
           }`}
         >
           {isSubmitting ? 'Відправляємо...' : 'Надіслати заявку'}
@@ -470,7 +475,7 @@ const Hero = () => {
     <section className="relative overflow-hidden">
       <div
         ref={videoContainerRef}
-        className="relative home-banner__video-wrap h-svh min-h-140 bg-[#1A1C21]"
+        className="relative home-banner__video-wrap min-h-svh bg-[#1A1C21] lg:h-svh lg:min-h-140"
       >
         <div
           className={`absolute inset-0 transition-opacity duration-1000 ${
@@ -519,18 +524,18 @@ const Hero = () => {
         <div className="absolute inset-y-0 right-0 hidden lg:block w-[42%] bg-[linear-gradient(90deg,rgba(17,19,24,0)_0%,rgba(17,19,24,0.24)_36%,rgba(17,19,24,0.42)_100%)]" />
 
         <div
-          className={`relative z-1 container h-full pt-26 pb-6 sm:pt-28 sm:pb-8 ${
+          className={`relative z-1 container h-full pt-23 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] sm:pt-25 sm:pb-8 ${
             isShortDesktopViewport ? 'lg:pt-30 lg:pb-8' : 'lg:pt-33 lg:pb-10'
           }`}
         >
           <div
-            className={`grid h-full grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] gap-6 lg:gap-10 ${
+            className={`grid gap-5 sm:gap-6 lg:h-full lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] lg:gap-10 ${
               isShortDesktopViewport ? 'lg:items-start' : 'lg:items-center'
             }`}
           >
-            <div className="flex flex-col justify-center lg:pr-6 text-white">
-              <h1 className="m-0 max-w-195 text-[clamp(2.05rem,5vw,4.5rem)] font-extrabold leading-[1.03] tracking-[-0.02em] text-white">
-                <span className="block whitespace-nowrap text-[clamp(1.35rem,4.6vw,4.5rem)]">
+            <div className="flex flex-col justify-start lg:justify-center lg:pr-6 text-white">
+              <h1 className="m-0 max-w-[22rem] text-[clamp(1.95rem,8.4vw,4.5rem)] font-extrabold leading-[1.02] tracking-[-0.02em] text-white sm:max-w-195 sm:text-[clamp(2.05rem,5vw,4.5rem)]">
+                <span className="block whitespace-nowrap text-[clamp(1.28rem,5.7vw,4.5rem)] sm:text-[clamp(1.35rem,4.6vw,4.5rem)]">
                   ОСВІТНІЙ&nbsp;ПРОСТІР
                 </span>
                 <span className="block mt-1 sm:mt-2">ДЛЯ ДІТЕЙ</span>
@@ -539,22 +544,22 @@ const Hero = () => {
                 </span>
               </h1>
 
-              <p className="mt-5 max-w-[42rem] text-[15px] leading-[1.6] text-white/84 sm:text-[17px]">
+              <p className="mt-4 max-w-[22rem] text-[14px] leading-[1.55] text-white/84 sm:mt-5 sm:max-w-[42rem] sm:text-[17px] sm:leading-[1.6]">
                 <strong className="font-extrabold text-white">LEOCODE</strong>{' '}
                 - освітній простір для дітей 7-15 років у Львові, де навчаємо
                 програмуванню, дронам, англійській мові та цифровим навичкам
                 онлайн й офлайн.
               </p>
 
-              <div className="mt-6 sm:mt-8">
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#23262D]/80 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-[0_10px_22px_rgba(0,0,0,0.18)] backdrop-blur-md">
+              <div className="mt-4 sm:mt-8">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#23262D]/80 px-3.5 py-2 text-[11px] font-semibold text-white shadow-[0_10px_22px_rgba(0,0,0,0.18)] backdrop-blur-md sm:px-4 sm:text-sm">
                   <span className="h-2.5 w-2.5 rounded-full bg-[#98CF93]" />
                   Доступне онлайн та офлайн навчання
                 </span>
               </div>
 
-              <div className="mt-6 sm:mt-8 lg:hidden">
-                <div className="max-w-125 rounded-2xl border border-white/10 bg-[#171A21]/70 p-4 shadow-[0_24px_40px_rgba(8,10,14,0.28)] backdrop-blur-md">
+              <div className="mt-4 sm:mt-6 lg:hidden">
+                <div className="mx-auto w-full max-w-[22rem] rounded-[20px] border border-white/10 bg-[#171A21]/70 p-3.5 shadow-[0_24px_40px_rgba(8,10,14,0.28)] backdrop-blur-md sm:max-w-125 sm:rounded-2xl sm:p-4">
                   <HeroLeadForm
                     formData={leadForm}
                     errors={leadErrors}
