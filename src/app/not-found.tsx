@@ -3,7 +3,11 @@ import Image from 'next/image'
 
 export default function NotFound() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#1E222B] text-white">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="relative min-h-screen overflow-hidden bg-[#1E222B] text-white"
+    >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-80"

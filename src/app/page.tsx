@@ -7,7 +7,7 @@ import ErrorBoundary from '@/components/utils/ErrorBoundary'
 import Courses from '@/components/home/Courses'
 import OnlineLearning from '@/components/home/OnlineLearning'
 import SummerCampAd from '@/components/other/SummerCampAd'
-import Results from '@/components/home/Results'
+import Results from '@/components/home/ResultsIsland'
 import Events from '@/components/home/Events'
 import FAQ from '@/components/home/FAQ'
 import Locations from '@/components/home/Locations'
@@ -40,7 +40,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main className="bg-transparent">
+      <main id="main-content" tabIndex={-1} className="bg-transparent">
         <ErrorBoundary
           fallback={
             <MediaErrorFallback message="Не вдалося завантажити головний блок" />

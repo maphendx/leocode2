@@ -43,7 +43,7 @@ export default function SchoolPartnershipPage() {
   return (
     <>
       <Header />
-      <main className="bg-[#262830]">
+      <main id="main-content" tabIndex={-1} className="bg-[#262830]">
         <section className="relative min-h-[100svh] overflow-hidden">
           <div className="absolute inset-0">
             <Image

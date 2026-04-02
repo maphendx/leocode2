@@ -2,8 +2,10 @@
 
 import { useEffect, useState, createContext } from 'react'
 import { MotionConfig } from 'framer-motion'
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
 import CookieConsent from '@/components/cookies/CookieConsent'
 import { ModalProvider } from '@/contexts/ModalContext'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 
 export const AnimationContext = createContext({
   isReducedMotion: false,
@@ -16,8 +18,15 @@ export default function ClientBody({
 }: {
   children: React.ReactNode
 }) {
-  const [isReducedMotion, setIsReducedMotion] = useState(false)
-  const [isFirstVisit, setIsFirstVisit] = useState(true)
+  const googleAnalyticsId = 'G-TLYHHQBXLP'
+  const isReducedMotion = usePrefersReducedMotion()
+  const [isFirstVisit, setIsFirstVisit] = useState(() => {
+    if (typeof window === 'undefined') {
+      return true
+    }
+
+    return localStorage.getItem('visited-before') !== 'true'
+  })
 
   useEffect(() => {
     // Clear stale scroll locks left by interrupted modal/menu transitions.
@@ -29,23 +38,23 @@ export default function ClientBody({
       document.body.style.removeProperty('width')
       document.documentElement.style.removeProperty('overflow')
     }
+  }, [])
 
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches
-    setIsReducedMotion(prefersReducedMotion)
+  useEffect(() => {
+    if (!isFirstVisit) {
+      localStorage.setItem('visited-before', 'true')
+      return
+    }
 
-    const hasVisitedBefore = localStorage.getItem('visited-before') === 'true'
-    setIsFirstVisit(!hasVisitedBefore)
-
-    const timer = setTimeout(() => {
+    const timer = window.setTimeout(() => {
       localStorage.setItem('visited-before', 'true')
     }, 1000)
 
-    return () => clearTimeout(timer)
-  }, [])
+    return () => window.clearTimeout(timer)
+  }, [isFirstVisit])
 
   const setFirstVisitComplete = () => {
+    localStorage.setItem('visited-before', 'true')
     setIsFirstVisit(false)
   }
 
@@ -59,6 +68,7 @@ export default function ClientBody({
     >
       <MotionConfig reducedMotion={isReducedMotion ? 'always' : 'never'}>
         <ModalProvider>{children}</ModalProvider>
+        <GoogleAnalytics measurementId={googleAnalyticsId} />
 
         {/* Cookie Consent Banner */}
         <CookieConsent />

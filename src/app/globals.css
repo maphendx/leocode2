@@ -126,6 +126,29 @@
   }
 }
 
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 5000;
+  transform: translateY(-150%);
+  border-radius: 999px;
+  background: #171c17;
+  color: #f9fff5;
+  padding: 0.75rem 1rem;
+  font-weight: 800;
+  box-shadow: 0 16px 32px rgba(10, 16, 10, 0.2);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid #98cf93;
+  outline-offset: 3px;
+}
+
 .animate-on-scroll {
   transition-property: opacity, transform;
   transition-timing-function: cubic-bezier(0.08, 0.82, 0.17, 1);
@@ -190,6 +213,27 @@
   will-change: transform;
 }
 
+@keyframes phone-ring {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  18% {
+    transform: rotate(10deg);
+  }
+  36% {
+    transform: rotate(-8deg);
+  }
+  54% {
+    transform: rotate(5deg);
+  }
+}
+
+.phone-ring-icon {
+  transform-origin: center;
+  animation: phone-ring 2.1s ease-in-out infinite;
+}
+
 .backdrop-blur-sm {
   backdrop-filter: blur(4px);
 }
@@ -220,6 +264,10 @@ input[type='checkbox'] {
 ::selection {
   background: rgba(152, 207, 147, 0.35);
   color: #1f2a1f;
+}
+
+:focus-visible {
+  scroll-margin-top: 6rem;
 }
 
 /* Правила для хедера з високим пріоритетом */
@@ -416,4 +464,17 @@ header.main-header {
   box-shadow:
     0 14px 30px rgba(28, 34, 29, 0.1),
     0 30px 60px rgba(82, 112, 73, 0.14) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  .animate-on-scroll,
+  .animate-bounce,
+  .phone-ring-icon {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -10,16 +10,7 @@ import 'swiper/css/navigation'
 import FreeLesson from '../other/FreeLesson'
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import type { Swiper as SwiperType } from 'swiper'
-
-const useIsMounted = () => {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  return mounted
-}
+import { useHydrated } from '@/hooks/useHydrated'
 
 interface CourseSkill {
   name: string
@@ -169,7 +160,7 @@ const ProgressTurnThread = ({
 }
 
 const SkillsDevelopment = () => {
-  const isMounted = useIsMounted()
+  const isMounted = useHydrated()
 
   const courses = useMemo<CourseData[]>(
     () => [
@@ -284,7 +275,7 @@ const SkillsDevelopment = () => {
         description:
           'Курс знайомить підлітків із сучасними цифровими професіями та навчає створювати власні проєкти — від ідеї до готового продукту. Протягом навчання діти опановують 3D-моделювання, графічний дизайн у Canva, UI/UX у Figma та веброзробку за допомогою HTML і CSS.',
         detailedDescription:
-          'Курс знайомить підлітків із сучасними цифровими професіями та навчає створювати власні проєкти — від ідеї до готового продукту. Протягом навчання діти опанують основи 3D-моделювання у Tinkercad, графічного дизайну у Canva, UI/UX у Figma та веброзробки за допомогою HTML і CSS. Додатково вивчатимуть технічну англійську та познайомляться з Drone-напрямком. У результаті курсу кожен учень отримає: 3D-модель котеджу, брендбук для власного бренду, вебсайт-портфоліо, яке буде опубліковане на GitHub-хостингу.',
+          'Курс знайомить підлітків із сучасними цифровими професіями та навчає створювати власні проєкти — від ідеї до готового продукту. Протягом навчання діти опанують основи 3D-моделювання у Tinkercad, графічного дизайну у Canva, UI/UX у Figma та веброзробки за допомогою HTML і CSS. Додатково познайомляться з Drone-напрямком та навчаться презентувати власні проєкти. У результаті курсу кожен учень отримає: 3D-модель котеджу, брендбук для власного бренду, вебсайт-портфоліо, яке буде опубліковане на GitHub-хостингу.',
         duration: '9 місяців',
         schedule: '2 рази на тиждень або субота, 2 години',
         age: '7-15 років',
@@ -307,7 +298,7 @@ const SkillsDevelopment = () => {
           { name: 'Адаптивний дизайн для різних пристроїв', level: 'середній' },
           { name: 'Публікація та хостинг сайту на GitHub', level: 'середній' },
           { name: 'Формування власного сайт-портфоліо', level: 'середній' },
-          { name: 'Технічна англійська', level: 'середній' },
+          { name: 'Презентація власних проєктів', level: 'середній' },
         ],
         progressSteps: [
           "Створення 3D-моделі котеджу (інтер'єр та екстер'єр) у Tinkercad",
@@ -316,7 +307,7 @@ const SkillsDevelopment = () => {
           'Створення прототипу сайту-портфоліо у Figma',
           'Верстка власного сайту-портфоліо за допомогою HTML/CSS',
           'Публікація сайту онлайн через GitHub',
-          "Вивчення технічної англійської на кожному занятті",
+          'Презентація та захист власного проєкту',
         ],
       },
       {
@@ -506,7 +497,6 @@ const SkillsDevelopment = () => {
   const [expandedCourse, setExpandedCourse] = useState<number | null>(null)
   const [isAnimating, setIsAnimating] = useState(false)
   const [isConsultationModalOpen, setIsConsultationModalOpen] = useState(false)
-  const [showNav, setShowNav] = useState(false)
 
   const expandedViewRef = useRef<HTMLDivElement>(null)
   const swiperRef = useRef<SwiperType | null>(null)
@@ -569,12 +559,6 @@ const SkillsDevelopment = () => {
     },
     [scrollToOnlineLearning],
   )
-  useEffect(() => {
-    if (isMounted) {
-      setShowNav(true)
-    }
-  }, [isMounted])
-
   // Simplified course click handler
   const handleCourseClick = useCallback(
     (index: number, fromHashChange = false) => {
@@ -1108,7 +1092,7 @@ const SkillsDevelopment = () => {
           </div>
 
           <div className="hidden md:flex gap-3 ml-4 z-10">
-            {isMounted && showNav && (
+            {isMounted && (
               <>
                 <motion.button
                   className="static! w-11! h-11! flex items-center justify-center border border-[#B9BCB6] text-[#2F3136] rounded-[4px] bg-transparent hover:border-[#98CF93] hover:bg-[#F3F8EF] active:bg-[#EAF5E3] transition-colors duration-300 p-1"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import NextImage, { ImageProps as NextImageProps } from 'next/image'
 import { isOffline, getFallbackImageUrl } from '@/lib/networkUtils'
 import imagePreloader from '@/services/imagePreloader'
@@ -29,23 +29,33 @@ export default function Image({
   onLoad,
   ...rest
 }: ImageProps) {
-  const [error, setError] = useState(false)
   const [offlineMode, setOfflineMode] = useState(false)
-  const [isLoaded, setIsLoaded] = useState(false)
   const imageRef = useRef<HTMLImageElement>(null)
-  const hasRendered = useRef(false)
+  const resolvedSrc = useMemo(() => String(src), [src])
+  const isPreloaded =
+    typeof src === 'string' && imagePreloader.isImagePreloaded(src)
+  const [imageState, setImageState] = useState(() => ({
+    src: resolvedSrc,
+    error: false,
+    isLoaded: isPreloaded,
+  }))
 
   // Add missing sizes prop for fill images
   const defaultSizes = fill
     ? '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
     : sizes
 
+  const currentImageState =
+    imageState.src === resolvedSrc
+      ? imageState
+      : {
+          src: resolvedSrc,
+          error: false,
+          isLoaded: isPreloaded,
+        }
+
   // Check for preloaded status
   useEffect(() => {
-    if (typeof src === 'string' && imagePreloader.isImagePreloaded(src)) {
-      setIsLoaded(true)
-    }
-
     // Preload image if requested and not already loaded
     if (
       withPreload &&
@@ -56,14 +66,6 @@ export default function Image({
         // Silently handle preload errors - will fallback to normal loading
       })
     }
-
-    // Reset states when src changes
-    if (!hasRendered.current) {
-      hasRendered.current = true
-    } else {
-      setError(false)
-      setIsLoaded(false)
-    }
   }, [src, withPreload])
 
   useEffect(() => {
@@ -71,9 +73,6 @@ export default function Image({
     const updateOfflineStatus = () => {
       const offline = isOffline()
       setOfflineMode(offline)
-      if (offline && !error) {
-        setError(true)
-      }
     }
 
     updateOfflineStatus()
@@ -85,17 +84,25 @@ export default function Image({
       window.removeEventListener('online', updateOfflineStatus)
       window.removeEventListener('offline', updateOfflineStatus)
     }
-  }, [error])
+  }, [])
 
   // Handle successful image load
   const handleLoad = () => {
-    setIsLoaded(true)
+    setImageState({
+      src: resolvedSrc,
+      error: false,
+      isLoaded: true,
+    })
     if (onLoad) onLoad()
   }
 
   // Handle image load error
   const handleError = () => {
-    setError(true)
+    setImageState({
+      src: resolvedSrc,
+      error: true,
+      isLoaded: currentImageState.isLoaded,
+    })
     // Preload fallback image if needed
     if (fallbackSrc && typeof fallbackSrc === 'string') {
       imagePreloader.preloadImage(fallbackSrc).catch(() => {
@@ -105,7 +112,7 @@ export default function Image({
   }
 
   // Use fallback or generate one if image fails to load
-  const imageSrc = error
+  const imageSrc = currentImageState.error || offlineMode
     ? fallbackSrc ||
       (showPlaceholder ? getFallbackImageUrl(src as string) : src)
     : src
@@ -114,15 +121,15 @@ export default function Image({
   const imageClasses = [
     className || '',
     fadeIn ? 'transition-opacity duration-300' : '',
-    fadeIn && !isLoaded && !priority ? 'opacity-0' : 'opacity-100',
-    error ? 'image-fallback' : '',
+    fadeIn && !currentImageState.isLoaded && !priority ? 'opacity-0' : 'opacity-100',
+    currentImageState.error || offlineMode ? 'image-fallback' : '',
     'gpu', // Apply hardware acceleration class
   ]
     .filter(Boolean)
     .join(' ')
 
   // If using placeholder and not loaded yet
-  if (lowQualitySrc && !isLoaded && !priority) {
+  if (lowQualitySrc && !currentImageState.isLoaded && !priority) {
     return (
       <div className="relative">
         {/* Low quality placeholder */}

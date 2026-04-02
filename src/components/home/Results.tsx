@@ -1,8 +1,12 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
+import {
+  AnimatePresence,
+  motion,
+  type Variants,
+} from 'framer-motion'
 import {
   ChevronLeft,
   ChevronRight,
@@ -19,61 +23,336 @@ import {
 } 
 from 'lucide-react'
 
+type ProjectSlide = {
+  id: string
+  title: string
+  description: string
+  image: string
+  student: string
+  result: string
+}
+
+type ProjectDirection = {
+  id: string
+  label: string
+  lead: string
+  slides: ProjectSlide[]
+}
+
+const threeDSlides: ProjectSlide[] = [
+  {
+    id: '3d-room',
+    title: '3D-макет інтерʼєру',
+    description:
+      'Учні збирають простір кімнати з меблями й деталями, відпрацьовуючи композицію, масштаб та обʼєм.',
+    image: '/images/works/3d/3d_1.jpeg',
+    student: 'Група 3D, 10-13 років',
+    result: 'Tinkercad',
+  },
+  {
+    id: '3d-printer-line',
+    title: 'Модель 3D-принтера',
+    description:
+      'Практичний проєкт на базі простих форм, де дитина конструює техніку та вчиться мислити як інженер.',
+    image: '/images/works/3d/3d_2.jpeg',
+    student: 'Учнівський проєкт',
+    result: '3D-конструювання',
+  },
+  {
+    id: '3d-printer-detail',
+    title: 'Деталізація механізму',
+    description:
+      'Кадр з іншим ракурсом, де добре видно роботу з обʼємом, деталями та конструкцією обʼєкта.',
+    image: '/images/works/3d/3d_3.jpeg',
+    student: 'Навчальна група',
+    result: 'Обʼєм + форма',
+  },
+  {
+    id: '3d-character',
+    title: 'Персонаж у 3D',
+    description:
+      'Навчальна робота, де дитина збирає власного персонажа зі складених форм і простих кольорових блоків.',
+    image: '/images/works/3d/3d_4.jpeg',
+    student: 'Учнівський проєкт',
+    result: '3D character',
+  },
+  {
+    id: '3d-race-car',
+    title: '3D-модель гоночного авто',
+    description:
+      'Складніші форми, персонажний стиль і робота з кольором у власній моделі транспорту.',
+    image: '/images/works/3d/3d_5.png',
+    student: 'Група 3D-моделювання',
+    result: 'Tinkercad + дизайн',
+  },
+  {
+    id: '3d-space-base',
+    title: 'Космічна 3D-сцена',
+    description:
+      'Велика композиція з кількома обʼєктами, де учні вчаться мислити сценою, а не лише однією моделлю.',
+    image: '/images/works/3d/3d_6.png',
+    student: 'Проєктна група',
+    result: 'Scene building',
+  },
+  {
+    id: '3d-solar-system',
+    title: 'Інсталяція з планетами',
+    description:
+      'Приклад просторового мислення, коли дитина вибудовує композицію з багатьох елементів у спільній сцені.',
+    image: '/images/works/3d/3d_7.png',
+    student: 'Учнівський макет',
+    result: '3D composition',
+  },
+  {
+    id: '3d-engineering-stand',
+    title: 'Інженерний стенд',
+    description:
+      'Проєкт з механічними деталями та написами, де тренується логіка побудови й точність розміщення елементів.',
+    image: '/images/works/3d/3d_8.png',
+    student: 'Навчальна група',
+    result: '3D prototype',
+  },
+  {
+    id: '3d-blockbench-cake',
+    title: 'Low-poly композиція',
+    description:
+      'Робота зі стилізацією, простими формами й яскравим кольором у середовищі Blockbench.',
+    image: '/images/works/3d/blockbench_1.jpeg',
+    student: 'Blockbench група',
+    result: 'Blockbench',
+  },
+  {
+    id: '3d-blockbench-redstone',
+    title: 'Minecraft-механізм',
+    description:
+      'Учні моделюють знайомі цифрові обʼєкти та переносять ігрову логіку у власні 3D-сцени.',
+    image: '/images/works/3d/blockbench_2.jpeg',
+    student: 'Учнівський 3D-проєкт',
+    result: 'Blockbench + logic',
+  },
+]
+
+const uiUxSlides: ProjectSlide[] = [
+  {
+    id: 'ux-product-card',
+    title: 'UI-концепт товарної сторінки',
+    description:
+      'Учні працюють з композицією екрана, карткою продукту та сильним CTA-блоком у Figma.',
+    image: '/images/works/ux/ux_ui_1.png',
+    student: 'Група UI/UX',
+    result: 'Figma',
+  },
+  {
+    id: 'ux-mobile-fashion',
+    title: 'Мобільний екран fashion-продукту',
+    description:
+      'Практика зі шрифтами, адаптивним ритмом і візуальною ієрархією мобільного інтерфейсу.',
+    image: '/images/works/ux/ux_ui_3.jpg',
+    student: 'Навчальна група',
+    result: 'UI/UX prototype',
+  },
+]
+
+const pythonSlides: ProjectSlide[] = [
+  {
+    id: 'python-calculator',
+    title: 'Калькулятор з базовою логікою',
+    description:
+      'Один з перших робочих застосунків, де дитина поєднує інтерфейс, кнопки та обчислення.',
+    image: '/images/works/python/python_1.jpeg',
+    student: 'Група Python',
+    result: 'Python app',
+  },
+  {
+    id: 'python-alarm',
+    title: 'Будильник з вибором часу',
+    description:
+      'Невеликий застосунок, де учні працюють з інпутами, станами і прикладною логікою.',
+    image: '/images/works/python/python_2.jpeg',
+    student: 'Група Python',
+    result: 'Tkinter + Python',
+  },
+  {
+    id: 'python-task-manager',
+    title: 'Планувальник завдань',
+    description:
+      'Практика зі списками, темами оформлення та кнопками взаємодії у власному застосунку.',
+    image: '/images/works/python/python_3.jpeg',
+    student: 'Навчальний проєкт',
+    result: 'Desktop UI',
+  },
+  {
+    id: 'python-translator',
+    title: 'Мініперекладач',
+    description:
+      'Робота з текстовими полями, мовними перемикачами і простою взаємодією у власній програмі.',
+    image: '/images/works/python/python_4.jpeg',
+    student: 'Навчальна група',
+    result: 'Python interface',
+  },
+  {
+    id: 'python-egg-game',
+    title: 'Гра "Полювання на писанки"',
+    description:
+      'Інтерактивна гра з очками, таймером і керуванням, зібрана учнем власноруч.',
+    image: '/images/works/python/python_5.png',
+    student: 'Учнівський проєкт',
+    result: 'Python + Pygame',
+  },
+]
+
+const canvaSlides: ProjectSlide[] = [
+  {
+    id: 'canva-stus-poster',
+    title: 'Типографічний постер про Василя Стуса',
+    description:
+      'Навчальна робота з фото, ритмом тексту та акцентною композицією.',
+    image: '/images/works/ux/ux_ui_2.jpg',
+    student: 'Група Canva',
+    result: 'Canva',
+  },
+  {
+    id: 'canva-music-poster',
+    title: 'Афіша музичної події',
+    description:
+      'Контрастний рекламний постер із чіткою ієрархією тексту, фото та атмосфери.',
+    image: '/images/works/ux/ux_ui_4.jpg',
+    student: 'Креативна група',
+    result: 'Canva poster',
+  },
+  {
+    id: 'canva-flower-board',
+    title: 'Колаж для flower-бренду',
+    description:
+      'Проєкт із moodboard-подачею, добором референсів і мʼякою візуальною атмосферою.',
+    image: '/images/works/ux/ux_ui_5.jpg',
+    student: 'Учнівський дизайн',
+    result: 'Canva layout',
+  },
+  {
+    id: 'canva-tour-poster',
+    title: 'Турова афіша для артиста',
+    description:
+      'Приклад промодизайну з фото, великим заголовком і чистою рекламною подачею.',
+    image: '/images/works/ux/ux_ui_6.jpg',
+    student: 'Навчальна група',
+    result: 'Canva poster',
+  },
+]
+
+const projectDirections: ProjectDirection[] = [
+  {
+    id: '3d-modeling',
+    label: '3D-моделювання',
+    lead: 'Обʼємні моделі, друк і проєкти, які можна взяти в руки.',
+    slides: threeDSlides,
+  },
+  {
+    id: 'ux-ui-figma',
+    label: 'UI/UX Figma',
+    lead: 'Інтерфейси, прототипи та візуальна логіка цифрових продуктів.',
+    slides: uiUxSlides,
+  },
+  {
+    id: 'python',
+    label: 'Python',
+    lead: 'Ігри, логіка та перші робочі програми власними руками.',
+    slides: pythonSlides,
+  },
+  {
+    id: 'canva',
+    label: 'Canva',
+    lead: 'Постери, креативи та візуальні роботи з сильним стилем.',
+    slides: canvaSlides,
+  },
+  {
+    id: 'complex-program',
+    label: 'Комплексна програма',
+    lead: 'Один напрямок, який поєднує дизайн, 3D, прототипування та веб.',
+    slides: [
+      {
+        ...threeDSlides[5],
+        id: 'complex-space-scene',
+        title: 'Велика 3D-сцена для портфоліо',
+        description:
+          'У комплексній програмі діти переходять від маленьких вправ до складної сцени з багатьма елементами.',
+        student: 'Комплексна група',
+        result: '3D + креатив',
+      },
+      {
+        ...uiUxSlides[0],
+        id: 'complex-ui-concept',
+        title: 'Інтерфейс як частина великого проєкту',
+        description:
+          'Після візуальної частини учні збирають цифровий інтерфейс і вчаться мислити продуктом цілісно.',
+        student: 'Комплексна програма',
+        result: 'UI/UX + Figma',
+      },
+      {
+        ...pythonSlides[0],
+        id: 'complex-code-screen',
+        title: 'Робочий екран із кодом і логікою',
+        description:
+          'Напрямок поєднує не лише дизайн, а й функціональність: діти створюють робочі застосунки власноруч.',
+        student: 'Комплексна програма',
+        result: 'Код + інтерфейс',
+      },
+      {
+        ...canvaSlides[2],
+        id: 'complex-brand-board',
+        title: 'Візуальний стиль для проєкту',
+        description:
+          'У фінальному портфоліо зʼявляються і moodboard, і постери, і промоматеріали для презентації роботи.',
+        student: 'Проєктна група',
+        result: 'Айдентика + креатив',
+      },
+    ],
+  },
+  {
+    id: 'web-programming',
+    label: 'Веб програмування',
+    lead: 'Верстка, структура сторінок і перші вебпроєкти, які можна показати онлайн.',
+    slides: [
+      {
+        ...uiUxSlides[0],
+        id: 'web-landing-screen',
+        title: 'Екран майбутнього лендингу',
+        description:
+          'Учні вчаться переходити від макета до живої сторінки, продумуючи hero-блоки, CTA та структуру екрана.',
+        student: 'Група вебпрограмування',
+        result: 'HTML/CSS + UI',
+      },
+      {
+        ...pythonSlides[2],
+        id: 'web-dashboard-logic',
+        title: 'Логіка веб-інтерфейсу',
+        description:
+          'Практика зі структурою сервісу, списками, формами й сценаріями взаємодії, які потім переносяться у веб.',
+        student: 'Навчальна група',
+        result: 'Веб-логіка',
+      },
+      {
+        ...pythonSlides[3],
+        id: 'web-form-screen',
+        title: 'Форма з результатом',
+        description:
+          'Робота з полями, кнопками і сценарієм взаємодії, який легко адаптувати під реальний вебпроєкт.',
+        student: 'Учнівський проєкт',
+        result: 'Форми + верстка',
+      },
+    ],
+  },
+]
+
 const Results = () => {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const sectionRef = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'end start'],
-  })
+  const [activeDirectionIndex, setActiveDirectionIndex] = useState(0)
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const [counters, setCounters] = useState({
     parentSatisfaction: 0,
     mathImprovement: 0,
     itContinuation: 0,
     referrals: 0,
   })
-
-  // Check if we're on mobile
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const checkMobile = () => {
-        setIsMobile(window.innerWidth < 768)
-      }
-      checkMobile()
-      window.addEventListener('resize', checkMobile)
-      return () => window.removeEventListener('resize', checkMobile)
-    }
-  }, [])
-
-  // Transform values for parallax animations with reduced effect on mobile
-  const mobileReduceFactor = isMobile ? 0.5 : 1
-  const backgroundY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ['-5%', '5%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`),
-  )
-  const headerY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ['0%', '10%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`),
-  )
-  const cardsY = useTransform(
-    scrollYProgress,
-    [0, 0.8],
-    ['5%', '-5%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`),
-  )
-  const statsY = useTransform(
-    scrollYProgress,
-    [0.2, 0.8],
-    ['10%', '-10%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`),
-  )
-  const projectsY = useTransform(
-    scrollYProgress,
-    [0.4, 1],
-    ['15%', '-5%'].map((val) => `${parseFloat(val) * mobileReduceFactor}%`),
-  )
 
   // Stats animation
   useEffect(() => {
@@ -192,75 +471,22 @@ const Results = () => {
     },
   ]
 
-  const studentProjects = [
-    {
-      id: 1,
-      title: 'Гра "Полювання на писанки"',
-      description:
-        'Інтерактивна гра, створена в середовищі Pygame,за допомогою Python',
-      image: '/work/game.png',
-      student: 'Марʼян Г., 12 років',
-      direction: 'IT школа',
-      tool: 'Python + Pygame',
-    },
-    {
-      id: 2,
-      title: '3D-модель "Дракон"',
-      description:
-        'Модель, створена за допомогою ThinkerCad та надрукована на 3D-принтері',
-      image: '/work/3d_1.png',
-      student: 'Олександр К., 13 років',
-      direction: 'IT школа',
-      tool: 'Tinkercad + 3D-друк',
-    },
-    {
-      id: 3,
-      title: 'Дизайн рекламного креативу',
-      description: 'Реклама танцювального майстер класу, розроблена у Canva',
-      image: '/work/ПР №15.png',
-      student: 'Марія Т., 12 років',
-      direction: 'IT школа',
-      tool: 'Canva',
-    },
-    {
-      id: 4,
-      title: '3D-модель "Ялинки"',
-      description:
-        'Модель, створена у середовищі ThinkerCad та надрукована за допомогою 3D-принтера',
-      image: '/work/3d_2.png',
-      student: 'Ярослав М., 12 років',
-      direction: 'IT школа',
-      tool: 'Tinkercad + 3D-друк',
-    },
-    {
-      id: 5,
-      title: 'Автомобільний постер',
-      description:
-        'Постер присвячений автомобілю Porsche GT3 RS, створений у середовищі Canva',
-      image: '/work/кіщак Маряна пр14.png',
-      student: 'Марʼяна К., 13 років',
-      direction: 'IT школа',
-      tool: 'Canva',
-    },
-    {
-      id: 6,
-      title: 'Дрон "Бікоптер"',
-      description: 'Дрон, створений нашим студентом, на курсі з напрямку ДРОНИ',
-      image: '/work/drone.jpeg',
-      student: 'Максим Р., 12 років',
-      direction: 'DRONE школа',
-      tool: 'Drone engineering',
-    },
-  ]
+  const activeDirection =
+    projectDirections[activeDirectionIndex] ?? projectDirections[0]
+  const activeSlides = activeDirection.slides
+  const activeSlide = activeSlides[activeSlideIndex] ?? activeSlides[0]
 
-  const activeProject = studentProjects[activeIndex] ?? studentProjects[0]
-
-  const moveProject = (direction: 'prev' | 'next') => {
-    setActiveIndex((prev) =>
+  const moveSlide = (direction: 'prev' | 'next') => {
+    setActiveSlideIndex((prev) =>
       direction === 'next'
-        ? (prev + 1) % studentProjects.length
-        : (prev - 1 + studentProjects.length) % studentProjects.length,
+        ? (prev + 1) % activeSlides.length
+        : (prev - 1 + activeSlides.length) % activeSlides.length,
     )
+  }
+
+  const handleDirectionSelect = (index: number) => {
+    setActiveDirectionIndex(index)
+    setActiveSlideIndex(0)
   }
 
   const containerVariants: Variants = {
@@ -289,14 +515,9 @@ const Results = () => {
   return (
     <section
       id="rezultati"
-      ref={sectionRef}
-      className="lc-section-soft pb-10 lg:pb-14 courses-section"
+      className="lc-section-soft pt-10 md:pt-12 lg:pt-16 pb-10 lg:pb-14 courses-section"
     >
-      {/* Parallax background decorative elements */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none overflow-hidden"
-        style={{ y: backgroundY }}
-      >
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 opacity-[0.015]">
           <div
             className="absolute h-full w-full"
@@ -307,48 +528,9 @@ const Results = () => {
           />
         </div>
 
-        {/* Reduce motion intensity on mobile */}
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/5 blur-3xl"
-          style={{
-            transform: 'translate(10px, -10px)',
-            y: useTransform(
-              scrollYProgress,
-              [0, 1],
-              ['-30px', '30px'].map(
-                (val) => `${parseFloat(val) * mobileReduceFactor}px`,
-              ),
-            ),
-            x: useTransform(
-              scrollYProgress,
-              [0, 1],
-              ['-20px', '20px'].map(
-                (val) => `${parseFloat(val) * mobileReduceFactor}px`,
-              ),
-            ),
-          }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/5 w-80 h-80 rounded-full bg-accent/5 blur-3xl"
-          style={{
-            transform: 'translate(-10px, 10px)',
-            y: useTransform(
-              scrollYProgress,
-              [0, 1],
-              ['50px', '-50px'].map(
-                (val) => `${parseFloat(val) * mobileReduceFactor}px`,
-              ),
-            ),
-            x: useTransform(
-              scrollYProgress,
-              [0, 1],
-              ['30px', '-30px'].map(
-                (val) => `${parseFloat(val) * mobileReduceFactor}px`,
-              ),
-            ),
-          }}
-        />
-      </motion.div>
+        <div className="absolute top-1/4 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute right-1/5 bottom-1/4 h-80 w-80 rounded-full bg-accent/5 blur-3xl" />
+      </div>
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header with Parallax */}
@@ -358,7 +540,6 @@ const Results = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
           className="hidden"
-          style={{ y: headerY }}
         >
           <h2 className="lc-section-title mb-4">РЕЗУЛЬТАТИ НАВЧАННЯ</h2>
           <p className="lc-section-lead">
@@ -375,7 +556,6 @@ const Results = () => {
           whileInView="visible"
           viewport={{ once: true }}
           className="hidden"
-          style={{ y: cardsY }}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto">
             {learningOutcomes.map((outcome) => (
@@ -403,7 +583,7 @@ const Results = () => {
         </motion.div>
 
         {/* Achievement Statistics - Horizontal Cards with Parallax */}
-        <motion.div className="hidden" style={{ y: statsY }}>
+        <motion.div className="hidden">
           {/* Decorative background elements */}
           <div className="absolute inset-0 opacity-15">
             <div className="absolute top-0 left-0 w-96 h-96 bg-primary-light/25 rounded-full blur-3xl"></div>
@@ -494,151 +674,177 @@ const Results = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="relative overflow-hidden mb-0 rounded-[10px] border border-[#D8DED2] bg-[#ECEEEA] p-4 md:p-6 lg:p-7"
-          style={{ y: projectsY }}
+          className="relative mb-0"
         >
           <div className="relative">
-            <div className="mb-5 md:mb-6">
+            <div className="mb-5 max-w-2xl md:mb-6 lg:mb-8">
               <div>
                 <h2 className="mb-2 text-[#292A2C] text-[30px] md:text-[42px] font-extrabold uppercase tracking-[-0.04em] leading-[0.9]">
                   РОБОТИ НАШИХ УЧНІВ
                 </h2>
                 <p className="max-w-2xl text-[#4E5750] text-[15px] md:text-[18px] leading-relaxed">
-                  Не шаблони, а живі проєкти дітей: від першої ідеї до
-                  фінального результату.
+                  Оберіть напрямок і перегляньте приклади робіт та кадри з
+                  навчального процесу у форматі слайдера.
                 </p>
               </div>
             </div>
 
-            <div className="grid gap-4 lg:gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)]">
-              <article
-                className="group relative overflow-hidden rounded-[8px] border border-[#D3DACD] bg-[#F1F4EC]"
-              >
-                <div className="relative h-[280px] md:h-[360px] lg:h-[410px] border-b border-[#D3DACD]">
-                  <Image
-                    src={activeProject.image}
-                    alt={activeProject.title}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 58vw"
-                    className="object-cover group-hover:scale-[1.025] transition-transform duration-500"
-                    priority
-                    fetchPriority="high"
-                    quality={68}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/8 to-transparent" />
-
-                  <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-                    <span
-                      className={`inline-flex rounded-[4px] border px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.04em] ${
-                        activeProject.direction === 'DRONE школа'
-                          ? 'bg-[#DDEBFF]/95 text-[#264E88] border-[#A6C2EC]'
-                          : 'bg-[#E7F5DF]/95 text-[#2B6A27] border-[#A7D19D]'
-                      }`}
+            <div className="grid items-start gap-5 lg:gap-8 lg:grid-cols-[minmax(0,1.28fr)_minmax(250px,0.72fr)]">
+              <article className="min-w-0">
+                <div className="relative overflow-hidden rounded-[14px] border border-[#D3DACD] bg-[#E4EADF]">
+                  <div className="relative h-[320px] md:h-[400px] lg:h-[500px]">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeSlide.id}
+                      initial={{ opacity: 0, scale: 1.02 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.985 }}
+                      transition={{ duration: 0.35, ease: 'easeOut' }}
+                      className="absolute inset-0"
                     >
-                      {activeProject.direction}
-                    </span>
-                    <span className="inline-flex rounded-[4px] border border-[#CFD6C9] bg-[#EEF3E7] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-[#455247]">
-                      {activeProject.tool}
-                    </span>
-                  </div>
+                      <div className="absolute inset-0 overflow-hidden bg-[#DCE4D4]">
+                        <Image
+                          src={activeSlide.image}
+                          alt=""
+                          fill
+                          aria-hidden="true"
+                          sizes="(max-width: 1024px) 100vw, 58vw"
+                          className="object-cover scale-105 blur-2xl opacity-25"
+                          quality={40}
+                        />
+                      </div>
+                      <Image
+                        src={activeSlide.image}
+                        alt={activeSlide.title}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 58vw"
+                        className="object-contain p-3 md:p-4"
+                        priority
+                        fetchPriority="high"
+                        quality={82}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
 
-                  <div className="absolute right-4 top-4 rounded-[4px] border border-[#CFD6C9] bg-[#EEF3E7] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-[#5A665A]">
-                    #{String(activeIndex + 1).padStart(2, '0')}
-                  </div>
-
-                  <div className="absolute left-0 right-0 bottom-0 p-4 md:p-5">
-                    <p className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.38)] text-[21px] md:text-[30px] font-extrabold uppercase tracking-[-0.03em] leading-[0.94] max-w-[22ch]">
-                      {activeProject.title}
-                    </p>
+                    <div className="absolute right-4 top-4 rounded-full border border-white/65 bg-[#F3F6EF]/85 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#4E5C4E] backdrop-blur-sm">
+                      {String(activeSlideIndex + 1).padStart(2, '0')} /{' '}
+                      {String(activeSlides.length).padStart(2, '0')}
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-4 md:p-5 lg:p-6 bg-[#F1F4EC]">
+                <div className="mt-4 border-t border-[#D3DACD] pt-4 md:pt-5">
                   <div className="mb-3 flex flex-wrap items-center gap-2">
-                    <span className="inline-flex rounded-[4px] border border-[#CDD5C7] bg-[#ECEFE7] px-2.5 py-1 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.06em] text-[#526050]">
-                      {activeProject.student}
+                    <span className="inline-flex rounded-full border border-[#BFD8B8] bg-[#EAF4E2] px-3 py-1 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.08em] text-[#3D6B39]">
+                      {activeDirection.label}
                     </span>
-                    <span className="inline-flex rounded-[4px] border border-[#BFD8B8] bg-[#EAF4E2] px-2.5 py-1 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.06em] text-[#3D6B39]">
-                      Учнівський проєкт
+                    <span className="inline-flex rounded-full border border-[#CDD5C7] bg-[#ECEFE7] px-3 py-1 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.08em] text-[#526050]">
+                      {activeSlide.result}
+                    </span>
+                    <span className="inline-flex rounded-full border border-[#D5DBCF] bg-white/70 px-3 py-1 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.08em] text-[#5B665C]">
+                      {activeSlide.student}
                     </span>
                   </div>
 
-                  <p className="text-[15px] md:text-[17px] leading-[1.3] text-[#434E45] max-w-3xl">
-                    {activeProject.description}
-                  </p>
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div className="max-w-2xl">
+                      <h3 className="text-[#292A2C] text-[25px] md:text-[34px] font-extrabold uppercase tracking-[-0.04em] leading-[0.95]">
+                        {activeSlide.title}
+                      </h3>
+                      <p className="mt-2 text-[15px] md:text-[17px] leading-[1.35] text-[#434E45]">
+                        {activeSlide.description}
+                      </p>
+                      <p className="mt-2 text-[13px] md:text-[14px] leading-relaxed text-[#617063]">
+                        {activeDirection.lead}
+                      </p>
+                    </div>
 
-                  <div className="mt-5 flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        moveProject('prev')
-                      }}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-[4px] border border-[#CDD5C7] bg-[#ECEFE7] text-[#3F4A41] transition-colors hover:bg-[#E4E9DF]"
-                      aria-label="Попередня робота"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        moveProject('next')
-                      }}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-[4px] border border-[#CDD5C7] bg-[#ECEFE7] text-[#3F4A41] transition-colors hover:bg-[#E4E9DF]"
-                      aria-label="Наступна робота"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
+                    <div className="flex flex-wrap items-center gap-3 lg:max-w-[320px] lg:justify-end">
+                      <div className="inline-flex items-center rounded-full border border-[#D3DACD] bg-[#EEF2E8] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            moveSlide('prev')
+                          }}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#495448] transition-all hover:bg-white/75 hover:text-[#2F382F]"
+                          aria-label="Попередній слайд"
+                        >
+                          <ChevronLeft className="h-[18px] w-[18px]" strokeWidth={2.2} />
+                        </button>
+
+                        <div className="h-5 w-px bg-[#D3DACD]" />
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            moveSlide('next')
+                          }}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#495448] transition-all hover:bg-white/75 hover:text-[#2F382F]"
+                          aria-label="Наступний слайд"
+                        >
+                          <ChevronRight className="h-[18px] w-[18px]" strokeWidth={2.2} />
+                        </button>
+                      </div>
+
+                      <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-[#D3DACD] bg-[#EEF2E8] px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
+                        {activeSlides.map((slide, index) => (
+                          <button
+                            key={slide.id}
+                            type="button"
+                            onClick={() => setActiveSlideIndex(index)}
+                            aria-label={`Перейти до слайду ${index + 1}`}
+                            className={`rounded-full transition-all ${
+                              index === activeSlideIndex
+                                ? 'h-2.5 w-8 bg-[#78C86F]'
+                                : 'h-2.5 w-2.5 bg-[#C7D0C0] hover:bg-[#B4C0AB]'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </article>
 
-              <aside className="rounded-[8px] border border-[#D3DACD] bg-[#F1F4EC] p-2 md:p-3 lg:p-4">
-                <div className="mb-3 px-1 text-[12px] md:text-[13px] font-semibold uppercase tracking-[0.08em] text-[#667265]">
-                  Оберіть роботу
+              <aside className="lg:border-l lg:border-[#D3DACD] lg:pl-6">
+                <div className="mb-3 text-[12px] md:text-[13px] font-semibold uppercase tracking-[0.08em] text-[#667265]">
+                  Оберіть напрямок
                 </div>
 
-                <div className="project-rail-scroll grid gap-2 max-h-[560px] overflow-auto pr-1">
-                  {studentProjects.map((project, index) => (
-                    <button
-                      key={project.id}
+                <div className="grid gap-1.5">
+                  {projectDirections.map((direction, index) => (
+                    <motion.button
+                      key={direction.id}
                       type="button"
-                      onClick={() => setActiveIndex(index)}
-                      className={`w-full text-left overflow-hidden rounded-[6px] border transition-colors ${
-                        index === activeIndex
+                      onClick={() => handleDirectionSelect(index)}
+                      whileHover={{ x: 4 }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      className={`w-full text-left overflow-hidden rounded-[10px] border transition-colors ${
+                        index === activeDirectionIndex
                           ? 'border-[#B9DDB5] bg-[#E8F3DF]'
-                          : 'border-[#D3DACD] bg-[#EEF2E8] hover:bg-[#E6ECDE]'
+                          : 'border-transparent bg-transparent hover:border-[#D3DACD] hover:bg-[#EEF2E8]'
                       }`}
                     >
-                      <div className="grid grid-cols-[96px_minmax(0,1fr)] items-stretch">
-                        <div className="relative h-[84px]">
-                          <Image
-                            src={project.image}
-                            alt={project.title}
-                            fill
-                            sizes="96px"
-                            className="object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/25" />
+                      <div className="p-3 md:p-3.5">
+                        <div className="mb-1.5 flex items-center gap-3">
+                          <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#667265]">
+                            #{String(index + 1).padStart(2, '0')}
+                          </span>
                         </div>
-                        <div className="p-3">
-                          <div className="mb-1 flex items-center justify-between gap-2">
-                            <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#667265]">
-                              #{String(index + 1).padStart(2, '0')}
-                            </span>
-                            <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6E7A6D]">
-                              {project.student}
-                            </span>
-                          </div>
-                          <p className="text-[15px] leading-tight font-bold text-[#2E342F] line-clamp-2">
-                            {project.title}
+                        <p className="text-[16px] leading-tight font-bold text-[#2E342F]">
+                          {direction.label}
+                        </p>
+                        {index === activeDirectionIndex ? (
+                          <p className="mt-2 max-w-[26ch] text-[12px] leading-relaxed text-[#617063]">
+                            {direction.lead}
                           </p>
-                        </div>
+                        ) : null}
                       </div>
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </aside>
@@ -648,19 +854,6 @@ const Results = () => {
         </motion.div>
       </div>
 
-      <style jsx global>{`
-        .project-rail-scroll::-webkit-scrollbar {
-          width: 7px;
-        }
-        .project-rail-scroll::-webkit-scrollbar-track {
-          background: #e2e7da;
-          border-radius: 999px;
-        }
-        .project-rail-scroll::-webkit-scrollbar-thumb {
-          background: #bdd8b3;
-          border-radius: 999px;
-        }
-      `}</style>
     </section>
   )
 }

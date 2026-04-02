@@ -17,7 +17,11 @@ export default function WorkPage() {
   return (
     <>
       <Header />
-      <main className="overflow-hidden bg-gradient-to-b from-[#F7FAF4] via-[#F3F8F0] to-[#EEF5E9]">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="overflow-hidden bg-gradient-to-b from-[#F7FAF4] via-[#F3F8F0] to-[#EEF5E9]"
+      >
         {/* Hero Section */}
         <section className="relative py-24 md:py-32 bg-gradient-to-r from-primary to-[#1F2421] text-white overflow-hidden">
           {/* Decorative elements */}
@@ -72,8 +76,8 @@ export default function WorkPage() {
                       50 000 випускників
                     </span>
                     . Навчаємо дітей 7-15 років, заняття проводимо онлайн та
-                    офлайн. Маємо два напрямки: програмування та англійська
-                    мова.
+                    офлайн. Маємо кілька напрямків: програмування, дрони та
+                    цифрові навички.
                   </p>
                   <p className="text-lg leading-relaxed">
                     Крім основного навчання проводимо сезонні інтелектуальні
@@ -200,7 +204,7 @@ export default function WorkPage() {
                   location: 'Онлайн + Офлайн',
                 },
                 {
-                  title: 'Викладач англійської мови',
+                  title: 'Викладач дронів',
                   type: 'Повний/Частковий день',
                   location: 'Онлайн + Офлайн',
                 },

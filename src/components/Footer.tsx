@@ -29,7 +29,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/#about"
-                  className="text-white/74 transition-colors duration-200 hover:text-white"
+                  className="text-white/74 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   Про нас
                 </Link>
@@ -37,7 +37,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/#advantages"
-                  className="text-white/74 transition-colors duration-200 hover:text-white"
+                  className="text-white/74 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   Переваги
                 </Link>
@@ -45,7 +45,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/#rezultati"
-                  className="text-white/74 transition-colors duration-200 hover:text-white"
+                  className="text-white/74 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   Результати
                 </Link>
@@ -53,7 +53,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/#napryamki"
-                  className="text-white/74 transition-colors duration-200 hover:text-white"
+                  className="text-white/74 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   Напрямки
                 </Link>
@@ -61,7 +61,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/#lokacii"
-                  className="text-white/74 transition-colors duration-200 hover:text-white"
+                  className="text-white/74 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   Локації
                 </Link>
@@ -69,7 +69,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/#vidguki"
-                  className="text-white/74 transition-colors duration-200 hover:text-white"
+                  className="text-white/74 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   Відгуки
                 </Link>
@@ -86,7 +86,7 @@ const Footer = () => {
                 <span className="text-white/65">Загальна лінія</span>
                 <a
                   href="tel:0800300648"
-                  className="font-semibold text-[#99E392] hover:text-[#B8F1B2] transition-colors duration-200"
+                  className="font-semibold text-[#99E392] hover:text-[#B8F1B2] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   0800 300 648
                 </a>
@@ -95,7 +95,7 @@ const Footer = () => {
                 <span className="text-white/65">вул. Наукова, 49</span>
                 <a
                   href="tel:+380687388656"
-                  className="font-semibold text-white/86 hover:text-white transition-colors duration-200"
+                  className="font-semibold text-white/86 hover:text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   +380 68 738 8656
                 </a>
@@ -104,7 +104,7 @@ const Footer = () => {
                 <span className="text-white/65">вул. Мазепи, 25Д</span>
                 <a
                   href="tel:+380687388608"
-                  className="font-semibold text-white/86 hover:text-white transition-colors duration-200"
+                  className="font-semibold text-white/86 hover:text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   +380 68 738 8608
                 </a>
@@ -120,7 +120,7 @@ const Footer = () => {
                   href="https://www.facebook.com/p/LeoCodeKids-61565577578490/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[15px] font-semibold text-white/78 hover:text-white transition-colors duration-200"
+                  className="text-[15px] font-semibold text-white/78 hover:text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   Facebook
                 </a>
@@ -128,7 +128,7 @@ const Footer = () => {
                   href="https://instagram.com/leocode.kids"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[15px] font-semibold text-white/78 hover:text-white transition-colors duration-200"
+                  className="text-[15px] font-semibold text-white/78 hover:text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   Instagram
                 </a>
@@ -136,7 +136,7 @@ const Footer = () => {
                   href="https://tiktok.com/@leocode.kids"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[15px] font-semibold text-white/78 hover:text-white transition-colors duration-200"
+                  className="text-[15px] font-semibold text-white/78 hover:text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
                 >
                   TikTok
                 </a>
@@ -156,7 +156,7 @@ const Footer = () => {
                 href="https://www.threads.com/@maphendx"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white transition-colors duration-200"
+                className="hover:text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F232B]"
               >
                 @maphendx
               </a>

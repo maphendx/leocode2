@@ -711,7 +711,7 @@ const SummerCampAd = ({
                       <span className="font-medium text-blue-800">
                         13:30-14:30
                       </span>
-                      <span>English</span>
+                      <span>ІТ-квест</span>
                     </div>
                     <div className="flex justify-between items-center bg-green-50 p-2 rounded-lg">
                       <span className="font-medium text-green-800">
@@ -804,7 +804,7 @@ const SummerCampAd = ({
                       <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
                         <CheckCircle2 className="h-4 w-4 text-green-600" />
                       </div>
-                      <p className="text-sm">Вивчення англійської через гру</p>
+                      <p className="text-sm">Командні ігри та інтерактиви</p>
                     </div>
                   </div>
 

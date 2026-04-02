@@ -10,7 +10,7 @@ export const siteConfig = {
   url: (process.env.NEXT_PUBLIC_BASE_URL || FALLBACK_BASE_URL).replace(/\/$/, ''),
   defaultTitle: 'LEOCODE - Освітній простір для дітей 7-15 років у Львові',
   description:
-    'Освітній простір LEOCODE у Львові для дітей 7-15 років: програмування, дрони, англійська та онлайн й офлайн навчання.',
+    'Освітній простір LEOCODE у Львові для дітей 7-15 років: програмування, дрони, цифрові навички та онлайн й офлайн навчання.',
   ogImage: '/logo.png',
 } as const
 

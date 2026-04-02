@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useEffectEvent, useRef } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronDown, Menu, X, Tent, Sparkles } from 'lucide-react'
+import { ChevronDown, Menu, PhoneCall, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
 
@@ -80,10 +81,10 @@ const CONTACT = {
 } as const
 
 const LOGO = {
-  src: '/new_logo_header_white.png?v=1',
+  src: '/new_logo_header_white.png',
   alt: 'LeoCode',
   width: 350,
-  height: 50.5,
+  height: 51,
 } as const
 
 const PhoneAnimatedIcon = () => (
@@ -95,27 +96,7 @@ const PhoneAnimatedIcon = () => (
     )}
     aria-hidden="true"
   >
-    <svg
-      viewBox="0 0 24 24"
-      className="h-3.5 w-3.5 text-[#98CF93]"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <g>
-        <animateTransform
-          attributeName="transform"
-          type="rotate"
-          values="0 12 12;8 12 12;-6 12 12;3 12 12;0 12 12"
-          keyTimes="0;0.14;0.28;0.42;1"
-          dur="2.1s"
-          repeatCount="indefinite"
-        />
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.86 19.86 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-      </g>
-    </svg>
+    <PhoneCall className="phone-ring-icon h-3.5 w-3.5 text-[#98CF93]" />
   </span>
 )
 
@@ -161,10 +142,9 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [openSubmenu, setOpenSubmenu] = useState<number | null>(null)
   const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
-  const [isCampAdOpen, setIsCampAdOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const menuToggleButtonRef = useRef<HTMLButtonElement>(null)
+  const lastScrollYRef = useRef(0)
 
   const clearBodyScrollLock = useCallback(() => {
     document.body.classList.remove('overflow-hidden')
@@ -202,19 +182,24 @@ const Header = () => {
     }
   }, [clearBodyScrollLock])
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuToggleButtonRef.current?.contains(e.target as Node) &&
-        !menuRef.current.contains(e.target as Node) &&
-        isMenuOpen
-      ) {
-        setIsMenuOpen(false)
-        clearBodyScrollLock()
-      }
-    }
+  const closeMenu = useCallback(() => {
+    setIsMenuOpen(false)
+    setOpenSubmenu(null)
+    clearBodyScrollLock()
+  }, [clearBodyScrollLock])
 
+  const handleClickOutside = useEffectEvent((event: MouseEvent) => {
+    if (
+      menuRef.current &&
+      !menuToggleButtonRef.current?.contains(event.target as Node) &&
+      !menuRef.current.contains(event.target as Node) &&
+      isMenuOpen
+    ) {
+      closeMenu()
+    }
+  })
+
+  useEffect(() => {
     if (isMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside)
     }
@@ -222,14 +207,17 @@ const Header = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isMenuOpen, clearBodyScrollLock])
+  }, [isMenuOpen])
 
-  const handleScroll = useCallback(() => {
+  const handleScroll = useEffectEvent(() => {
     if (isMenuOpen) return
+
+    const currentScrollY = window.scrollY
+
     if (window.innerWidth >= BREAKPOINTS.lg) {
       if (
-        window.scrollY > lastScrollY &&
-        window.scrollY > TIMING.scrollThreshold
+        currentScrollY > lastScrollYRef.current &&
+        currentScrollY > TIMING.scrollThreshold
       ) {
         setIsVisible(false)
       } else {
@@ -238,11 +226,13 @@ const Header = () => {
     } else {
       setIsVisible(true)
     }
-    setLastScrollY(window.scrollY)
-  }, [lastScrollY, isMenuOpen])
+
+    lastScrollYRef.current = currentScrollY
+  })
 
   useEffect(() => {
     let scrollTimer: ReturnType<typeof setTimeout> | null = null
+    lastScrollYRef.current = window.scrollY
 
     const throttledScroll = () => {
       if (scrollTimer === null) {
@@ -258,69 +248,50 @@ const Header = () => {
       window.removeEventListener('scroll', throttledScroll)
       if (scrollTimer) clearTimeout(scrollTimer)
     }
-  }, [handleScroll])
+  }, [])
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= BREAKPOINTS.lg && isMenuOpen) {
-        setIsMenuOpen(false)
-        clearBodyScrollLock()
-      }
-
-      if (window.innerWidth < BREAKPOINTS.lg) {
-        setIsVisible(true)
-      } else {
-        setIsVisible(window.scrollY <= TIMING.scrollThreshold)
-      }
+  const handleResize = useEffectEvent(() => {
+    if (window.innerWidth >= BREAKPOINTS.lg && isMenuOpen) {
+      closeMenu()
     }
 
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [isMenuOpen, clearBodyScrollLock])
+    if (window.innerWidth < BREAKPOINTS.lg) {
+      setIsVisible(true)
+    } else {
+      setIsVisible(window.scrollY <= TIMING.scrollThreshold)
+      lastScrollYRef.current = window.scrollY
+    }
+  })
 
   useEffect(() => {
-    const shouldLockBody = isMenuOpen || isCampAdOpen
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
-    if (shouldLockBody) {
+  useEffect(() => {
+    if (isMenuOpen) {
       document.body.classList.add('overflow-hidden')
     } else {
       clearBodyScrollLock()
     }
-  }, [isMenuOpen, isCampAdOpen, clearBodyScrollLock])
+  }, [isMenuOpen, clearBodyScrollLock])
 
   const toggleSubmenu = useCallback((index: number) => {
     setOpenSubmenu((prev) => (prev === index ? null : index))
   }, [])
-
-  const handleCampButtonClick = useCallback(() => {
-    setIsCampAdOpen(true)
-
-    if (isMenuOpen) {
-      setIsMenuOpen(false)
-      clearBodyScrollLock()
-    }
-  }, [isMenuOpen, clearBodyScrollLock])
 
   const handleClick = useCallback(
     (
       e: React.MouseEvent<HTMLAnchorElement>,
       href: string,
       isScroll?: boolean,
-      isSpecial?: boolean,
     ) => {
-      if (isSpecial) {
-        e.preventDefault()
-        handleCampButtonClick()
-        return
-      }
-
       if (href.includes('#napryamki:')) {
         e.preventDefault()
         const filterName = href.split(':')[1]
 
         if (isMenuOpen) {
-          setIsMenuOpen(false)
-          clearBodyScrollLock()
+          closeMenu()
         }
 
         scrollToElement('napryamki')
@@ -333,25 +304,35 @@ const Header = () => {
         const elementId = href.replace('/#', '')
 
         if (isMenuOpen) {
-          setIsMenuOpen(false)
-          clearBodyScrollLock()
+          closeMenu()
           setTimeout(() => scrollToElement(elementId), TIMING.filterDelay)
         } else {
           scrollToElement(elementId)
         }
       } else if (isMenuOpen) {
-        setIsMenuOpen(false)
-        clearBodyScrollLock()
+        closeMenu()
       }
     },
     [
       isMenuOpen,
-      handleCampButtonClick,
-      clearBodyScrollLock,
+      closeMenu,
       scrollToElement,
       dispatchFilterEvent,
     ],
   )
+
+  const handleEscape = useEffectEvent((event: KeyboardEvent) => {
+    if (event.key === 'Escape' && isMenuOpen) {
+      closeMenu()
+    }
+  })
+
+  useEffect(() => {
+    if (!isMenuOpen) return
+
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [isMenuOpen])
 
   return (
     <>
@@ -366,31 +347,33 @@ const Header = () => {
         <div className="container h-full flex items-center justify-between px-4 md:px-6 lg:px-8">
           <Link
             href="/"
-            className="shrink-0 z-20 min-w-31.5 sm:min-w-35.5 lg:min-w-42.5"
+            className="shrink-0 z-20 min-w-31.5 sm:min-w-35.5 lg:min-w-42.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0E12]"
           >
             <div className="flex items-center">
-              <img
+              <Image
                 src={LOGO.src}
                 alt={LOGO.alt}
                 width={LOGO.width}
                 height={LOGO.height}
                 className="block w-31.5 sm:w-35.5 lg:w-42.5 h-auto object-contain"
+                priority
               />
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-7 xl:gap-9 ml-10">
+          <nav
+            className="hidden lg:flex items-center gap-7 xl:gap-9 ml-10"
+            aria-label="Основна навігація"
+          >
             {MENU_ITEMS.filter((item) => !item.isSpecial).map((item, index) => (
               <div key={index} className="relative group">
                 <Link
                   href={item.href}
-                  onClick={(e) =>
-                    handleClick(e, item.href, item.isScroll, item.isSpecial)
-                  }
+                  onClick={(e) => handleClick(e, item.href, item.isScroll)}
                   className={cn(
                     'relative flex items-center text-white/92 font-extrabold uppercase',
                     'tracking-wide transition-colors duration-300 text-[13px] xl:text-[15px] whitespace-nowrap',
-                    'hover:text-[#ECF9EA]',
+                    'hover:text-[#ECF9EA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0E12]',
                     item.hasDropdown && 'group-hover:text-[#ECF9EA]',
                   )}
                 >
@@ -424,7 +407,7 @@ const Header = () => {
                         href={dropItem.href}
                         className={cn(
                           'block mx-2 px-3.5 py-2.5 text-sm font-semibold text-white/85',
-                          'hover:text-[#DDF7DA] hover:bg-[#98CF93]/12 rounded-[4px] transition-colors duration-200',
+                          'hover:text-[#DDF7DA] hover:bg-[#98CF93]/12 rounded-[4px] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#232426]',
                         )}
                       >
                         {dropItem.title}
@@ -441,7 +424,7 @@ const Header = () => {
               href={CONTACT.phoneHref}
               className={cn(
                 'inline-flex items-center gap-2 text-white hover:text-white font-extrabold text-[15px] xl:text-base',
-                'tracking-wide transition-colors duration-200 whitespace-nowrap',
+                'tracking-wide transition-colors duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0E12]',
               )}
               aria-label={`Зателефонувати: ${CONTACT.phone}`}
             >
@@ -454,8 +437,10 @@ const Header = () => {
             <motion.button
               ref={menuToggleButtonRef}
               onClick={toggleMenu}
-              className="z-20 p-2 rounded-md focus:outline-none transition-colors duration-200"
-              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              className="z-20 touch-manipulation rounded-md p-2 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0E12]"
+              aria-label={isMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-navigation"
               initial={false}
               animate={{
                 backgroundColor: isMenuOpen
@@ -503,31 +488,37 @@ const Header = () => {
               animate="open"
               exit="closed"
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              onClick={toggleMenu}
+              onClick={closeMenu}
               aria-hidden="true"
             />
             <motion.div
               ref={menuRef}
+              id="mobile-navigation"
               key="mobile-menu"
               className={cn(
                 'fixed top-0 right-0 bottom-0 w-[85%] max-w-87.5',
-                'bg-[rgba(12,14,18,0.92)] backdrop-blur-md shadow-[0_24px_60px_rgba(0,0,0,0.45)] overflow-hidden border-l border-white/10',
+                'bg-[rgba(12,14,18,0.92)] backdrop-blur-md shadow-[0_24px_60px_rgba(0,0,0,0.45)] overflow-hidden overscroll-contain border-l border-white/10',
               )}
               style={{ zIndex: Z_INDEX.mobileMenu }}
               variants={menuVariants}
               initial="closed"
               animate="open"
               exit="closed"
-              aria-hidden={!isMenuOpen}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="mobile-navigation-title"
             >
               <div className="sticky top-0 bg-[rgba(12,14,18,0.82)] backdrop-blur-md h-20 flex items-center justify-end px-6 z-10 border-b border-white/10">
+                <h2 id="mobile-navigation-title" className="sr-only">
+                  Мобільна навігація
+                </h2>
                 <motion.button
                   onClick={(e) => {
                     e.stopPropagation()
-                    toggleMenu()
+                    closeMenu()
                   }}
-                  className="p-2 text-white focus:outline-none"
-                  aria-label="Close menu"
+                  className="touch-manipulation p-2 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0E12]"
+                  aria-label="Закрити меню"
                   whileTap={{ scale: 0.9 }}
                   whileHover={{ rotate: 90 }}
                   transition={{ duration: TIMING.animationDuration }}
@@ -536,8 +527,8 @@ const Header = () => {
                 </motion.button>
               </div>
 
-              <motion.div className="overflow-y-auto h-[calc(100%-5rem)] pb-6 px-5">
-                <nav className="py-5">
+              <motion.div className="h-[calc(100%-5rem)] overflow-y-auto pb-6 px-5 overscroll-contain">
+                <nav className="py-5" aria-label="Мобільна навігація">
                   {MENU_ITEMS.filter((item) => !item.isSpecial).map(
                     (item, index) => (
                       <motion.div
@@ -552,11 +543,12 @@ const Header = () => {
                               onClick={() => toggleSubmenu(index)}
                               className={cn(
                                 'flex items-center justify-between w-full py-5 px-1 text-left',
-                                'text-base font-extrabold uppercase tracking-wide transition-colors duration-200',
+                                'text-base font-extrabold uppercase tracking-wide transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0E12]',
                                 openSubmenu === index
                                   ? 'text-white'
                                   : 'text-white/90 hover:text-white',
                               )}
+                              aria-expanded={openSubmenu === index}
                               whileTap={{ scale: 0.97 }}
                             >
                               <span>{item.title}</span>
@@ -598,7 +590,7 @@ const Header = () => {
                                             }
                                             className={cn(
                                               'block py-2 px-3 rounded-lg text-[13px] font-semibold uppercase tracking-wide',
-                                              'text-white/75 hover:text-white hover:bg-white/5 transition-colors duration-200',
+                                              'text-white/75 hover:text-white hover:bg-white/5 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0E12]',
                                             )}
                                           >
                                             {dropItem.title}
@@ -616,27 +608,14 @@ const Header = () => {
                             <Link
                               href={item.href}
                               onClick={(e) =>
-                                handleClick(
-                                  e,
-                                  item.href,
-                                  item.isScroll,
-                                  item.isSpecial,
-                                )
+                                handleClick(e, item.href, item.isScroll)
                               }
                               className={cn(
                                 'block py-5 px-1 text-base font-extrabold uppercase tracking-wide transition-colors duration-200',
-                                item.isSpecial
-                                  ? 'flex items-center gap-2 text-white/90 hover:text-white'
-                                  : 'text-white/90 hover:text-white',
+                                'text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0E12]',
                               )}
                             >
-                              {item.isSpecial && (
-                                <Tent className="h-5 w-5 text-[#98CF93] animate-bounce" />
-                              )}
                               {item.title}
-                              {item.isSpecial && (
-                                <Sparkles className="h-4 w-4 text-[#F5BE3B] animate-pulse" />
-                              )}
                             </Link>
                           </motion.div>
                         )}
@@ -655,7 +634,7 @@ const Header = () => {
                     href={CONTACT.phoneHref}
                     className={cn(
                       'inline-flex w-full items-center justify-center gap-2 py-3.5 px-4',
-                      'text-white hover:text-white font-extrabold text-[15px] tracking-wide transition-colors duration-200',
+                      'text-white hover:text-white font-extrabold text-[15px] tracking-wide transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0E12]',
                     )}
                     aria-label={`Зателефонувати: ${CONTACT.phone}`}
                   >

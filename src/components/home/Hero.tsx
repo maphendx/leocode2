@@ -17,6 +17,8 @@ interface HeroLeadFormErrors {
   childAge: string
 }
 
+type HeroLeadFieldName = keyof HeroLeadFormState
+
 const initialHeroLeadForm: HeroLeadFormState = {
   parentName: '',
   phone: '',
@@ -30,6 +32,11 @@ const initialHeroLeadErrors: HeroLeadFormErrors = {
 }
 
 const heroNamePattern = /^[\p{L}\p{M}\s'-]*$/u
+const heroLeadFieldOrder: HeroLeadFieldName[] = [
+  'parentName',
+  'phone',
+  'childAge',
+]
 
 const normalizeHeroPhone = (phone: string) => {
   const digits = phone.replace(/\D/g, '')
@@ -94,6 +101,8 @@ const HeroLeadForm = ({
   onChange,
   onPhoneFocus,
   onSubmit,
+  submitError,
+  formIdPrefix,
   compact = false,
 }: {
   formData: HeroLeadFormState
@@ -103,6 +112,8 @@ const HeroLeadForm = ({
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onPhoneFocus: () => void
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+  submitError: string
+  formIdPrefix: string
   compact?: boolean
 }) => {
   const inputSize = compact ? 'text-[16px] sm:text-[18px]' : 'text-[20px] xl:text-[22px]'
@@ -110,10 +121,20 @@ const HeroLeadForm = ({
   const floatingLabelClass = compact
     ? 'top-0 translate-y-0 text-[11px] text-[#98CF93] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[16px] peer-placeholder-shown:sm:text-[18px] peer-placeholder-shown:text-white/62 peer-focus:top-0 peer-focus:translate-y-0 peer-focus:text-[11px] peer-focus:text-[#98CF93]'
     : 'top-0 translate-y-0 text-[13px] xl:text-[14px] text-[#98CF93] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[20px] peer-placeholder-shown:xl:text-[22px] peer-placeholder-shown:text-white/62 peer-focus:top-0 peer-focus:translate-y-0 peer-focus:text-[13px] peer-focus:xl:text-[14px] peer-focus:text-[#98CF93]'
+  const parentNameId = `${formIdPrefix}-parent-name`
+  const parentNameErrorId = `${parentNameId}-error`
+  const phoneId = `${formIdPrefix}-phone`
+  const phoneErrorId = `${phoneId}-error`
+  const childAgeId = `${formIdPrefix}-child-age`
+  const childAgeErrorId = `${childAgeId}-error`
 
   if (submitted) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-center px-3">
+      <div
+        className="h-full flex flex-col items-center justify-center text-center px-3"
+        role="status"
+        aria-live="polite"
+      >
         <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full border border-[#98CF93]/30 bg-[#78C86F]/15">
           <CheckCircle2 className="h-8 w-8 text-[#98CF93]" />
         </div>
@@ -150,87 +171,114 @@ const HeroLeadForm = ({
         <div>
           <div className="relative">
             <input
-              id="hero-parent-name"
+              id={parentNameId}
               type="text"
               name="parentName"
               value={formData.parentName}
               onChange={onChange}
               placeholder=" "
+              autoComplete="name"
+              spellCheck={false}
+              aria-invalid={Boolean(errors.parentName)}
+              aria-describedby={errors.parentName ? parentNameErrorId : undefined}
               className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 ${inputSpacingClass} text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
               required
             />
             <label
-              htmlFor="hero-parent-name"
+              htmlFor={parentNameId}
               className={`pointer-events-none absolute left-0 transition-all duration-200 ease-out ${floatingLabelClass}`}
             >
               Ім&apos;я
             </label>
           </div>
           {errors.parentName && (
-            <p className="mt-1 text-xs text-[#FFAFB7]">{errors.parentName}</p>
+            <p id={parentNameErrorId} className="mt-1 text-xs text-[#FFAFB7]">
+              {errors.parentName}
+            </p>
           )}
         </div>
 
         <div>
           <div className="relative">
             <input
-              id="hero-phone"
+              id={phoneId}
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={onChange}
               onFocus={onPhoneFocus}
               placeholder=" "
+              autoComplete="tel"
+              inputMode="tel"
+              spellCheck={false}
+              aria-invalid={Boolean(errors.phone)}
+              aria-describedby={errors.phone ? phoneErrorId : undefined}
               className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 ${inputSpacingClass} text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
               required
             />
             <label
-              htmlFor="hero-phone"
+              htmlFor={phoneId}
               className={`pointer-events-none absolute left-0 transition-all duration-200 ease-out ${floatingLabelClass}`}
             >
               Номер телефону
             </label>
           </div>
           {errors.phone && (
-            <p className="mt-1 text-xs text-[#FFAFB7]">{errors.phone}</p>
+            <p id={phoneErrorId} className="mt-1 text-xs text-[#FFAFB7]">
+              {errors.phone}
+            </p>
           )}
         </div>
 
         <div>
           <div className="relative">
             <input
-              id="hero-child-age"
+              id={childAgeId}
               type="text"
               inputMode="numeric"
               name="childAge"
               value={formData.childAge}
               onChange={onChange}
               placeholder=" "
+              autoComplete="off"
+              aria-invalid={Boolean(errors.childAge)}
+              aria-describedby={errors.childAge ? childAgeErrorId : undefined}
               className={`hero-underline-input peer w-full bg-transparent border-0 border-b-2 border-white/70 px-0 ${inputSpacingClass} text-white tracking-[-0.01em] ${inputSize} placeholder:text-transparent transition-colors duration-200 rounded-none appearance-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:shadow-none focus-visible:shadow-none focus:border-[#98CF93]`}
               required
             />
             <label
-              htmlFor="hero-child-age"
+              htmlFor={childAgeId}
               className={`pointer-events-none absolute left-0 transition-all duration-200 ease-out ${floatingLabelClass}`}
             >
               Вік дитини
             </label>
           </div>
           {errors.childAge && (
-            <p className="mt-1 text-xs text-[#FFAFB7]">{errors.childAge}</p>
+            <p id={childAgeErrorId} className="mt-1 text-xs text-[#FFAFB7]">
+              {errors.childAge}
+            </p>
           )}
         </div>
       </div>
 
       <div className={`${compact ? 'mt-4' : 'mt-auto pt-6'}`}>
+        {submitError && (
+          <p
+            className="mb-3 text-sm text-[#FFAFB7]"
+            role="status"
+            aria-live="polite"
+          >
+            {submitError}
+          </p>
+        )}
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full rounded-[4px] bg-accent px-6 text-center font-extrabold uppercase tracking-[0.02em] text-[#192518] transition-colors duration-200 hover:bg-[#8BC886] disabled:opacity-60 disabled:cursor-not-allowed ${
+          className={`touch-manipulation w-full rounded-[4px] bg-accent px-6 text-center font-extrabold uppercase tracking-[0.02em] text-[#192518] transition-colors duration-200 hover:bg-[#8BC886] disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#171A21] ${
             compact ? 'py-3 text-[13px] sm:py-3.5 sm:text-sm' : 'py-5 text-[15px] xl:text-[16px]'
           }`}
         >
-          {isSubmitting ? 'Відправляємо...' : 'Надіслати заявку'}
+          {isSubmitting ? 'Відправляємо…' : 'Надіслати заявку'}
         </button>
       </div>
     </form>
@@ -246,12 +294,14 @@ const Hero = () => {
   const [leadErrors, setLeadErrors] = useState<HeroLeadFormErrors>(initialHeroLeadErrors)
   const [isLeadSubmitting, setIsLeadSubmitting] = useState(false)
   const [leadSubmitted, setLeadSubmitted] = useState(false)
+  const [leadSubmitError, setLeadSubmitError] = useState('')
   const videoRef = useRef<HTMLVideoElement>(null)
   const videoContainerRef = useRef<HTMLDivElement>(null)
   const isPlayingRef = useRef(false)
 
   const videoSource = '/video.mp4'
-  const posterImageSrc = '/main-poster.jpg'
+  const heroPosterSrc = '/main-poster.jpg'
+  const heroPosterFallbackSrc = '/main.png'
 
   useIntersectionObserver(
     videoContainerRef,
@@ -361,6 +411,7 @@ const Hero = () => {
         ...prev,
         [name]: "Поле повинно містити тільки літери",
       }))
+      setLeadSubmitError('')
       return
     }
 
@@ -374,6 +425,7 @@ const Hero = () => {
         ...prev,
         phone: '',
       }))
+      setLeadSubmitError('')
       return
     }
 
@@ -382,6 +434,7 @@ const Hero = () => {
         ...prev,
         childAge: 'Вкажіть вік цифрами',
       }))
+      setLeadSubmitError('')
       return
     }
 
@@ -394,6 +447,7 @@ const Hero = () => {
       ...prev,
       [name]: '',
     }))
+    setLeadSubmitError('')
   }
 
   const handlePhoneFocus = () => {
@@ -415,6 +469,7 @@ const Hero = () => {
       ...prev,
       phone: '',
     }))
+    setLeadSubmitError('')
   }
 
   const handleLeadSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -423,9 +478,18 @@ const Hero = () => {
     const validation = validateHeroLeadForm(leadForm)
     setLeadErrors(validation)
 
-    if (Object.values(validation).some(Boolean)) return
+    const firstInvalidField = heroLeadFieldOrder.find((field) => validation[field])
+    if (firstInvalidField) {
+      const invalidInput = e.currentTarget.elements.namedItem(firstInvalidField)
+      if (invalidInput instanceof HTMLElement) {
+        invalidInput.focus()
+      }
+      setLeadSubmitError('Перевірте форму та заповніть обов’язкові поля.')
+      return
+    }
 
     setIsLeadSubmitting(true)
+    setLeadSubmitError('')
 
     try {
       const normalizedPhone = normalizeHeroPhone(leadForm.phone)
@@ -458,16 +522,18 @@ const Hero = () => {
 
       setLeadSubmitted(true)
       setIsLeadSubmitting(false)
+      setLeadSubmitError('')
 
       setTimeout(() => {
         setLeadForm(initialHeroLeadForm)
         setLeadErrors(initialHeroLeadErrors)
         setLeadSubmitted(false)
+        setLeadSubmitError('')
       }, 2500)
     } catch (error) {
       console.error('Hero form submit error:', error)
       setIsLeadSubmitting(false)
-      alert('Помилка підключення. Спробуйте ще раз пізніше.')
+      setLeadSubmitError('Не вдалося надіслати форму. Спробуйте ще раз трохи пізніше.')
     }
   }
 
@@ -483,11 +549,13 @@ const Hero = () => {
           }`}
         >
           <Image
-            src={posterImageSrc}
+            src={heroPosterSrc}
+            fallbackSrc={heroPosterFallbackSrc}
             alt="Leo Code"
             fill
             priority={true}
             fetchPriority="high"
+            withPreload
             className="object-cover"
             sizes="100vw"
             quality={70}
@@ -501,7 +569,7 @@ const Hero = () => {
           playsInline
           loop
           controls={false}
-          poster={posterImageSrc}
+          poster={heroPosterSrc}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
             videoLoaded && !videoError ? 'opacity-100' : 'opacity-0'
           }`}
@@ -534,7 +602,7 @@ const Hero = () => {
             }`}
           >
             <div className="flex flex-col justify-start lg:justify-center lg:pr-6 text-white">
-              <h1 className="m-0 max-w-[22rem] text-[clamp(1.95rem,8.4vw,4.5rem)] font-extrabold leading-[1.02] tracking-[-0.02em] text-white sm:max-w-195 sm:text-[clamp(2.05rem,5vw,4.5rem)]">
+              <h1 className="m-0 max-w-[22rem] text-pretty text-[clamp(1.95rem,8.4vw,4.5rem)] font-extrabold leading-[1.02] tracking-[-0.02em] text-white sm:max-w-195 sm:text-[clamp(2.05rem,5vw,4.5rem)]">
                 <span className="block whitespace-nowrap text-[clamp(1.28rem,5.7vw,4.5rem)] sm:text-[clamp(1.35rem,4.6vw,4.5rem)]">
                   ОСВІТНІЙ&nbsp;ПРОСТІР
                 </span>
@@ -544,11 +612,13 @@ const Hero = () => {
                 </span>
               </h1>
 
-              <p className="mt-4 max-w-[22rem] text-[14px] leading-[1.55] text-white/84 sm:mt-5 sm:max-w-[42rem] sm:text-[17px] sm:leading-[1.6]">
+              <p
+                suppressHydrationWarning
+                className="mt-4 max-w-[22rem] text-[14px] leading-[1.55] text-white/84 sm:mt-5 sm:max-w-[42rem] sm:text-[17px] sm:leading-[1.6]"
+              >
                 <strong className="font-extrabold text-white">LEOCODE</strong>{' '}
                 - освітній простір для дітей 7-15 років у Львові, де навчаємо
-                програмуванню, дронам, англійській мові та цифровим навичкам
-                онлайн й офлайн.
+                програмуванню, дронам та цифровим навичкам онлайн й офлайн.
               </p>
 
               <div className="mt-4 sm:mt-8">
@@ -568,6 +638,8 @@ const Hero = () => {
                     onChange={handleLeadInputChange}
                     onPhoneFocus={handlePhoneFocus}
                     onSubmit={handleLeadSubmit}
+                    submitError={leadSubmitError}
+                    formIdPrefix="hero-mobile"
                     compact
                   />
                 </div>
@@ -597,6 +669,8 @@ const Hero = () => {
                     onChange={handleLeadInputChange}
                     onPhoneFocus={handlePhoneFocus}
                     onSubmit={handleLeadSubmit}
+                    submitError={leadSubmitError}
+                    formIdPrefix="hero-desktop"
                   />
                 </div>
               </div>

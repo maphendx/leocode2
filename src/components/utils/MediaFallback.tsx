@@ -74,9 +74,6 @@ const MediaFallback: React.FC<MediaFallbackProps> = ({
       const shouldLoad = !prefersReducedMotion && networkCondition !== 'slow'
 
       setShouldLoadVideo(shouldLoad)
-      if (!shouldLoad) {
-        setError(true) // Use the fallback image
-      }
     }
 
     updateOnlineStatus()
@@ -84,11 +81,6 @@ const MediaFallback: React.FC<MediaFallbackProps> = ({
 
     window.addEventListener('online', updateOnlineStatus)
     window.addEventListener('offline', updateOnlineStatus)
-
-    // If we're offline, immediately show the fallback
-    if (!navigator.onLine) {
-      setError(true)
-    }
 
     return () => {
       window.removeEventListener('online', updateOnlineStatus)
@@ -121,12 +113,8 @@ const MediaFallback: React.FC<MediaFallbackProps> = ({
     }
   }, [isInViewport, videoLoaded, shouldLoadVideo, error, type])
 
-  // When online status changes and we come back online, try the original media again
-  useEffect(() => {
-    if (!isOffline && error) {
-      setError(false)
-    }
-  }, [isOffline, error])
+  const shouldUseFallback =
+    error || isOffline || (type === 'video' && !shouldLoadVideo)
 
   // Video component with fallback to image
   if (type === 'video') {
@@ -141,13 +129,13 @@ const MediaFallback: React.FC<MediaFallbackProps> = ({
           quality={quality}
           priority={priority}
           className={`object-cover transition-opacity duration-500 ${
-            !error && videoLoaded ? 'opacity-0' : 'opacity-100'
+            !shouldUseFallback && videoLoaded ? 'opacity-0' : 'opacity-100'
           }`}
           {...imageProps}
         />
 
         {/* Only load video if conditions are met */}
-        {shouldLoadVideo && isInViewport && !error && (
+        {shouldLoadVideo && isInViewport && !error && !isOffline && (
           <video
             ref={videoRef}
             autoPlay
@@ -178,7 +166,7 @@ const MediaFallback: React.FC<MediaFallbackProps> = ({
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <Image
-        src={error ? fallbackSrc : src}
+        src={shouldUseFallback ? fallbackSrc : src}
         alt={alt}
         quality={quality}
         priority={priority}

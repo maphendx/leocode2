@@ -7,7 +7,7 @@
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .js,.mjs,.cjs,.ts,.tsx --ignore-pattern .next --ignore-pattern node_modules",
+    "lint": "eslint . --ext .js,.mjs,.cjs,.ts,.tsx --ignore-pattern .next --ignore-pattern node_modules --ignore-pattern public",
     "predeploy": "mkdir -p public && cp -r build/* public/",
     "build:no-lint": "next build"
   },

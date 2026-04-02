@@ -109,6 +109,7 @@ const OnlineLearning = () => {
                   alt={card.title}
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
+                  loading="eager"
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                   style={{ objectPosition: card.imagePosition }}
                 />

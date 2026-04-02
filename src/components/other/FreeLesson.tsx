@@ -13,6 +13,7 @@ import {
   Phone,
   MapPin,
 } from 'lucide-react'
+import { useHydrated } from '@/hooks/useHydrated'
 
 const countryCodes = [
   { code: '+380', flag: '🇺🇦', country: 'Ukraine' },
@@ -83,13 +84,12 @@ const hasValidPhoneDigits = (value: string) => {
 }
 
 const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
-  const [isClientMounted, setIsClientMounted] = useState(false)
+  const isHydrated = useHydrated()
   const [isAnimating, setIsAnimating] = useState(false)
   const [shouldRender, setShouldRender] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
-  const [formProgress, setFormProgress] = useState(0)
   const [showAgeDropdown, setShowAgeDropdown] = useState(false)
   const [showCountryDropdown, setShowCountryDropdown] = useState(false)
   const [showLocationDropdown, setShowLocationDropdown] = useState(false)
@@ -112,36 +112,32 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
     setShowLocationDropdown(false)
     setIsSubmitting(false)
     setSubmitted(false)
-    setFormProgress(0)
   }
 
   useEffect(() => {
-    setIsClientMounted(true)
-  }, [])
-
-  useEffect(() => {
-    const filled = [
-      Boolean(formData.parentName.trim()),
-      Boolean(formData.childName.trim()),
-      Boolean(formData.childAge),
-      Boolean(formData.location),
-      hasValidPhoneDigits(formData.phone),
-    ].filter(Boolean).length
-
-    setFormProgress(filled * 20)
-  }, [formData])
-
-  useEffect(() => {
     if (isOpen) {
-      resetForm()
-      setShouldRender(true)
-      setTimeout(() => setIsAnimating(true), 10)
-    } else {
+      const showFrame = window.requestAnimationFrame(() => {
+        setShouldRender(true)
+        window.requestAnimationFrame(() => {
+          setIsAnimating(true)
+        })
+      })
+
+      return () => window.cancelAnimationFrame(showFrame)
+    }
+
+    const hideFrame = window.requestAnimationFrame(() => {
       setIsAnimating(false)
-      const timer = setTimeout(() => {
-        setShouldRender(false)
-      }, 350)
-      return () => clearTimeout(timer)
+    })
+
+    const timer = window.setTimeout(() => {
+      setShouldRender(false)
+      resetForm()
+    }, 350)
+
+    return () => {
+      window.cancelAnimationFrame(hideFrame)
+      window.clearTimeout(timer)
     }
   }, [isOpen])
 
@@ -343,7 +339,16 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
     onClose()
   }
 
-  if (!shouldRender || !isClientMounted) return null
+  const formProgress =
+    [
+      Boolean(formData.parentName.trim()),
+      Boolean(formData.childName.trim()),
+      Boolean(formData.childAge),
+      Boolean(formData.location),
+      hasValidPhoneDigits(formData.phone),
+    ].filter(Boolean).length * 20
+
+  if (!shouldRender || !isHydrated) return null
 
   const modal = (
     <div className="fixed inset-0 z-[15000] overflow-hidden consultation-modal-open">
@@ -351,18 +356,18 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
         className={`fixed inset-0 bg-[#0B0E14] transition-all duration-300 ease-in-out z-[14999] ${
           isAnimating ? 'opacity-70 backdrop-blur-sm' : 'opacity-0'
         }`}
+        onClick={onClose}
         aria-hidden="true"
       />
 
-      <div
-        className="fixed inset-0 flex items-center justify-center p-3 md:p-6 z-[15001]"
-        onClick={onClose}
-      >
+      <div className="fixed inset-0 z-[15001] flex items-center justify-center p-3 md:p-6">
         <div
           className={`relative w-full max-w-[680px] max-h-[95vh] overflow-hidden overflow-y-auto rounded-[22px] border border-white/10 bg-[linear-gradient(180deg,#2A2F38_0%,#232831_100%)] shadow-[0_30px_70px_rgba(0,0,0,0.55)] transition-all duration-400 ease-out ${
             isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
-          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="free-lesson-title"
         >
           <div className="relative border-b border-white/10 px-5 md:px-8 pt-7 pb-5">
             <button
@@ -375,7 +380,10 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
             </button>
 
             <div className="text-center pr-10 pl-2">
-              <h2 className="text-[28px] md:text-[36px] font-extrabold tracking-[-0.03em] text-white leading-tight">
+              <h2
+                id="free-lesson-title"
+                className="text-[28px] md:text-[36px] font-extrabold tracking-[-0.03em] text-white leading-tight"
+              >
                 Запис на <span className="text-[#8ED28A]">безкоштовне</span>{' '}
                 заняття
               </h2>
@@ -420,12 +428,14 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
               <>
                 <div className="flex justify-between items-center mb-8 gap-3">
                   {[1, 2, 3].map((step) => (
-                    <div
+                    <button
+                      type="button"
                       key={step}
                       className={`flex flex-col items-center text-center ${
                         step < currentStep ? 'cursor-pointer' : ''
                       }`}
                       onClick={() => step < currentStep && setCurrentStep(step)}
+                      disabled={step >= currentStep}
                     >
                       <div
                         className={`h-10 w-10 rounded-full flex items-center justify-center border transition-all ${
@@ -457,7 +467,7 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                             ? 'Контакти'
                             : 'Підтвердження'}
                       </span>
-                    </div>
+                    </button>
                   ))}
                 </div>
 
@@ -472,12 +482,16 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                       </p>
 
                       <div className="relative">
-                        <label className="block text-sm font-medium mb-2 text-white/80">
+                        <label
+                          htmlFor="free-lesson-parent-name"
+                          className="block text-sm font-medium mb-2 text-white/80"
+                        >
                           Ваше ім'я (батько/мама)
                         </label>
                         <div className="relative">
                           <User className="absolute left-3 top-3.5 h-5 w-5 text-white/45" />
                           <input
+                            id="free-lesson-parent-name"
                             type="text"
                             name="parentName"
                             value={formData.parentName}
@@ -495,12 +509,16 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                       </div>
 
                       <div className="relative">
-                        <label className="block text-sm font-medium mb-2 text-white/80">
+                        <label
+                          htmlFor="free-lesson-child-name"
+                          className="block text-sm font-medium mb-2 text-white/80"
+                        >
                           Ім'я дитини
                         </label>
                         <div className="relative">
                           <Baby className="absolute left-3 top-3.5 h-5 w-5 text-white/45" />
                           <input
+                            id="free-lesson-child-name"
                             type="text"
                             name="childName"
                             value={formData.childName}
@@ -542,14 +560,19 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                       </h2>
 
                       <div className="relative">
-                        <label className="block text-sm font-medium mb-2 text-white/80">
+                        <p
+                          id="free-lesson-age-label"
+                          className="block text-sm font-medium mb-2 text-white/80"
+                        >
                           Вік дитини (від 7 до 15)
-                        </label>
+                        </p>
                         <div className="relative" ref={ageDropdownRef}>
                           <Baby className="absolute left-3 top-3.5 h-5 w-5 text-white/45" />
                           <button
                             type="button"
                             onClick={() => setShowAgeDropdown((prev) => !prev)}
+                            aria-labelledby="free-lesson-age-label"
+                            aria-expanded={showAgeDropdown}
                             className="w-full pl-11 pr-10 py-3.5 border border-white/12 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#78C86F]/70 text-left bg-[#2C313A] flex items-center justify-between"
                           >
                             <span
@@ -568,13 +591,14 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                               style={{ maxHeight: '220px' }}
                             >
                               {ageOptions.map((age) => (
-                                <div
+                                <button
+                                  type="button"
                                   key={age}
-                                  className="px-4 py-3 hover:bg-white/8 cursor-pointer text-white/85 hover:text-white transition-colors"
+                                  className="w-full px-4 py-3 text-left hover:bg-white/8 cursor-pointer text-white/85 hover:text-white transition-colors"
                                   onClick={() => handleAgeSelect(age)}
                                 >
                                   {age}
-                                </div>
+                                </button>
                               ))}
                             </div>
                           )}
@@ -582,9 +606,12 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                       </div>
 
                       <div className="relative">
-                        <label className="block text-sm font-medium mb-2 text-white/80">
+                        <p
+                          id="free-lesson-location-label"
+                          className="block text-sm font-medium mb-2 text-white/80"
+                        >
                           Локація
-                        </label>
+                        </p>
                         <div className="relative" ref={locationDropdownRef}>
                           <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-white/45" />
                           <button
@@ -592,6 +619,8 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                             onClick={() =>
                               setShowLocationDropdown((prev) => !prev)
                             }
+                            aria-labelledby="free-lesson-location-label"
+                            aria-expanded={showLocationDropdown}
                             className="w-full pl-11 pr-10 py-3.5 border border-white/12 rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#78C86F]/70 text-left bg-[#2C313A] flex items-center justify-between"
                           >
                             <span
@@ -627,7 +656,10 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                       </div>
 
                       <div className="relative">
-                        <label className="block text-sm font-medium mb-2 text-white/80">
+                        <label
+                          htmlFor="free-lesson-phone"
+                          className="block text-sm font-medium mb-2 text-white/80"
+                        >
                           Номер телефону
                         </label>
                         <div className="relative" ref={phoneDropdownRef}>
@@ -648,6 +680,7 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                             </button>
                             <Phone className="absolute left-[84px] top-3.5 h-5 w-5 text-white/45" />
                             <input
+                              id="free-lesson-phone"
                               type="tel"
                               name="phone"
                               value={formData.phone}
@@ -670,9 +703,10 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                               style={{ maxHeight: '240px', width: '280px' }}
                             >
                               {countryCodes.map((country) => (
-                                <div
+                                <button
+                                  type="button"
                                   key={country.code}
-                                  className="px-4 py-3 hover:bg-white/8 cursor-pointer flex items-center gap-2 border-b border-white/8 last:border-0"
+                                  className="flex w-full items-center gap-2 border-b border-white/8 px-4 py-3 text-left hover:bg-white/8 cursor-pointer last:border-0"
                                   onClick={() =>
                                     handleCountrySelect(country.code)
                                   }
@@ -684,7 +718,7 @@ const FreeLesson = ({ isOpen, onClose }: FreeLessonProps) => {
                                   <span className="text-white/55 text-sm">
                                     {country.country}
                                   </span>
-                                </div>
+                                </button>
                               ))}
                             </div>
                           )}

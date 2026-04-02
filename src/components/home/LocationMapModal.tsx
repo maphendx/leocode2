@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ExternalLink, MapPin, Phone, X } from 'lucide-react'
+import { useHydrated } from '@/hooks/useHydrated'
 
 type LocationMapData = {
   name: string
@@ -21,12 +22,7 @@ type LocationMapModalProps = {
 }
 
 const LocationMapModal = ({ location, onClose }: LocationMapModalProps) => {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-    return () => setMounted(false)
-  }, [])
+  const isHydrated = useHydrated()
 
   useEffect(() => {
     if (!location) return
@@ -54,7 +50,7 @@ const LocationMapModal = ({ location, onClose }: LocationMapModalProps) => {
     return `https://maps.google.com/maps?hl=uk&q=${query}&t=m&z=16&output=embed`
   }, [location])
 
-  if (!mounted) {
+  if (!isHydrated) {
     return null
   }
 
@@ -74,18 +70,24 @@ const LocationMapModal = ({ location, onClose }: LocationMapModalProps) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.98 }}
             transition={{ duration: 0.24, ease: 'easeOut' }}
-            className="relative w-full max-w-5xl overflow-hidden rounded-[12px] border border-white/10 bg-[#2A2D35] shadow-[0_28px_70px_-26px_rgba(4,6,8,0.8)]"
+            className="relative w-full max-w-5xl overflow-hidden overscroll-contain rounded-[12px] border border-white/10 bg-[#2A2D35] shadow-[0_28px_70px_-26px_rgba(4,6,8,0.8)]"
             onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="location-map-title"
           >
             <div className="flex items-center justify-between border-b border-white/10 bg-[#2F333D] px-4 py-3 md:px-5 md:py-4">
-              <h3 className="flex items-center text-[20px] md:text-[24px] font-extrabold tracking-[-0.02em] text-white">
+              <h3
+                id="location-map-title"
+                className="flex items-center text-[20px] md:text-[24px] font-extrabold tracking-[-0.02em] text-white"
+              >
                 <MapPin className="mr-2 h-5 w-5 text-[#76C36D]" />
                 {location.name}
               </h3>
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-[6px] border border-white/15 bg-[#272B33] p-2 text-white/75 transition-colors hover:bg-[#313642] hover:text-white"
+                className="rounded-[6px] border border-white/15 bg-[#272B33] p-2 text-white/75 transition-colors hover:bg-[#313642] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F333D]"
                 aria-label="Закрити карту"
               >
                 <X className="h-5 w-5" />
@@ -95,6 +97,7 @@ const LocationMapModal = ({ location, onClose }: LocationMapModalProps) => {
             <div className="h-[58vh] min-h-[340px] max-h-[560px] w-full border-b border-white/10 bg-[#21252D]">
               <iframe
                 src={embedUrl}
+                title={`Карта локації ${location.name}`}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -127,7 +130,7 @@ const LocationMapModal = ({ location, onClose }: LocationMapModalProps) => {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-11 items-center justify-center rounded-[6px] border border-[#82CC78] bg-[#7DCC72] px-4 text-[12px] md:text-[13px] font-extrabold uppercase tracking-[0.04em] text-[#1A2618] transition-colors hover:bg-[#8DD882]"
+                className="inline-flex h-11 items-center justify-center rounded-[6px] border border-[#82CC78] bg-[#7DCC72] px-4 text-[12px] md:text-[13px] font-extrabold uppercase tracking-[0.04em] text-[#1A2618] transition-colors hover:bg-[#8DD882] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#98CF93] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F333D]"
               >
                 Відкрити у Google Maps
                 <ExternalLink className="ml-2 h-4 w-4" />

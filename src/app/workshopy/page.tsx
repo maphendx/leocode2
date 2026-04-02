@@ -2,6 +2,7 @@
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import Link from 'next/link'
 import { useState } from 'react'
 import FreeLesson from '@/components/other/FreeLesson'
 import {
@@ -176,7 +177,11 @@ export default function WorkshopsPage() {
   return (
     <>
       <Header />
-      <main className="overflow-hidden bg-gradient-to-b from-[#F7FAF4] via-[#F3F8F0] to-[#EEF5E9]">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="overflow-hidden bg-gradient-to-b from-[#F7FAF4] via-[#F3F8F0] to-[#EEF5E9]"
+      >
         {/* Hero Section */}
         <section className="relative py-24 md:py-36 bg-gradient-to-br from-[#2a1a47] via-[#1F2421] to-primary text-white overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full opacity-10 z-0">
@@ -498,12 +503,12 @@ export default function WorkshopsPage() {
                 >
                   Обрати воркшоп
                 </button>
-                <a
+                <Link
                   href="/"
                   className="bg-transparent border-2 border-white/30 hover:bg-white/10 py-4 px-10 rounded-full text-lg font-medium transition-all hover:shadow-xl hover:-translate-y-1"
                 >
                   На головну
-                </a>
+                </Link>
               </div>
             </div>
           </div>

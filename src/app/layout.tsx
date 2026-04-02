@@ -67,6 +67,9 @@ export default function RootLayout({
   return (
     <html lang="uk" className={mulish.variable}>
       <body className="antialiased" suppressHydrationWarning>
+        <a href="#main-content" className="skip-link">
+          Перейти до основного вмісту
+        </a>
         <SchemaMarkup />
         <ClientBody>{children}</ClientBody>
         {isProduction && <LiveChatLoader chatId={liveChatId} />}
