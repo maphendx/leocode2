@@ -2,6 +2,7 @@
 
 import { createContext, useState, useContext, ReactNode } from 'react'
 import FreeLesson from '@/components/other/FreeLesson'
+import SummerCampBanner from '@/components/other/SummerCampBanner'
 
 type ModalContextType = {
   openFreeLesson: () => void
@@ -26,6 +27,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
 
   return (
     <ModalContext.Provider value={{ openFreeLesson, closeFreeLesson }}>
+      <SummerCampBanner />
       {children}
       <FreeLesson isOpen={isFreeLessonOpen} onClose={closeFreeLesson} />
     </ModalContext.Provider>

@@ -44,7 +44,7 @@ export default function SchoolPartnershipPage() {
     <>
       <Header />
       <main id="main-content" tabIndex={-1} className="bg-[#262830]">
-        <section className="relative min-h-[100svh] overflow-hidden">
+        <section className="relative min-h-[100svh] mt-10 overflow-hidden">
           <div className="absolute inset-0">
             <Image
               src="/main-poster.jpg"

@@ -592,8 +592,8 @@ const Hero = () => {
         <div className="absolute inset-y-0 right-0 hidden lg:block w-[42%] bg-[linear-gradient(90deg,rgba(17,19,24,0)_0%,rgba(17,19,24,0.24)_36%,rgba(17,19,24,0.42)_100%)]" />
 
         <div
-          className={`relative z-1 container h-full pt-23 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] sm:pt-25 sm:pb-8 ${
-            isShortDesktopViewport ? 'lg:pt-30 lg:pb-8' : 'lg:pt-33 lg:pb-10'
+          className={`relative z-1 container h-full pt-33 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] sm:pt-35 sm:pb-8 ${
+            isShortDesktopViewport ? 'lg:pt-40 lg:pb-8' : 'lg:pt-43 lg:pb-10'
           }`}
         >
           <div

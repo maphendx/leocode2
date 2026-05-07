@@ -338,7 +338,7 @@ const Header = () => {
     <>
       <header
         className={cn(
-          'fixed top-0 w-full h-20 transition-transform duration-700',
+          'fixed top-10 w-full h-20 transition-transform duration-700',
           'bg-[rgba(12,14,18,0.82)] backdrop-blur-md border-b border-white/10',
           isVisible ? 'translate-y-0' : '-translate-y-full',
         )}
@@ -496,7 +496,7 @@ const Header = () => {
               id="mobile-navigation"
               key="mobile-menu"
               className={cn(
-                'fixed top-0 right-0 bottom-0 w-[85%] max-w-87.5',
+                'fixed top-10 right-0 bottom-0 w-[85%] max-w-87.5',
                 'bg-[rgba(12,14,18,0.92)] backdrop-blur-md shadow-[0_24px_60px_rgba(0,0,0,0.45)] overflow-hidden overscroll-contain border-l border-white/10',
               )}
               style={{ zIndex: Z_INDEX.mobileMenu }}

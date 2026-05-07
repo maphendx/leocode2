@@ -6,7 +6,6 @@ import type { Metadata } from 'next'
 import ErrorBoundary from '@/components/utils/ErrorBoundary'
 import Courses from '@/components/home/Courses'
 import OnlineLearning from '@/components/home/OnlineLearning'
-import SummerCampAd from '@/components/other/SummerCampAd'
 import Results from '@/components/home/ResultsIsland'
 import Events from '@/components/home/Events'
 import FAQ from '@/components/home/FAQ'
@@ -86,7 +85,6 @@ export default function Home() {
         </ErrorBoundary>
       </main>
       <Footer />
-      <SummerCampAd />
     </>
   )
 }

@@ -183,7 +183,7 @@ export default function WorkshopsPage() {
         className="overflow-hidden bg-gradient-to-b from-[#F7FAF4] via-[#F3F8F0] to-[#EEF5E9]"
       >
         {/* Hero Section */}
-        <section className="relative py-24 md:py-36 bg-gradient-to-br from-[#2a1a47] via-[#1F2421] to-primary text-white overflow-hidden">
+        <section className="relative py-24 md:py-36 mt-10 bg-gradient-to-br from-[#2a1a47] via-[#1F2421] to-primary text-white overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full opacity-10 z-0">
             <div className="absolute top-14 left-14 w-20 h-20 border-2 border-white/30 rounded-lg rotate-12 animate-pulse" />
             <div

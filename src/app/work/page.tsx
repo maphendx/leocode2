@@ -23,7 +23,7 @@ export default function WorkPage() {
         className="overflow-hidden bg-gradient-to-b from-[#F7FAF4] via-[#F3F8F0] to-[#EEF5E9]"
       >
         {/* Hero Section */}
-        <section className="relative py-24 md:py-32 bg-gradient-to-r from-primary to-[#1F2421] text-white overflow-hidden">
+        <section className="relative py-24 md:py-32 mt-10 bg-gradient-to-r from-primary to-[#1F2421] text-white overflow-hidden">
           {/* Decorative elements */}
           <div className="absolute top-0 left-0 w-full h-full bg-[url('/pattern.svg')] opacity-10 z-0"></div>
           <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-accent/20 blur-3xl"></div>
